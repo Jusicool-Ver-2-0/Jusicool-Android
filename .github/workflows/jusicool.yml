@@ -1,0 +1,58 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "master", "develop" ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Build with Gradle
+      run: ./gradlew build
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: JUSICOOL Android CI Discord Notification
+      uses: sarisia/actions-status-discord@v1
+      if: ${{ success() }}
+      with:
+        title: ✅ JusiCool-Android-CI 성공! ✅
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        status: ${{ job.status }}
+        image: ${{ secrets.SUCCESS_IMAGE }}
+        description: 성공!
+        color: 0000CD
+        url: "https://github.com/sarisia/actions-status-discord"
+        username: JusiCool CI 봇
+
+    - name: JUSICOOL Android CI Discord Notification
+      uses: sarisia/actions-status-discord@v1
+      if: ${{ failure() }}
+      with:
+        title: ❗️ JusiCool-Android-CI 실패! ❗️
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        status: ${{ job.status }}
+        image: ${{ secrets.FAILED_IMAGE }}
+        description: 실패ㅠㅠ
+        color: 00FF00
+        url: "https://github.com/sarisia/actions-status-discord"
+        username: JusiCool CI 봇
