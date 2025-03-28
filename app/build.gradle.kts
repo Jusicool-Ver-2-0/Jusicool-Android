@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.jusicool_android"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.jusicool_android"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
