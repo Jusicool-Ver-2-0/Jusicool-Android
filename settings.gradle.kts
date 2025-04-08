@@ -22,3 +22,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "Jusicool-Android"
 include(":app")
+
+include(":data")
+include(":data")
+include(":domain")
+include(":feature")
+include(":ui")
