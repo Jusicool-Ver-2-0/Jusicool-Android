@@ -36,37 +36,35 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
-    ): OkHttpClient = OkHttpClient.Builder()
-        .cookieJar(BasicCookieJar())
-        .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
-        .readTimeout(TIMEOUT, TimeUnit.SECONDS)
-        .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
-        .addInterceptor(httpLoggingInterceptor)
-        .build()
+    ): OkHttpClient =
+        OkHttpClient.Builder()
+            .cookieJar(BasicCookieJar())
+            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .addInterceptor(httpLoggingInterceptor)
+            .build()
 
 
     @Provides
     @Singleton
-    fun provideMoshiInstance(): Moshi {
-        return Moshi.Builder().build()
-    }
+    fun provideMoshiInstance(): Moshi =
+        Moshi.Builder().build()
 
     @Provides
     @Singleton
-    fun provideMoshiConverterFactory(moshi: Moshi): MoshiConverterFactory {
-        return MoshiConverterFactory.create(moshi)
-    }
+    fun provideMoshiConverterFactory(moshi: Moshi): MoshiConverterFactory =
+        MoshiConverterFactory.create(moshi)
 
     @Provides
     @Singleton
     fun provideBaseApiRetrofit(
         okHttpClient: OkHttpClient,
         moshiConverterFactory: MoshiConverterFactory
-    ): Retrofit {
-        return Retrofit.Builder()
+    ): Retrofit =
+        Retrofit.Builder()
             .baseUrl("BuildConfig.BASE_URL")
             .client(okHttpClient)
             .addConverterFactory(moshiConverterFactory)
             .build()
-    }
 }
