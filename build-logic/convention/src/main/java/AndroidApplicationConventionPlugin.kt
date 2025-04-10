@@ -27,13 +27,14 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 defaultConfig {
                     applicationId = "com.example.build"
                     minSdk = 26
-                    targetSdk = 30
+                    targetSdk = 36
                     versionCode = 19
                     versionName = "1.2.8"
                     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
                     vectorDrawables.useSupportLibrary = true
                 }
+
 
                 // Enable Jetpack Compose feature for the project
                 buildFeatures.compose = true
