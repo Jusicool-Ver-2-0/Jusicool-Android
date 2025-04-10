@@ -3,7 +3,7 @@ plugins {
     id("jusicool.android.hilt")
 }
 android {
-    namespace = "com.example.design-system"
+    namespace = "com.example.design_system"
 }
 
 dependencies {
