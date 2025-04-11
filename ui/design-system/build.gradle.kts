@@ -13,4 +13,6 @@ dependencies {
     implementation(libs.retrofit.kotlin.serialization)
     implementation(libs.retrofit.moshi.converter)
     implementation(libs.moshi)
+    implementation(libs.androidx.runtime.android)
+    implementation(libs.androidx.ui.text.android)
 }

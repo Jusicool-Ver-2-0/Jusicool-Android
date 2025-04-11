@@ -64,6 +64,8 @@ swiperefresh = "0.27.0"
 turbine = "1.2.0"
 zxing = "3.5.3"
 chuck = "1.1.0"
+runtimeAndroid = "1.7.8"
+uiTextAndroid = "1.7.8"
 
 
 [libraries]
@@ -162,6 +164,8 @@ ui = { group = "androidx.compose.ui", name = "ui" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
+androidx-ui-text-android = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "uiTextAndroid" }
 
 [plugins]
 #Define Plugins
