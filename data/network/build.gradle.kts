@@ -14,4 +14,7 @@ dependencies {
     implementation(libs.retrofit.moshi.converter)
     implementation(libs.moshi)
     ksp(libs.retrofit.moshi.codegen)
+
+    implementation(project(":data:model"))
+    implementation(project(":data:utils"))
 }
