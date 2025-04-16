@@ -20,4 +20,7 @@ object JusicoolColor : ColorTheme() {
     override val gray200 = Color(0xFFCBCCCE)
     override val gray100 = Color(0xFFEFF0F2)
     override val gray50 = Color(0xFFF5F6F8)
+
+    override val black = Color(0xFF000000)
+    override val white = Color(0xFFFFFFFF)
 }
