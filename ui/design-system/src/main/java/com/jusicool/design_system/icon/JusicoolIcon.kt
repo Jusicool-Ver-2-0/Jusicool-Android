@@ -1,5 +1,6 @@
 package com.school_of_company.design_system.icon
 
+import androidx.collection.intIntMapOf
 import androidx.compose.foundation.Image
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -63,12 +64,14 @@ fun ChartLineIcon(
 
 @Composable
 fun FlatCylinderImage(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    tint: Color = Color.Unspecified
 ) {
-    Image(
+    Icon(
         painter = painterResource(id = R.drawable.flat_cylinder_3),
         contentDescription = stringResource(id = R.string.flat_cylinder_description),
-        modifier = modifier
+        modifier = modifier,
+        tint = tint
     )
 }
 
