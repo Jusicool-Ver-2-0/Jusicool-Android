@@ -7,7 +7,7 @@ import com.jusicool.design_system.theme.color.JusicoolColor
 @Composable
 fun JusicoolTheme(
     colors: JusicoolColor = JusicoolColor,
-    typography: JusicoolTypography,
+    typography: JusicoolTypography = JusicoolTypography,
     content: @Composable (colors: ColorTheme, typography: JusicoolTypography) -> Unit
 ) {
     content(colors, typography)
