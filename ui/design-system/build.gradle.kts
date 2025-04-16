@@ -9,4 +9,5 @@ android {
 
 dependencies {
     implementation(libs.coil.kt)
+    implementation(libs.androidx.ui.android)
 }
