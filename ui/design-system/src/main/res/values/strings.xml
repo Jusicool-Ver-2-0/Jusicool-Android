@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="account_description">마이 페이지 아이콘</string>
+    <string name="clarity_arrow_line_description">왼쪽 방향 아이콘</string>
+    <string name="right_arrow_description">오른쪽 방향 아이콘</string>
+    <string name="chart_line_description">차트 아이콘</string>
+    <string name="flat_cylinder_description">판매, 구매 성공 아이콘</string>
+    <string name="lets_icons_setting_fill_description">설정 아이콘</string>
+    <string name="search_description">검색 아이콘</string>
+    <string name="pie_chartfilled_description">자산 아이콘</string>
+    <string name="union_description">쥬시쿨 아이콘</string>
+    <string name="material_symbols_news_outline_description">뉴스 아이콘</string>
+</resources>
