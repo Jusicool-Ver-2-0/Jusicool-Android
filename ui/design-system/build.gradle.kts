@@ -1,18 +1,12 @@
 plugins {
     id("jusicool.android.core")
-    id("jusicool.android.hilt")
+    id("jusicool.android.lint")
+    id("jusicool.android.compose")
 }
 android {
     namespace = "com.example.design_system"
 }
 
 dependencies {
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.okhttp.logging)
-    implementation(libs.retrofit.core)
-    implementation(libs.retrofit.kotlin.serialization)
-    implementation(libs.retrofit.moshi.converter)
-    implementation(libs.moshi)
-    implementation(libs.androidx.runtime.android)
-    implementation(libs.androidx.ui.text.android)
+    implementation(libs.coil.kt)
 }
