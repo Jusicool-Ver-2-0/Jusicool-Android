@@ -1,3 +1,4 @@
+
 package com.jusicool.design_system.component.button
 
 import androidx.compose.foundation.BorderStroke
@@ -31,9 +32,7 @@ fun JusicoolFilledButton(
         }
 
         Button(
-            modifier = modifier
-                .width(92.dp)
-                .height(54.dp),
+            modifier = modifier,
             onClick = onClick,
             enabled = enabledState(state),
             shape = RoundedCornerShape(12.dp),
@@ -66,9 +65,7 @@ fun JusicoolOutlinedButton(
         }
 
         OutlinedButton(
-            modifier = modifier
-                .width(92.dp)
-                .height(54.dp),
+            modifier = modifier,
             onClick = onClick,
             enabled = enabledState(state),
             shape = RoundedCornerShape(12.dp),
