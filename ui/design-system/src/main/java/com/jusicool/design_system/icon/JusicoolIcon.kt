@@ -1,7 +1,5 @@
 package com.school_of_company.design_system.icon
 
-import androidx.collection.intIntMapOf
-import androidx.compose.foundation.Image
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
