@@ -10,4 +10,5 @@
     <string name="pie_chartfilled_description">자산 아이콘</string>
     <string name="union_description">쥬시쿨 아이콘</string>
     <string name="material_symbols_news_outline_description">뉴스 아이콘</string>
+    <string name="swap_horizontal">스왑 아이콘</string>
 </resources>
