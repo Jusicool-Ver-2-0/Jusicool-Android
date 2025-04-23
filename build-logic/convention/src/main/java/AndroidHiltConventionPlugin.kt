@@ -19,8 +19,6 @@ class AndroidHiltConventionPlugin : Plugin<Project> {
             dependencies {
                 add("implementation", libs.findLibrary("hilt.android").get()) // Add Hilt core library for dependency injection
                 add("ksp", libs.findLibrary("hilt.compiler").get()) // Add Hilt compiler for KSP (Kotlin Symbol Processing)
-                add("kspAndroidTest", libs.findLibrary("hilt.compiler").get()) // Add Hilt compiler for Android instrumented tests (AndroidTest)
-                add("kspTest", libs.findLibrary("hilt.compiler").get()) // Add Hilt compiler for unit tests (Test)
             }
         }
     }
