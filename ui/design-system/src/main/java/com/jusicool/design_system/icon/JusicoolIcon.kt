@@ -139,3 +139,16 @@ fun MaterialSymbolsNewsOutlineIcon(
         tint = tint
     )
 }
+
+@Composable
+fun SwapIcon(
+    modifier: Modifier = Modifier,
+    tint: Color = Color.Unspecified
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.swap_horizontal),
+        contentDescription = stringResource(id = R.string.swap_horizontal),
+        modifier = modifier,
+        tint = tint
+    )
+}
