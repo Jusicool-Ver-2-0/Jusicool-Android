@@ -17,8 +17,8 @@ import com.jusicool.design_system.theme.JusicoolTheme
 @Composable
 fun JusicoolTopBar(
     modifier: Modifier = Modifier,
-    startIcon: @Composable () -> Unit,
     betweenText: String = "",
+    startIcon: @Composable () -> Unit,
     endIcon: @Composable () -> Unit
 ) {
     JusicoolTheme { _, _ ->
@@ -59,8 +59,7 @@ private fun JusicoolTopbarPreview() {
                   painter = painterResource(id = R.drawable.swap_horizontal),
                   contentDescription = "swap",
                   modifier = Modifier
-                      .width(8.dp)
-                      .height(8.dp)
+                      .size(8.dp)
               )
             }
         )
