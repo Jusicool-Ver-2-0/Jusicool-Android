@@ -12,6 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jusicool.design_system.R
+import com.jusicool.design_system.component.text.JusicoolSubjectTitleText
 import com.jusicool.design_system.theme.JusicoolTheme
 
 @Composable
@@ -30,7 +31,13 @@ fun JusicoolTopBar(
                 .padding(horizontal = 24.dp, vertical = 16.dp)
         ) {
             startIcon()
-            Text(text = betweenText)
+
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                JusicoolSubjectTitleText(subjectText = betweenText)
+            }
             endIcon()
         }
     }
@@ -55,12 +62,38 @@ private fun JusicoolTopbarPreview() {
                 )
             },
             endIcon = {
-              Image(
-                  painter = painterResource(id = R.drawable.swap_horizontal),
-                  contentDescription = "swap",
-                  modifier = Modifier
-                      .size(8.dp)
-              )
+                Image(
+                    painter = painterResource(id = R.drawable.swap_horizontal),
+                    contentDescription = "swap",
+                    modifier = Modifier
+                        .size(8.dp)
+                )
+            }
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun JusicoolTopbarPreview1() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+    ) {
+        JusicoolTopBar(
+            startIcon = {
+                Image(
+                    painter = painterResource(id = R.drawable.clarity_arrow_line),
+                    contentDescription = "clarity_arrow_line",
+                    modifier = Modifier
+                        .width(18.dp)
+                        .height(27.dp)
+                )
+            },
+            betweenText = "뉴스",
+            endIcon = {
+                Spacer(modifier = Modifier.size(24.dp))
             }
         )
     }
