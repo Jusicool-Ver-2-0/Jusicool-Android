@@ -4,7 +4,7 @@ plugins {
     id("jusicool.android.compose")
 }
 android {
-    namespace = "com.example.design_system"
+    namespace = "com.jusicool.design_system"
 }
 
 dependencies {

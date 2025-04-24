@@ -1,14 +1,12 @@
 package com.school_of_company.design_system.icon
 
-import androidx.collection.intIntMapOf
-import androidx.compose.foundation.Image
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.example.design_system.R
+import com.jusicool.design_system.R
 
 @Composable
 fun AccountImage(
@@ -135,6 +133,19 @@ fun MaterialSymbolsNewsOutlineIcon(
     Icon(
         painter = painterResource(id = R.drawable.material_symbols_news_outline),
         contentDescription = stringResource(id = R.string.material_symbols_news_outline_description),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun SwapIcon(
+    modifier: Modifier = Modifier,
+    tint: Color = Color.Unspecified
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.swap_horizontal),
+        contentDescription = stringResource(id = R.string.swap_horizontal),
         modifier = modifier,
         tint = tint
     )
