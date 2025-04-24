@@ -23,4 +23,6 @@ abstract class ColorTheme {
 
     abstract val black: Color
     abstract val white: Color
+    abstract val chartPriceIncreased: Color
+    abstract val chartPriceDecreased: Color
 }
