@@ -19,6 +19,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             // Add necessary dependencies from Version Catalog
             dependencies {
                 add("implementation", project(":ui:design-system"))
+                add("implementation", project(":data:model"))
 
                 add("implementation", libs.findLibrary("androidx.lifecycle.runtimeCompose").get())  // Add Lifecycle runtime for Compose
                 add("implementation", libs.findLibrary("androidx.lifecycle.viewModelCompose").get())  // Add ViewModel support for Compose
