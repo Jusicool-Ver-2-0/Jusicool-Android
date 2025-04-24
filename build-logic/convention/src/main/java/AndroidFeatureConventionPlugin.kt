@@ -11,12 +11,15 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
         with(target) {
             // Apply necessary core, Compose, and Hilt plugins for Android
             with(pluginManager) {
-                apply("jusicool.android.compose")  // Apply Compose settings from custom plugin
+                apply("jusicool.android.core")  // Apply Compose settings from custom plugin
+                apply("jusicool.android.compose")
                 apply("jusicool.android.hilt")  // Apply Hilt for dependency injection
             }
 
             // Add necessary dependencies from Version Catalog
             dependencies {
+                add("implementation", project(":ui:design-system"))
+
                 add("implementation", libs.findLibrary("androidx.lifecycle.runtimeCompose").get())  // Add Lifecycle runtime for Compose
                 add("implementation", libs.findLibrary("androidx.lifecycle.viewModelCompose").get())  // Add ViewModel support for Compose
                 add("implementation", libs.findLibrary("kotlinx.datetime").get())  // Add KotlinX DateTime library
