@@ -49,41 +49,6 @@ fun JusicoolFilledButton(
     }
 }
 
-@Composable
-fun JusicoolOutlinedButton(
-    modifier: Modifier = Modifier,
-    text: String,
-    state: ButtonState = ButtonState.Enable,
-    onClick: () -> Unit,
-) {
-    JusicoolTheme { colors, typography ->
-        val enabledState: (buttonState: ButtonState) -> Boolean = {
-            it == ButtonState.Enable
-        }
-
-        OutlinedButton(
-            modifier = modifier,
-            onClick = onClick,
-            enabled = enabledState(state),
-            shape = RoundedCornerShape(12.dp),
-            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = colors.main,
-                disabledContentColor = colors.gray300
-            ),
-            border = BorderStroke(
-                width = 1.dp,
-                color = if (enabledState(state)) colors.main else colors.gray200
-            )
-        ) {
-            Text(
-                text = text,
-                style = typography.bodyMedium
-            )
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun JusicoolButtonPreview() {
@@ -94,17 +59,7 @@ private fun JusicoolButtonPreview() {
                 state = ButtonState.Enable,
                 onClick = {}
             )
-            JusicoolOutlinedButton(
-                text = "다음",
-                state = ButtonState.Enable,
-                onClick = {}
-            )
             JusicoolFilledButton(
-                text = "다음",
-                state = ButtonState.Disable,
-                onClick = {}
-            )
-            JusicoolOutlinedButton(
                 text = "다음",
                 state = ButtonState.Disable,
                 onClick = {}
