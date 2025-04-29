@@ -150,3 +150,29 @@ fun SwapIcon(
         tint = tint
     )
 }
+
+@Composable
+fun HeartIcon(
+    modifier: Modifier = Modifier,
+    tint: Color = Color.Unspecified
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.heart),
+        contentDescription = stringResource(id = R.string.swap_horizontal),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun CommentIcon(
+    modifier: Modifier = Modifier,
+    tint: Color = Color.Unspecified
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.comment),
+        contentDescription = stringResource(id = R.string.swap_horizontal),
+        modifier = modifier,
+        tint = tint
+    )
+}
