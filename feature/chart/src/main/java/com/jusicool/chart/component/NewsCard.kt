@@ -57,7 +57,7 @@ fun NewsCard(
                     AsyncImage(
                         modifier = Modifier
                             .size(90.dp)
-                            .clip(RoundedCornerShape(12.dp)),
+                            .clip(RoundedCornerShape(8.dp)),
                         model = item.img,
                         contentDescription = null,
                         contentScale = ContentScale.Crop
