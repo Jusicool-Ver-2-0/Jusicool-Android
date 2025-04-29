@@ -21,6 +21,10 @@ object JusicoolColor : ColorTheme() {
     override val gray100 = Color(0xFFEFF0F2)
     override val gray50 = Color(0xFFF5F6F8)
 
+    //ChartColot
+    override val chartPriceIncreased = Color(0xFFFF5C5C)
+    override val chartPriceDecreased  = Color(0xFF2196F3)
+
     override val black = Color(0xFF000000)
     override val white = Color(0xFFFFFFFF)
 }
