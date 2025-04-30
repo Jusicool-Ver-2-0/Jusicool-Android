@@ -90,7 +90,7 @@ fun SignInScreen(
                 icon = {}
             )
 
-            Spacer(modifier = Modifier.height(176.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
             val isInputValid = email.isNotEmpty() && password.isNotEmpty()
 
@@ -126,6 +126,7 @@ fun SignInScreen(
                         // TODO: 회원가입 화면으로 이동
                     }
                 )
+                Spacer(modifier = Modifier.height(84.dp))
             }
         }
     }
