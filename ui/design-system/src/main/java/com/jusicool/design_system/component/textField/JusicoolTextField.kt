@@ -30,7 +30,7 @@ fun JusicoolTextField(
     isError: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onTextChange: (String) -> Unit,
-    icon: @Composable () -> Unit
+    icon: @Composable () -> Unit = {}
 ) {
     JusicoolTheme { colors, typography ->
         Column(
@@ -83,13 +83,13 @@ fun JusicoolTextField(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = helperText,
+                    text = errorText,
                     color = colors.error,
                     style = typography.label
                 )
 
                 Text(
-                    text = errorText,
+                    text = helperText,
                     color = colors.main,
                     style = typography.label
                 )
@@ -110,8 +110,7 @@ fun JusicoolTextFieldPreview() {
             label = "이메일",
             textState = textState,
             onTextChange = onTextChange,
-            placeHolder = "이메일을 입력해주세요",
-            icon = {}
+            placeHolder = "이메일을 입력해주세요"
         )
 
         JusicoolTextField(
@@ -120,8 +119,7 @@ fun JusicoolTextFieldPreview() {
             isError = true,
             onTextChange = onTextChange,
             placeHolder = "이메일을 입력해주세요",
-            errorText = "이메일 형식을 다시 입력해주세요",
-            icon = {}
+            errorText = "이메일 형식을 다시 입력해주세요"
         )
 
         JusicoolTextField(
@@ -130,8 +128,7 @@ fun JusicoolTextFieldPreview() {
             isError = true,
             onTextChange = onTextChange,
             placeHolder = "이메일을 입력해주세요",
-            helperText = "이메일 수정하기",
-            icon = {}
+            helperText = "이메일 수정하기"
         )
     }
 }
