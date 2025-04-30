@@ -115,8 +115,8 @@ fun SignInScreen(
             ) {
                 Text(
                     text = "아직 계정이 없으신가요?",
-                    style = typography.bodySmall,
-                    color = colors.gray400
+                    style = typography.label,
+                    color = colors.gray300
                 )
                 Text(
                     text = "회원가입",
