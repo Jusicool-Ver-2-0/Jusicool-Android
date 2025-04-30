@@ -72,7 +72,7 @@ fun SignInScreen(
                 icon = {}
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             JusicoolTextField(
                 label = "비밀번호",
