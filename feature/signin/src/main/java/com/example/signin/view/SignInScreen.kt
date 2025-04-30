@@ -68,7 +68,6 @@ fun SignInScreen(
                 },
                 placeHolder = "이메일을 입력해주세요",
                 isError = emailError,
-                helperText = "",
                 errorText = if (emailError) "이메일 형식을 다시 입력해주세요" else "",
                 icon = {}
             )
@@ -86,7 +85,6 @@ fun SignInScreen(
                 },
                 placeHolder = "비밀번호를 입력해주세요",
                 isError = passwordError,
-                helperText = "",
                 errorText = if (passwordError) "비밀번호를 입력해주세요" else "",
                 visualTransformation = PasswordVisualTransformation(),
                 icon = {}
