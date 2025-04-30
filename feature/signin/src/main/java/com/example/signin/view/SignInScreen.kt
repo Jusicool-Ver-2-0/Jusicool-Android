@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jusicool.design_system.component.button.JusicoolFilledButton
 import com.jusicool.design_system.component.button.state.ButtonState
+import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.JusicoolTextField
 import com.jusicool.design_system.theme.JusicoolTheme
 
@@ -122,7 +123,7 @@ fun SignInScreen(
                     text = "회원가입",
                     style = typography.bodySmall,
                     color = colors.main,
-                    modifier = Modifier.clickable {
+                    modifier = Modifier.JusicoolClickable {
                         // TODO: 회원가입 화면으로 이동
                     }
                 )
