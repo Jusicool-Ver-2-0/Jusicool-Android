@@ -22,14 +22,14 @@ fun SignInScreen(
     modifier: Modifier = Modifier,
     initialEmail: String = "",
     initialPassword: String = "",
-    emailErrorPreview: Boolean = false,
-    passwordErrorPreview: Boolean = false
+    emailErrorInitial: Boolean = false,
+    passwordErrorInitial: Boolean = false
 ) {
     JusicoolTheme { colors, typography ->
         var email by remember { mutableStateOf(initialEmail) }
         var password by remember { mutableStateOf(initialPassword) }
-        var emailError by remember { mutableStateOf(emailErrorPreview) }
-        var passwordError by remember { mutableStateOf(passwordErrorPreview) }
+        var emailError by remember { mutableStateOf(emailErrorInitial) }
+        var passwordError by remember { mutableStateOf(passwordErrorInitial) }
         var triedLogin by remember { mutableStateOf(false) }
 
         Column(
@@ -156,7 +156,7 @@ fun SignInScreenPreviewError() {
     SignInScreen(
         initialEmail = "wrongemail",
         initialPassword = "sdasd",
-        emailErrorPreview = true,
-        passwordErrorPreview = true
+        emailErrorInitial = true,
+        passwordErrorInitial = true
     )
 }
