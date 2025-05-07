@@ -41,11 +41,11 @@ fun SignInScreen(
             horizontalAlignment = Alignment.Start
         ) {
             Image(
-                painter = painterResource(id = com.jusicool.design_system.R.drawable.union),
-                contentDescription = null,
                 modifier = Modifier
                     .width(220.dp)
-                    .height(32.dp)
+                    .height(32.dp),
+                painter = painterResource(id = com.jusicool.design_system.R.drawable.union),
+                contentDescription = null,
             )
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -95,6 +95,9 @@ fun SignInScreen(
             val isInputValid = email.isNotEmpty() && password.isNotEmpty()
 
             JusicoolFilledButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 text = "로그인",
                 state = if (isInputValid) ButtonState.Enable else ButtonState.Disable,
                 onClick = {
@@ -102,9 +105,6 @@ fun SignInScreen(
                     emailError = !isValidEmail(email)
                     passwordError = password.isEmpty()
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
