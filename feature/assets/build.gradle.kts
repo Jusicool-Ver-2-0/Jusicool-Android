@@ -9,4 +9,5 @@ android {
 
 dependencies {
 
+    implementation(project(":ui:utils"))
 }
