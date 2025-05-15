@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 fun DoughnutChart(
     modifier: Modifier = Modifier,
     data: List<Pair<Float, Color>>,
-    strokeWidth: Float = 60f,
+    strokeWidth: Float = 100f,
     gapAngle: Float = 1f
 ) {
     val total = data.sumOf { it.first.toDouble() }.toFloat()
