@@ -35,6 +35,7 @@ import com.meister.assets.component.DoughnutChart
 import com.meister.assets.viewModel.MonthlyIncomeViewModel
 import com.meister.assets.viewModel.uiState.MonthlyIncomeUiState
 import com.school_of_company.design_system.icon.ClarityArrowLineIcon
+import kotlin.random.Random
 
 
 @Composable
@@ -67,6 +68,8 @@ private fun MonthlyIncomeScreen(
     val scrollState = rememberScrollState()
 
     JusicoolTheme { colors, typography ->
+        val stockDistribution = transformData(uiState.ownedStocks)
+
         Column(
             modifier = modifier
                 .background(colors.white)
@@ -147,21 +150,13 @@ private fun MonthlyIncomeScreen(
                         )
                     }
 
-                    val colors = listOf(
-                        15f to Color(0xFFB0C4DE), // LightSteelBlue
-                        25f to Color(0xFFFFB6C1), // LightPink
-                        35f to Color(0xFF98FB98), // PaleGreen
-                        10f to Color(0xFFFFFF99), // LightYellow
-                        15f to Color(0xFFDAA6F0),  // LightPurple (custom)
-                    )
-
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center,
                     ) {
                         DoughnutChart(
                             modifier = Modifier.size(240.dp),
-                            data = colors,
+                            data = stockDistribution.map { (it.percent to it.color) },
                         )
                     }
 
@@ -169,15 +164,14 @@ private fun MonthlyIncomeScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        val total = uiState.ownedStocks.sumOf { it.second }
 
-                        uiState.ownedStocks.forEach {
+                        stockDistribution.forEach {
                             OwnedStocksBar(
                                 modifier = Modifier.fillMaxWidth(),
-                                corpName = it.first,
-                                purchasedShares = it.second,
-                                totalAmount = total,
-                                stockColor = Color(0xFFB0C4DE),
+                                corpName = it.name,
+                                purchasedShares = it.count,
+                                holdingRatio = it.percent,
+                                stockColor = it.color,
                             )
                         }
                     }
@@ -209,7 +203,7 @@ private fun OwnedStocksBar(
     modifier: Modifier = Modifier,
     corpName: String,
     purchasedShares: Int,
-    totalAmount: Int,
+    holdingRatio: Float,
     stockColor: Color,
 ) {
     JusicoolTheme { colors, typography ->
@@ -242,9 +236,34 @@ private fun OwnedStocksBar(
             }
 
             Text(
-                text = "${purchasedShares / totalAmount * 100}%",
+                text = "${holdingRatio}%",
                 style = typography.subTitle
             )
         }
+    }
+}
+
+
+data class Item(
+    val name: String,
+    val count: Int,
+    val percent: Float,
+    val color: Color
+)
+
+private fun transformData(input: List<Pair<String, Int>>): List<Item> {
+    val grouped = input.groupBy({ it.first }, { it.second })
+        .mapValues { it.value.sum() }
+
+    val total = grouped.values.sum().takeIf { it > 0 } ?: 1
+
+    return grouped.map { (name, count) ->
+        val percent = count.toFloat() / total * 100
+        val hue = Random.nextFloat() * 360f
+        val saturation = 0.5f
+        val value = 0.8f
+        val color = Color.hsv(hue, saturation, value)
+
+        Item(name = name, count = count, percent = percent, color = color)
     }
 }
