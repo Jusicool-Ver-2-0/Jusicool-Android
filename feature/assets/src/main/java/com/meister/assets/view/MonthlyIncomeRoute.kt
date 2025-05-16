@@ -35,6 +35,7 @@ import com.meister.assets.component.DoughnutChart
 import com.meister.assets.viewModel.MonthlyIncomeViewModel
 import com.meister.assets.viewModel.uiState.MonthlyIncomeUiState
 import com.school_of_company.design_system.icon.ClarityArrowLineIcon
+import kotlinx.collections.immutable.persistentListOf
 import kotlin.random.Random
 
 
@@ -191,7 +192,7 @@ private fun MonthlyIncomeScreenPreview() {
             moneyChangeFromLastMonth = 50,
             availableOrderAmount = 200,
             investedAmount = 800,
-            ownedStocks = listOf("dqdw" to 100, "dqdw" to 100),
+            ownedStocks = persistentListOf("dqdw" to 100, "dqdw" to 100,"#34ㄺㄷㅈ" to 120,"dwqe" to 100,"dwqe1" to 100),
             errorMessage = null
         ),
         navigateToBack = {},
