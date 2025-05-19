@@ -1,7 +1,10 @@
 package com.example.network.di
 
 import android.util.Log
+import com.example.network.api.ChartApi
+import com.example.network.util.BaseApiRetrofit
 import com.example.network.util.BasicCookieJar
+import com.example.network.util.UpbitRetrofit
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -45,7 +48,6 @@ object NetworkModule {
             .addInterceptor(httpLoggingInterceptor)
             .build()
 
-
     @Provides
     @Singleton
     fun provideMoshiInstance(): Moshi =
@@ -58,6 +60,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @BaseApiRetrofit
     fun provideBaseApiRetrofit(
         okHttpClient: OkHttpClient,
         moshiConverterFactory: MoshiConverterFactory
@@ -67,4 +70,22 @@ object NetworkModule {
             .client(okHttpClient)
             .addConverterFactory(moshiConverterFactory)
             .build()
+
+    @Provides
+    @Singleton
+    @UpbitRetrofit
+    fun provideUpbitRetrofit(
+        okHttpClient: OkHttpClient,
+        moshiConverterFactory: MoshiConverterFactory
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl("https://api.upbit.com/")
+            .client(okHttpClient)
+            .addConverterFactory(moshiConverterFactory)
+            .build()
+
+    @Provides
+    @UpbitRetrofit
+    fun provideChartApi(@UpbitRetrofit retrofit: Retrofit): ChartApi =
+        retrofit.create(ChartApi::class.java)
 }
