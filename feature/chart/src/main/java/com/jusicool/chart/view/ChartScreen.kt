@@ -1,6 +1,7 @@
 package com.jusicool.chart.view
 
 import androidx.compose.foundation.background
+import androidx.compose.runtime.collectAsState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,10 +28,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.jusicool.chart.component.CandleChart
 import com.jusicool.chart.component.CommunityCard
 import com.jusicool.chart.component.NewsCard
 import com.jusicool.chart.component.PriceBarChart
+import com.jusicool.chart.viewModel.ChartViewModel
 import com.jusicool.design_system.component.button.JusicoolFilledButton
 import com.jusicool.design_system.component.button.state.ButtonState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
@@ -51,8 +54,11 @@ fun ChartScreen(
     candles: List<CandleChartModel>,
     price: ChartPriceModel,
     news: List<NewsModel>,
-    community: List<CommunityModel>
+    community: List<CommunityModel>,
+    viewModel: ChartViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.chartUiState.collectAsState()
+
     val scrollState = rememberScrollState()
     var selectedInfo by remember { mutableStateOf("종목 정보") }
 
@@ -278,7 +284,6 @@ fun ChartScreen(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun ChartScreenPreview() {
     val mockCandles = listOf(
