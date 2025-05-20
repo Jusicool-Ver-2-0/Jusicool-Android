@@ -259,7 +259,8 @@ private fun transformData(input: List<Pair<String, Int>>): List<Item> {
     val total = grouped.values.sum().takeIf { it > 0 } ?: 1
 
     return grouped.map { (name, count) ->
-        val percent = count.toFloat() / total * 100
+        val rawPercent = count.toFloat() / total * 100
+        val percent = String.format("%.2f", rawPercent).toFloat()
         val hue = Random.nextFloat() * 360f
         val saturation = 0.5f
         val value = 0.8f
