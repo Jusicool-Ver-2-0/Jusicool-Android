@@ -262,7 +262,7 @@ private fun transformData(input: List<Pair<String, Int>>): List<Item> {
         val rawPercent = count.toFloat() / total * 100
         val percent = String.format("%.2f", rawPercent).toFloat()
         val hue = Random.nextFloat() * 360f
-        val saturation = 0.5f
+        val saturation = 0.25f
         val value = 0.8f
         val color = Color.hsv(hue, saturation, value)
 
