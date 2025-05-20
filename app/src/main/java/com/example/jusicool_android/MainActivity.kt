@@ -12,20 +12,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.jusicool_android.ui.theme.JusicoolAndroidTheme
+import com.jusicool.account.component.UserAssetCardPreview
+import com.jusicool.account.view.AccountScreenPreview
+import com.jusicool.chart.view.ChartScreen
+import com.jusicool.chart.view.ChartScreenPreview
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            JusicoolAndroidTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
         }
     }
 }
