@@ -1,7 +1,7 @@
-package com.example.network.di
+package com.jusicool.network.di
 
 import android.util.Log
-import com.example.network.util.BasicCookieJar
+import com.jusicool.network.util.BasicCookieJar
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides

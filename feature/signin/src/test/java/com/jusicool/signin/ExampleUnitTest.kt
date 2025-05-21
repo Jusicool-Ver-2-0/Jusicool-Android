@@ -1,4 +1,4 @@
-package com.example.jusicool_android
+package com.jusicool.signin
 
 import org.junit.Test
 

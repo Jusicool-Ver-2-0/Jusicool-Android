@@ -1,4 +1,4 @@
-package com.example.signin
+package com.jusicool.signin
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

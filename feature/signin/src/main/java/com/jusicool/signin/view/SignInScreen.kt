@@ -1,4 +1,4 @@
-package com.example.signin.view
+package com.jusicool.signin.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

@@ -1,4 +1,4 @@
-package com.example.network.util
+package com.jusicool.network.util
 
 import android.util.Log
 import okhttp3.Cookie

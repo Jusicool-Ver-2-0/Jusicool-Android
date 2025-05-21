@@ -1,4 +1,4 @@
-package com.example.network.di
+package com.jusicool.network.di
 
 import dagger.Module
 import dagger.hilt.InstallIn
