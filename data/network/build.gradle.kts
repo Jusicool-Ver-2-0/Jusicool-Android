@@ -22,6 +22,19 @@ android {
     namespace = "com.jusicool.network"
 }
 
+dependencies {
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.okhttp.logging)
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.kotlin.serialization)
+    implementation(libs.retrofit.moshi.converter)
+    implementation(libs.moshi)
+    ksp(libs.retrofit.moshi.codegen)
+
+    implementation(project(":data:model"))
+    implementation(project(":data:utils"))
+}
+
 fun getApiKey(propertyKey: String): String {
     val propFile = rootProject.file("./local.properties")
     val properties = Properties()
