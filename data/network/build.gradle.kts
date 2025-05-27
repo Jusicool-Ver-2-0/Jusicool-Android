@@ -15,7 +15,7 @@ android {
         buildConfigField(
             type = "String",
             name = "BASE_URL",
-            getApiKey("BASE_URL")
+            value = "\"${getApiKey("BASE_URL")}\""
         )
     }
 
