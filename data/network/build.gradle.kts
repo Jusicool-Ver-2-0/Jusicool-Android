@@ -1,9 +1,25 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("jusicool.android.core")
     id("jusicool.android.hilt")
 }
+
 android {
-    namespace = "com.example.network"
+    buildFeatures {
+        buildConfig = true
+    }
+
+    defaultConfig {
+        buildConfigField(
+            type = "String",
+            name = "BASE_URL",
+            value = "\"${getApiKey("BASE_URL")}\""
+        )
+    }
+
+    namespace = "com.jusicool.network"
 }
 
 dependencies {
@@ -17,4 +33,11 @@ dependencies {
 
     implementation(project(":data:model"))
     implementation(project(":data:utils"))
+}
+
+fun getApiKey(propertyKey: String): String {
+    val propFile = rootProject.file("./local.properties")
+    val properties = Properties()
+    properties.load(FileInputStream(propFile))
+    return properties.getProperty(propertyKey) ?: throw IllegalArgumentException("Property $propertyKey no found in local.properties")
 }
