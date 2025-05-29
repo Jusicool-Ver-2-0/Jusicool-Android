@@ -1,12 +1,11 @@
 package com.jusicool.network.di
 
 import android.util.Log
+import com.example.network.api.ChartApi
+import com.example.network.util.BaseApiRetrofit
+import com.example.network.util.UpbitRetrofit
 import com.jusicool.network.util.BasicCookieJar
 import com.jusicool.network.BuildConfig
-import com.jusicool.network.api.ChartApi
-import com.jusicool.network.util.BaseApiRetrofit
-import com.jusicool.network.util.BasicCookieJar
-import com.jusicool.network.util.UpbitRetrofit
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -88,7 +87,6 @@ object NetworkModule {
             .build()
 
     @Provides
-    @UpbitRetrofit
     fun provideChartApi(@UpbitRetrofit retrofit: Retrofit): ChartApi =
         retrofit.create(ChartApi::class.java)
 }

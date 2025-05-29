@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ChartDataSourceImpl @Inject constructor(
-    @UpbitRetrofit private val service: ChartApi
+    private val service: ChartApi
 ): ChartDataSource {
     override suspend fun getChart(markets: String): Flow<List<ChartResponse>> =
         performApiRequest { service.getChart(markets = markets) }
