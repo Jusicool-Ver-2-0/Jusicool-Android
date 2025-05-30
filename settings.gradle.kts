@@ -24,9 +24,6 @@ rootProject.name = "Jusicool-Android"
 include(":app")
 
 include(":feature")
-include(":feature:chart")
-include(":feature:account")
-include(":feature:signin")
 
 include(":ui")
 include(":ui:design-system")
@@ -45,3 +42,7 @@ include(":domain:entity")
 include(":domain:repository")
 include(":domain:usecase")
 include(":domain:utils")
+include(":feature:chart")
+include(":feature:account")
+include(":feature:signin")
+include(":feature:assets")
