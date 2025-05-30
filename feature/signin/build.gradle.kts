@@ -8,5 +8,6 @@ android {
 }
 
 dependencies {
-
+    implementation(project(":domain:usecase"))
+    implementation(project(":domain:entity"))
 }
