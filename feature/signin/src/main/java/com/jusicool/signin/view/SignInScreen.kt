@@ -4,34 +4,70 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.design_system.component.button.JusicoolFilledButton
 import com.jusicool.design_system.component.button.state.ButtonState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.JusicoolTextField
 import com.jusicool.design_system.theme.JusicoolTheme
+import com.jusicool.signin.viewModel.SignInUiState
+import com.jusicool.signin.viewModel.SignInViewModel
 
 @Composable
-fun SignInScreen(
+fun SignInRoute(
     modifier: Modifier = Modifier,
-    initialEmail: String = "",
-    initialPassword: String = "",
-    emailErrorInitial: Boolean = false,
-    passwordErrorInitial: Boolean = false
+    onSignInClick: () -> Unit,
+    viewModel: SignInViewModel = hiltViewModel()
+) {
+    val state = viewModel.signInUiState.collectAsStateWithLifecycle().value
+    val email = viewModel.email.collectAsStateWithLifecycle().value
+    val password = viewModel.password.collectAsStateWithLifecycle().value
+    val isEmailError = viewModel.isEmailError.collectAsStateWithLifecycle().value
+    val isPasswordError = viewModel.isPasswordError.collectAsStateWithLifecycle().value
+
+    LaunchedEffect(state) {
+        when (state) {
+            is SignInUiState.Success -> onSignInClick()
+            is SignInUiState.Error -> {
+                // TODO: 에러 핸들링
+            }
+            else -> Unit
+        }
+    }
+
+    SignInScreen(
+        modifier = modifier,
+        email = email,
+        password = password,
+        isEmailError = isEmailError,
+        isPasswordError = isPasswordError,
+        onEmailChange = viewModel::onEmailChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onSignInClick = viewModel::onSignInClick
+    )
+}
+
+@Composable
+private fun SignInScreen(
+    modifier: Modifier = Modifier,
+    email: String,
+    password: String,
+    isEmailError: Boolean,
+    isPasswordError: Boolean,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onSignInClick: () -> Unit
 ) {
     JusicoolTheme { colors, typography ->
-        var email by remember { mutableStateOf(initialEmail) }
-        var password by remember { mutableStateOf(initialPassword) }
-        var emailError by remember { mutableStateOf(emailErrorInitial) }
-        var passwordError by remember { mutableStateOf(passwordErrorInitial) }
-        var triedLogin by remember { mutableStateOf(false) }
-
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -47,6 +83,7 @@ fun SignInScreen(
                 painter = painterResource(id = com.jusicool.design_system.R.drawable.union),
                 contentDescription = null,
             )
+
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
@@ -60,14 +97,9 @@ fun SignInScreen(
             JusicoolTextField(
                 label = "이메일",
                 textState = email,
-                onTextChange = {
-                    email = it
-                    if (triedLogin) {
-                        emailError = !isValidEmail(email)
-                    }
-                },
+                onTextChange = onEmailChange,
                 placeHolder = "이메일을 입력해주세요",
-                isError = emailError,
+                isError = isEmailError,
                 icon = {}
             )
 
@@ -76,15 +108,10 @@ fun SignInScreen(
             JusicoolTextField(
                 label = "비밀번호",
                 textState = password,
-                onTextChange = {
-                    password = it
-                    if (triedLogin) {
-                        passwordError = password.isEmpty()
-                    }
-                },
+                onTextChange = onPasswordChange,
                 placeHolder = "비밀번호를 입력해주세요",
-                isError = passwordError,
-                helperText = if (passwordError) "아이디와 비밀번호를 다시 한 번 확인해주세요" else "",
+                isError = isPasswordError,
+                helperText = if (isPasswordError) "아이디와 비밀번호를 다시 확인해주세요" else "",
                 visualTransformation = PasswordVisualTransformation(),
                 icon = {}
             )
@@ -99,11 +126,7 @@ fun SignInScreen(
                     .padding(vertical = 8.dp),
                 text = "로그인",
                 state = if (isInputValid) ButtonState.Enable else ButtonState.Disable,
-                onClick = {
-                    triedLogin = true
-                    emailError = !isValidEmail(email)
-                    passwordError = password.isEmpty()
-                },
+                onClick = onSignInClick
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -131,22 +154,31 @@ fun SignInScreen(
     }
 }
 
-private fun isValidEmail(email: String): Boolean {
-    return email.contains("@") && email.contains(".")
-}
-
 @Preview(showBackground = true, name = "초기 상태 (버튼 비활성화)")
 @Composable
 fun SignInScreenPreviewInitial() {
-    SignInScreen()
+    SignInScreen(
+        email = "",
+        password = "",
+        isEmailError = false,
+        isPasswordError = false,
+        onEmailChange = {},
+        onPasswordChange = {},
+        onSignInClick = {}
+    )
 }
 
 @Preview(showBackground = true, name = "입력 완료 (버튼 활성화)")
 @Composable
 fun SignInScreenPreviewValid() {
     SignInScreen(
-        initialEmail = "test@email.com",
-        initialPassword = "password123@"
+        email = "test@email.com",
+        password = "password123@",
+        isEmailError = false,
+        isPasswordError = false,
+        onEmailChange = {},
+        onPasswordChange = {},
+        onSignInClick = {}
     )
 }
 
@@ -154,9 +186,12 @@ fun SignInScreenPreviewValid() {
 @Composable
 fun SignInScreenPreviewError() {
     SignInScreen(
-        initialEmail = "wrongemail",
-        initialPassword = "sdasd",
-        emailErrorInitial = true,
-        passwordErrorInitial = true
+        email = "wrongemail",
+        password = "sdasd",
+        isEmailError = true,
+        isPasswordError = true,
+        onEmailChange = {},
+        onPasswordChange = {},
+        onSignInClick = {}
     )
 }
