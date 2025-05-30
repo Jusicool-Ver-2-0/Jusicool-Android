@@ -1,6 +1,5 @@
-package com.example.network.datasource.chart
+package com.jusicool.network.datasource.chart
 
-import com.example.network.util.UpbitRetrofit
 import com.jusicool.model.chart.ChartResponse
 import kotlinx.coroutines.flow.Flow
 

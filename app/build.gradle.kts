@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.jusicool_android"
+    namespace = "com.jusicool.jusicool_android"
 
 
     packaging {
@@ -35,6 +35,7 @@ dependencies {
 
     implementation(project(":feature:chart"))
     implementation(project(":feature:account"))
+    implementation(project(":feature:signin"))
 
     implementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext)

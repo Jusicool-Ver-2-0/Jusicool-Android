@@ -25,7 +25,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 configureKotlinAndroid(this)
                 // Configure default settings for the application
                 defaultConfig {
-                    applicationId = "com.example.build"
+                    applicationId = "com.jusicool.build"
                     minSdk = 26
                     targetSdk = 36
                     versionCode = 19

@@ -1,16 +1,18 @@
 package com.jusicool.network.di
 
 import android.util.Log
-import com.example.network.api.ChartApi
-import com.example.network.util.BaseApiRetrofit
-import com.example.network.util.UpbitRetrofit
+import com.jusicool.network.util.BaseApiRetrofit
+import com.jusicool.network.util.UpbitRetrofit
 import com.jusicool.network.util.BasicCookieJar
 import com.jusicool.network.BuildConfig
+import com.jusicool.network.api.AuthApi
+import com.jusicool.network.api.ChartApi
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.CookieJar
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -52,6 +54,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideCookieJar(): CookieJar {
+        return BasicCookieJar()
+    }
+
+    @Provides
+    @Singleton
     fun provideMoshiInstance(): Moshi =
         Moshi.Builder().build()
 
@@ -89,4 +97,8 @@ object NetworkModule {
     @Provides
     fun provideChartApi(@UpbitRetrofit retrofit: Retrofit): ChartApi =
         retrofit.create(ChartApi::class.java)
+
+    @Provides
+    fun provideAuthApi(@BaseApiRetrofit retrofit: Retrofit): AuthApi =
+        retrofit.create(AuthApi::class.java)
 }

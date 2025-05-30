@@ -1,8 +1,8 @@
-package com.example.network.datasource.chart
+package com.jusicool.network.datasource.chart
 
 import com.jusicool.utils.performApiRequest
-import com.example.network.api.ChartApi
-import com.example.network.util.UpbitRetrofit
+import com.jusicool.network.api.ChartApi
+import com.jusicool.network.util.UpbitRetrofit
 import com.jusicool.model.chart.ChartResponse
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

@@ -1,4 +1,4 @@
-package com.example.jusicool_android
+package com.jusicool.jusicool_android
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

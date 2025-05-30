@@ -1,4 +1,4 @@
-package com.example.network.api
+package com.jusicool.network.api
 
 import com.jusicool.model.chart.ChartResponse
 import retrofit2.http.GET
