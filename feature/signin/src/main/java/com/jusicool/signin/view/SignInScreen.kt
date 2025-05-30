@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,11 +29,11 @@ fun SignInRoute(
     onSignInClick: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
-    val state = viewModel.signInUiState.collectAsStateWithLifecycle().value
-    val email = viewModel.email.collectAsStateWithLifecycle().value
-    val password = viewModel.password.collectAsStateWithLifecycle().value
-    val isEmailError = viewModel.isEmailError.collectAsStateWithLifecycle().value
-    val isPasswordError = viewModel.isPasswordError.collectAsStateWithLifecycle().value
+    val state by viewModel.signInUiState.collectAsStateWithLifecycle()
+    val email by viewModel.email.collectAsStateWithLifecycle()
+    val password by viewModel.password.collectAsStateWithLifecycle()
+    val isEmailError by viewModel.isEmailError.collectAsStateWithLifecycle()
+    val isPasswordError by viewModel.isPasswordError.collectAsStateWithLifecycle()
 
     LaunchedEffect(state) {
         when (state) {
