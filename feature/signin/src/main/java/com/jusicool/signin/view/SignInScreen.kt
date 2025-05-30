@@ -29,14 +29,14 @@ fun SignInRoute(
     onSignInClick: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
-    val state by viewModel.signInUiState.collectAsStateWithLifecycle()
+    val signInUiState by viewModel.signInUiState.collectAsStateWithLifecycle()
     val email by viewModel.email.collectAsStateWithLifecycle()
     val password by viewModel.password.collectAsStateWithLifecycle()
     val isEmailError by viewModel.isEmailError.collectAsStateWithLifecycle()
     val isPasswordError by viewModel.isPasswordError.collectAsStateWithLifecycle()
 
-    LaunchedEffect(state) {
-        when (state) {
+    LaunchedEffect(signInUiState) {
+        when (signInUiState) {
             is SignInUiState.Success -> onSignInClick()
             is SignInUiState.Error -> {
                 // TODO: 에러 핸들링
