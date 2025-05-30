@@ -1,7 +1,9 @@
 package com.jusicool.network.di
 
-import com.example.network.datasource.chart.ChartDataSource
-import com.example.network.datasource.chart.ChartDataSourceImpl
+import com.jusicool.network.datasource.auth.AuthDataSource
+import com.jusicool.network.datasource.auth.AuthDataSourceImpl
+import com.jusicool.network.datasource.chart.ChartDataSource
+import com.jusicool.network.datasource.chart.ChartDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -20,5 +22,10 @@ abstract class RemoteDataSourceModule {
     @Binds
     abstract fun bindChartDataSource(
         chartDataSourceImpl: ChartDataSourceImpl
-    ):ChartDataSource
+    ): ChartDataSource
+
+    @Binds
+    abstract fun bindAuthDataSource(
+        authDataSourceImpl: AuthDataSourceImpl
+    ): AuthDataSource
 }

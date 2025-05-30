@@ -1,6 +1,8 @@
 package com.jusicool.di
 
-import com.jusicool.repository.ChartRepositoryImpl
+import com.jusicool.repository.auth.AuthRepository
+import com.jusicool.repository.auth.AuthRepositoryImpl
+import com.jusicool.repository.chart.ChartRepositoryImpl
 import com.jusicool.repository.chart.ChartRepository
 import dagger.Binds
 import dagger.Module
@@ -15,4 +17,9 @@ abstract class RepositoryModule {
     abstract fun bindChartRepository(
         chartRepositoryImpl: ChartRepositoryImpl
     ): ChartRepository
+
+    @Binds
+    abstract fun bindAuthRepository(
+        authRepositoryImpl: AuthRepositoryImpl
+    ): AuthRepository
 }
