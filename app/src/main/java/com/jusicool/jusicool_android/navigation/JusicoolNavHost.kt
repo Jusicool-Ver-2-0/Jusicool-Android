@@ -2,12 +2,8 @@ package com.jusicool.jusicool_android.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.jusicool.account.navigation.accountRoute
-import com.jusicool.account.navigation.navigateToAccountRoute
-import com.jusicool.signin.navigation.navigateToSignInRoute
 import com.jusicool.signin.navigation.signInRoute
 
 @Composable
