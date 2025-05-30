@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jusicool.model.auth.SignInRequest
 import com.jusicool.usecase.auth.SignInRequestUseCase
+import com.jusicool.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -60,11 +61,11 @@ class SignInViewModel @Inject constructor(
         _signInUiState.value = SignInUiState.Loading
         signInRequestUseCase(body)
             .onSuccess {
-                Log.d("SignInViewModel", "로그인 성공")
+                Logger.d("SignInViewModel", "로그인 성공")
                 _signInUiState.value = SignInUiState.Success
             }
             .onFailure {
-                Log.e("SignInViewModel", "로그인 실패: ${it.message}")
+                Logger.e("SignInViewModel", "로그인 실패: ${it.message}")
                 _signInUiState.value = SignInUiState.Error(it.message ?: "Unknown error")
             }
     }
