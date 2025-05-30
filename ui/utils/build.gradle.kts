@@ -3,7 +3,7 @@ plugins {
     id("jusicool.android.hilt")
 }
 android {
-    namespace = "com.example.utils"
+    namespace = "com.jusicool.utils"
 }
 
 dependencies {

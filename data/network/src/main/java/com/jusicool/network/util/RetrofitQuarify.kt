@@ -1,4 +1,4 @@
-package com.example.network.util
+package com.jusicool.network.util
 
 import javax.inject.Qualifier
 
