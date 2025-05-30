@@ -112,7 +112,7 @@ private fun SignInScreen(
                 onTextChange = onPasswordChange,
                 placeHolder = "비밀번호를 입력해주세요",
                 isError = isPasswordError,
-                helperText = if (isPasswordError) "아이디와 비밀번호를 다시 확인해주세요" else "",
+                helperText = "아이디와 비밀번호를 다시 확인해주세요",
                 visualTransformation = PasswordVisualTransformation(),
                 icon = {}
             )
