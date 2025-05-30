@@ -84,7 +84,7 @@ fun JusicoolTextField(
             ) {
                 Text(
                     text = errorText,
-                    color = colors.error,
+                    color = if(isError) colors.error else colors.white,
                     style = typography.label
                 )
 
