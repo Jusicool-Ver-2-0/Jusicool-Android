@@ -9,6 +9,7 @@ import com.jusicool.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -61,8 +62,13 @@ class SignInViewModel @Inject constructor(
         _signInUiState.value = SignInUiState.Loading
         signInRequestUseCase(body)
             .onSuccess {
-                Logger.d("SignInViewModel", "로그인 성공")
-                _signInUiState.value = SignInUiState.Success
+                it.catch { e ->
+                    Logger.e("SignInViewModel", "로그인 실패: ${e.message}")
+                    _signInUiState.value = SignInUiState.Error(e.message ?: "Unknown error")
+                }.collect {
+                    Logger.d("SignInViewModel", "로그인 성공")
+                    _signInUiState.value = SignInUiState.Success
+                }
             }
             .onFailure {
                 Logger.e("SignInViewModel", "로그인 실패: ${it.message}")
