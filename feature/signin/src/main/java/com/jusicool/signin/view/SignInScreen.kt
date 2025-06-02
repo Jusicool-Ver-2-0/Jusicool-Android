@@ -26,7 +26,8 @@ import com.jusicool.signin.viewModel.SignInViewModel
 @Composable
 fun SignInRoute(
     modifier: Modifier = Modifier,
-    onSignInClick: () -> Unit,
+    navigateToSignUp: () -> Unit,
+    navigateToAccount: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
     val signInUiState by viewModel.signInUiState.collectAsStateWithLifecycle()
@@ -37,7 +38,7 @@ fun SignInRoute(
 
     LaunchedEffect(signInUiState) {
         when (signInUiState) {
-            is SignInUiState.Success -> onSignInClick()
+            is SignInUiState.Success -> navigateToAccount()
             is SignInUiState.Error -> {
                 // TODO: 에러 핸들링
             }
