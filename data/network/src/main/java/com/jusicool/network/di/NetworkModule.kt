@@ -7,6 +7,8 @@ import com.jusicool.network.util.BasicCookieJar
 import com.jusicool.network.BuildConfig
 import com.jusicool.network.api.AuthApi
 import com.jusicool.network.api.ChartApi
+import com.jusicool.network.api.KoreaInvestmentApi
+import com.jusicool.network.util.KoreaInvestmentRetrofit
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -101,4 +103,8 @@ object NetworkModule {
     @Provides
     fun provideAuthApi(@BaseApiRetrofit retrofit: Retrofit): AuthApi =
         retrofit.create(AuthApi::class.java)
+
+    @Provides
+    fun provideKoreaInvestmentApi(@KoreaInvestmentRetrofit retrofit: Retrofit): KoreaInvestmentApi =
+        retrofit.create(KoreaInvestmentApi::class.java)
 }
