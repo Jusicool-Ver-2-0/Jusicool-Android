@@ -2,12 +2,27 @@ package com.jusicool.network.api
 
 import StockCandleResponse
 import StockPriceResponse
+import com.jusicool.model.koreaInvestment.AccessKeyRequest
+import com.jusicool.model.koreaInvestment.AccessTokenResponse
 import com.jusicool.model.koreaInvestment.StockMinutePriceResponse
+import com.jusicool.model.koreaInvestment.WebSocketAccessKeyResponse
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
 
 interface KoreaInvestmentApi {
+
+    @GET("/oauth2/Approval")
+    suspend fun getWebSocketAccessToken(
+        @Body body: AccessKeyRequest,
+    ): WebSocketAccessKeyResponse
+
+    @GET("/oauth2/tokenP")
+    suspend fun getAccessToken(
+        @Body body: AccessKeyRequest,
+    ): AccessTokenResponse
+
 
     @GET("/uapi/domestic-stock/v1/quotations/inquire-time-dailychartprice")
     suspend fun getStockOrder(
