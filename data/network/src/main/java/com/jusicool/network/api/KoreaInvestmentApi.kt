@@ -27,20 +27,12 @@ interface KoreaInvestmentApi {
 
     @GET("/uapi/domestic-stock/v1/quotations/inquire-time-dailychartprice")
     suspend fun getStockOrder(
-        @Header("content-type") contentType: String,
-        @Header("authorization") authorization: String,
+        @Header("content-type") contentType: String = "application/json; charset=utf-8",
         @Header("appkey") appKey: String,
         @Header("appsecret") appSecret: String,
-        @Header("personalseckey") personalSecKey: String? = null,
-        @Header("tr_id") trId: String,
+        @Header("tr_id") trId: String = "FHKST01010100",
         @Header("tr_cont") trCont: String? = null,
-        @Header("custtype") custType: String,
-        @Header("seq_no") seqNo: String? = null,
-        @Header("mac_address") macAddress: String? = null,
-        @Header("phone_number") phoneNumber: String? = null,
-        @Header("ip_addr") ipAddr: String? = null,
-        @Header("hashkey") hashKey: String? = null,
-        @Header("gt_uid") gtUid: String? = null,
+        @Header("custtype") custType: String = "P",
 
         @Query("FID_COND_MRKT_DIV_CODE") condMrktDivCode: String,
         @Query("FID_INPUT_ISCD") inputIsCd: String,
@@ -52,20 +44,12 @@ interface KoreaInvestmentApi {
 
     @GET("/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice")
     suspend fun getMinutePrice(
-        @Header("content-type") contentType: String,
-        @Header("authorization") authorization: String,
+        @Header("content-type") contentType: String = "application/json; charset=utf-8",
         @Header("appkey") appkey: String,
         @Header("appsecret") appsecret: String,
-        @Header("personalseckey") personalseckey: String? = null,
-        @Header("tr_id") trId: String,
+        @Header("tr_id") trId: String = "FHKST01010100",
         @Header("tr_cont") trCont: String? = null,
-        @Header("custtype") custtype: String,
-        @Header("seq_no") seqNo: String? = null,
-        @Header("mac_address") macAddress: String? = null,
-        @Header("phone_number") phoneNumber: String? = null,
-        @Header("ip_addr") ipAddr: String? = null,
-        @Header("hashkey") hashkey: String? = null,
-        @Header("gt_uid") gtUid: String? = null,
+        @Header("custtype") custtype: String = "P",
 
         @Query("FID_COND_MRKT_DIV_CODE") condMrktDivCode: String,
         @Query("FID_INPUT_ISCD") inputIsCd: String,
@@ -77,19 +61,12 @@ interface KoreaInvestmentApi {
     @GET("/uapi/domestic-stock/v1/quotations/inquire-price")
     suspend fun getStockCurrentPrice(
         @Header("content-type") contentType: String = "application/json; charset=utf-8",
-        @Header("authorization") authorization: String,
         @Header("appkey") appKey: String,
         @Header("appsecret") appSecret: String,
-        @Header("personalseckey") personalSecKey: String? = null,
         @Header("tr_id") trId: String = "FHKST01010100",
         @Header("tr_cont") trCont: String? = null,
         @Header("custtype") custType: String,
-        @Header("seq_no") seqNo: String? = null,
-        @Header("mac_address") macAddress: String? = null,
-        @Header("phone_number") phoneNumber: String? = null,
-        @Header("ip_addr") ipAddr: String? = null,
-        @Header("hashkey") hashKey: String? = null,
-        @Header("gt_uid") gtUid: String? = null,
+
         @Query("FID_COND_MRKT_DIV_CODE") marketDivCode: String,
         @Query("FID_INPUT_ISCD") stockCode: String,
     ): StockPriceResponse
