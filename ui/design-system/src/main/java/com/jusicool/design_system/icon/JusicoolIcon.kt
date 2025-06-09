@@ -176,3 +176,16 @@ fun CommentIcon(
         tint = tint
     )
 }
+
+@Composable
+fun XIcon(
+    modifier: Modifier = Modifier,
+    tint: Color = Color.Unspecified
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.x),
+        contentDescription = "X",
+        modifier = modifier,
+        tint = tint
+    )
+}
