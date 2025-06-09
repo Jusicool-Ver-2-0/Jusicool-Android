@@ -1,0 +1,78 @@
+package com.jusicool.chart.view
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.jusicool.design_system.component.modifier.JusicoolClickable
+import com.jusicool.design_system.theme.JusicoolTheme
+import com.school_of_company.design_system.icon.XIcon
+
+@Composable
+internal fun StockSearchRoute(modifier: Modifier = Modifier) {
+    StockSearchScreen(modifier = modifier)
+}
+
+@Composable
+private fun StockSearchScreen(modifier: Modifier = Modifier) {
+
+}
+
+@Composable
+private fun RecentSearchTag(
+    modifier: Modifier = Modifier,
+    stockName: String,
+    stockChangeRate: Double,
+    onClearClick: () -> Unit
+) {
+    val isPlus = stockChangeRate > 0
+
+    JusicoolTheme { colors, typography ->
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+                .background(color = colors.gray100, shape = RoundedCornerShape(size = 14.dp))
+                .padding(8.dp),
+        ) {
+            Text(
+                text = stockName,
+                style = typography.label,
+                color = colors.gray600,
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "${if (isPlus) "+" else "-"}${stockChangeRate}%",
+                style = typography.label,
+                color = if (isPlus) colors.error else colors.main,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            XIcon(
+                modifier = Modifier
+                    .size(24.dp)
+                    .JusicoolClickable(
+                        onClick = onClearClick
+                    )
+            )
+        }
+    }
+}
+
+@Preview()
+@Composable
+private fun RecentSearchTagPreview() {
+    RecentSearchTag(
+        modifier = Modifier,
+        stockName = "삼성전자",
+        stockChangeRate = 12.1,
+        onClearClick = {})
+}
