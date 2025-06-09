@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.jusicool.utils"
+    namespace = "com.jusicool.datautils"
 }
 
 dependencies {
