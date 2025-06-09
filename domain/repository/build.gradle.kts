@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.jusicool.di"
+    namespace = "com.jusicool.repository"
 }
 
 dependencies {

@@ -7,7 +7,7 @@ android {
         buildConfig = true
     }
 
-    namespace = "com.jusicool.utils"
+    namespace = "com.jusicool.uiutils"
 }
 
 dependencies {
