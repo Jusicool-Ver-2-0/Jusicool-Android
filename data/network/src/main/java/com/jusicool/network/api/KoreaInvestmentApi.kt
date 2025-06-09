@@ -27,29 +27,29 @@ interface KoreaInvestmentApi {
 
     @GET("/uapi/domestic-stock/v1/quotations/inquire-time-dailychartprice")
     suspend fun getStockOrder(
-        @Header("content-type") contentType: String = "application/json; charset=utf-8",
+        @Header("content-type") contentType: String,
         @Header("appkey") appKey: String,
         @Header("appsecret") appSecret: String,
-        @Header("tr_id") trId: String = "FHKST01010100",
-        @Header("tr_cont") trCont: String? = null,
-        @Header("custtype") custType: String = "P",
+        @Header("tr_id") trId: String,
+        @Header("tr_cont") trCont: String?,
+        @Header("custtype") custType: String,
 
         @Query("FID_COND_MRKT_DIV_CODE") condMrktDivCode: String,
         @Query("FID_INPUT_ISCD") inputIsCd: String,
         @Query("FID_INPUT_HOUR_1") inputHour1: String,
         @Query("FID_INPUT_DATE_1") inputDate1: String,
         @Query("FID_PW_DATA_INCU_YN") pwDataIncuYn: String,
-        @Query("FID_FAKE_TICK_INCU_YN") fakeTickIncuYn: String? = null,
+        @Query("FID_FAKE_TICK_INCU_YN") fakeTickIncuYn: String?,
     ): StockCandleResponse
 
     @GET("/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice")
     suspend fun getMinutePrice(
-        @Header("content-type") contentType: String = "application/json; charset=utf-8",
-        @Header("appkey") appkey: String,
-        @Header("appsecret") appsecret: String,
-        @Header("tr_id") trId: String = "FHKST01010100",
-        @Header("tr_cont") trCont: String? = null,
-        @Header("custtype") custtype: String = "P",
+        @Header("content-type") contentType: String,
+        @Header("appkey") appKey: String,
+        @Header("appsecret") appSecret: String,
+        @Header("tr_id") trId: String,
+        @Header("tr_cont") trCont: String?,
+        @Header("custtype") custType: String,
 
         @Query("FID_COND_MRKT_DIV_CODE") condMrktDivCode: String,
         @Query("FID_INPUT_ISCD") inputIsCd: String,
@@ -60,11 +60,11 @@ interface KoreaInvestmentApi {
 
     @GET("/uapi/domestic-stock/v1/quotations/inquire-price")
     suspend fun getStockCurrentPrice(
-        @Header("content-type") contentType: String = "application/json; charset=utf-8",
+        @Header("content-type") contentType: String,
         @Header("appkey") appKey: String,
         @Header("appsecret") appSecret: String,
-        @Header("tr_id") trId: String = "FHKST01010100",
-        @Header("tr_cont") trCont: String? = null,
+        @Header("tr_id") trId: String,
+        @Header("tr_cont") trCont: String?,
         @Header("custtype") custType: String,
 
         @Query("FID_COND_MRKT_DIV_CODE") marketDivCode: String,
