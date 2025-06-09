@@ -23,15 +23,15 @@ dependencies {
     implementation(project(":data:model"))
     implementation(project(":data:network"))
     implementation(project(":data:repository"))
-    implementation(project(":data:datautils"))
+    implementation(project(":data:utils"))
 
     implementation(project(":domain:entity"))
     implementation(project(":domain:repository"))
     implementation(project(":domain:usecase"))
-    implementation(project(":domain:domainutils"))
+    implementation(project(":domain:utils"))
 
     implementation(project(":ui:design-system"))
-    implementation(project(":ui:datautils"))
+    implementation(project(":ui:utils"))
 
     implementation(project(":feature:chart"))
     implementation(project(":feature:account"))
