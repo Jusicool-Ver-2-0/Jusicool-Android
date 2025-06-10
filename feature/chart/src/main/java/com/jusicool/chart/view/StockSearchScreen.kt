@@ -33,14 +33,68 @@ private fun StockSearchScreen(
     popUpBackStack: () -> Unit,
     onSearchTextChange: (String) -> Unit
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
-        SearchBox(
-            modifier = Modifier.fillMaxWidth(),
-            searchTextState = searchTextState,
-            popularKeyword = popularKeyword,
-            onSearchTextChange = onSearchTextChange,
-            onArrowClick = popUpBackStack,
-        )
+    JusicoolTheme { colors, typography ->
+        Column(modifier = modifier.fillMaxSize()) {
+            SearchBox(
+                modifier = Modifier.fillMaxWidth(),
+                searchTextState = uiState.searchTextState,
+                popularKeyword = uiState.popularKeyword,
+                onSearchTextChange = onSearchTextChange,
+                onArrowClick = popUpBackStack,
+            )
+
+            Divider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+                color = colors.gray100,
+            )
+
+            Spacer(Modifier.height(10.dp))
+
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                itemsIndexed(
+                    items = uiState.resentSearchTagData,
+                    key = { _, item -> item.stockName },
+                ) { _, item ->
+                    RecentSearchTag(
+                        stockName = item.stockName,
+                        stockChangeRate = item.stockChangeRate,
+                        onClearClick = item.onClearClick
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+
+            Column(modifier = Modifier.fillMaxSize()) {
+                Column {
+                    Spacer(Modifier.width(24.dp))
+                    Text(
+                        text = "인기 검색어",
+                        style = typography.bodyMedium
+                    )
+                }
+
+                Spacer(Modifier.height(11.dp))
+
+                LazyRow(modifier = Modifier.fillMaxWidth()) {
+                    itemsIndexed(
+                        items = uiState.popularKeywordData,
+                        key = { _, item -> item.first },
+                    ) { index, item ->
+                        SearchKeywordRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            order = index + 1,
+                            keyword = item.first,
+                            changeRate = item.second,
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
