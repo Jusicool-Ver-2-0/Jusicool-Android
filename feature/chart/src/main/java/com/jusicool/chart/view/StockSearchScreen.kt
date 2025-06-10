@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Divider
@@ -26,6 +27,7 @@ import com.jusicool.design_system.component.textField.TransparentTextField
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.utils.FormatPercent
 import com.school_of_company.design_system.icon.ClarityArrowLineIcon
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -40,10 +42,13 @@ private fun StockSearchScreen(
     popUpBackStack: () -> Unit,
     onSearchTextChange: (String) -> Unit
 ) {
-    JusicoolTheme { colors, typography ->
-        Column(modifier = modifier.fillMaxSize()) {
+    JusicoolTheme { colors, _ ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp)
+        ) {
             SearchBox(
-                modifier = Modifier.fillMaxWidth(),
                 searchTextState = uiState.searchTextState,
                 popularKeyword = uiState.popularKeyword,
                 onSearchTextChange = onSearchTextChange,
@@ -56,51 +61,13 @@ private fun StockSearchScreen(
                 color = colors.gray100,
             )
 
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(12.dp))
 
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                itemsIndexed(
-                    items = uiState.resentSearchTagData,
-                    key = { _, item -> item.stockName },
-                ) { _, item ->
-                    RecentSearchTag(
-                        stockName = item.stockName,
-                        stockChangeRate = item.stockChangeRate,
-                        onClearClick = item.onClearClick
-                    )
-                }
-            }
+            RecentSearchSection(data = uiState.resentSearchTagData)
 
             Spacer(Modifier.height(24.dp))
 
-            Column(modifier = Modifier.fillMaxSize()) {
-                Column {
-                    Spacer(Modifier.width(24.dp))
-                    Text(
-                        text = "인기 검색어",
-                        style = typography.bodyMedium
-                    )
-                }
-
-                Spacer(Modifier.height(11.dp))
-
-                LazyRow(modifier = Modifier.fillMaxWidth()) {
-                    itemsIndexed(
-                        items = uiState.popularKeywordData,
-                        key = { _, item -> item.first },
-                    ) { index, item ->
-                        SearchKeywordRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            order = index + 1,
-                            keyword = item.first,
-                            changeRate = item.second,
-                        )
-                    }
-                }
-            }
+            PopularKeywordSection(data = uiState.popularKeywordData)
         }
     }
 }
@@ -132,6 +99,55 @@ data class StockSearchTagData(
     val stockChangeRate: Double,
     val onClearClick: () -> Unit,
 )
+
+@Composable
+private fun RecentSearchSection(data: PersistentList<StockSearchTagData>) {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        itemsIndexed(data, key = { _, item -> item.stockName }) { _, item ->
+            RecentSearchTag(
+                stockName = item.stockName,
+                stockChangeRate = item.stockChangeRate,
+                onClearClick = item.onClearClick
+            )
+        }
+    }
+}
+
+
+@Composable
+private fun PopularKeywordSection(
+    data: PersistentList<Pair<String, Double>>,
+) {
+    JusicoolTheme { _, typography ->
+        Row {
+            Spacer(modifier = Modifier.width(24.dp))
+
+            Text(
+                text = "인기 검색어",
+                style = typography.bodyMedium,
+            )
+        }
+
+        Spacer(Modifier.height(11.dp))
+
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            itemsIndexed(data, key = { _, item -> item.first }) { index, item ->
+                SearchKeywordRow(
+                    order = index + 1,
+                    keyword = item.first,
+                    changeRate = item.second,
+                )
+            }
+        }
+    }
+}
+
 
 @Composable
 private fun SearchBox(
@@ -198,15 +214,4 @@ private fun SearchKeywordRow(
             )
         }
     }
-}
-
-@Preview
-@Composable
-private fun SearchKeywordRowPreview() {
-    SearchKeywordRow(
-        modifier = Modifier,
-        order = 2,
-        keyword = "삼성전자",
-        changeRate = 12.1,
-    )
 }
