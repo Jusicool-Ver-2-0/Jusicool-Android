@@ -29,10 +29,9 @@ internal fun StockSearchRoute(modifier: Modifier = Modifier) {
 @Composable
 private fun StockSearchScreen(
     modifier: Modifier = Modifier,
-    searchTextState: String,
-    popularKeyword: String,
-    onSearchTextChange: (String) -> Unit,
-    popUpBackStack: () -> Unit
+    uiState: StockSearchUiState,
+    popUpBackStack: () -> Unit,
+    onSearchTextChange: (String) -> Unit
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         SearchBox(
