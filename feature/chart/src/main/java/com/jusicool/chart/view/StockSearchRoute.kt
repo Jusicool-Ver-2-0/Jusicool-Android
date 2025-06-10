@@ -16,12 +16,16 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.chart.component.RecentSearchTag
 import com.jusicool.chart.viewModel.StockSearchUiState
+import com.jusicool.chart.viewModel.StockSearchViewModel
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.TransparentTextField
 import com.jusicool.design_system.theme.JusicoolTheme
@@ -31,8 +35,27 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-internal fun StockSearchRoute(modifier: Modifier = Modifier) {
+internal fun StockSearchRoute(
+    modifier: Modifier = Modifier,
+    popUpBackStack: () -> Unit,
+    viewModel: StockSearchViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+
+    when {
+        uiState.isLoading -> {}
+        uiState.errorMessage != null -> {}
+        else -> {
+            StockSearchScreen(
+                modifier = modifier,
+                uiState = uiState,
+                popUpBackStack = popUpBackStack,
+                searchStock = viewModel::searchStock,
+                onSearchTextChange = viewModel::onSearchTextChange,
+            )
+        }
+    }
 }
 
 @Composable
