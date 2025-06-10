@@ -1,22 +1,18 @@
 package com.jusicool.chart.view
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.school_of_company.design_system.icon.XIcon
+import com.jusicool.utils.FormatPercent
 
 @Composable
 internal fun StockSearchRoute(modifier: Modifier = Modifier) {
@@ -29,50 +25,51 @@ private fun StockSearchScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun RecentSearchTag(
+private fun SearchKeywordRow(
     modifier: Modifier = Modifier,
-    stockName: String,
-    stockChangeRate: Double,
-    onClearClick: () -> Unit
+    order: Int,
+    keyword: String,
+    changeRate: Double,
 ) {
-    val isPlus = stockChangeRate > 0
+    val isPlus = changeRate > 0
 
     JusicoolTheme { colors, typography ->
         Row(
-            verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
-                .background(color = colors.gray100, shape = RoundedCornerShape(size = 14.dp))
-                .padding(8.dp),
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            Row {
+                Text(
+                    text = "$order",
+                    style = typography.bodyMedium,
+                )
+
+                Spacer(Modifier.width(50.dp))
+
+                Text(
+                    text = keyword,
+                    style = typography.bodySmall,
+                )
+            }
+
             Text(
-                text = stockName,
-                style = typography.label,
-                color = colors.gray600,
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "${if (isPlus) "+" else "-"}${stockChangeRate}%",
-                style = typography.label,
+                text = FormatPercent.format(changeRate),
+                style = typography.bodySmall,
                 color = if (isPlus) colors.error else colors.main,
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            XIcon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .JusicoolClickable(
-                        onClick = onClearClick
-                    )
             )
         }
     }
 }
 
-@Preview()
+@Preview
 @Composable
-private fun RecentSearchTagPreview() {
-    RecentSearchTag(
+private fun SearchKeywordRowPreview() {
+    SearchKeywordRow(
         modifier = Modifier,
-        stockName = "삼성전자",
-        stockChangeRate = 12.1,
-        onClearClick = {})
+        order = 2,
+        keyword = "삼성전자",
+        changeRate = 12.1,
+    )
 }
