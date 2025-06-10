@@ -20,7 +20,7 @@ import com.school_of_company.design_system.icon.XIcon
 
 
 @Composable
-private fun RecentSearchTag(
+internal fun RecentSearchTag(
     modifier: Modifier = Modifier,
     stockName: String,
     stockChangeRate: Double,
