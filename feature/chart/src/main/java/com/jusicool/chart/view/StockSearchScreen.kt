@@ -6,20 +6,27 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jusicool.chart.component.RecentSearchTag
+import com.jusicool.chart.viewModel.StockSearchUiState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.TransparentTextField
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.utils.FormatPercent
 import com.school_of_company.design_system.icon.ClarityArrowLineIcon
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun StockSearchRoute(modifier: Modifier = Modifier) {
@@ -97,6 +104,34 @@ private fun StockSearchScreen(
         }
     }
 }
+
+@Preview
+@Composable
+private fun StockSearchScreenPreview() {
+    StockSearchScreen(
+        onSearchTextChange = {},
+        popUpBackStack = {},
+        uiState = StockSearchUiState(
+            popularKeywordData = persistentListOf(
+                "삼성전자" to 12.1,
+                "SK하이닉스" to 10.2,
+                "네이버" to 9.3,
+                "카카오" to 10.3,
+            ),
+            isLoading = false,
+            searchTextState = "",
+            popularKeyword = "삼성전자",
+            resentSearchTagData = persistentListOf(),
+            errorMessage = null,
+        )
+    )
+}
+
+data class StockSearchTagData(
+    val stockName: String,
+    val stockChangeRate: Double,
+    val onClearClick: () -> Unit,
+)
 
 @Composable
 private fun SearchBox(
