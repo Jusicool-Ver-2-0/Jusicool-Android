@@ -40,6 +40,7 @@ private fun StockSearchScreen(
     modifier: Modifier = Modifier,
     uiState: StockSearchUiState,
     popUpBackStack: () -> Unit,
+    searchStock: (String) -> Unit,
     onSearchTextChange: (String) -> Unit
 ) {
     JusicoolTheme { colors, _ ->
@@ -53,6 +54,7 @@ private fun StockSearchScreen(
                 popularKeyword = uiState.popularKeyword,
                 onSearchTextChange = onSearchTextChange,
                 onArrowClick = popUpBackStack,
+                onSearchClick = { searchStock(it) }
             )
 
             Divider(
@@ -90,7 +92,8 @@ private fun StockSearchScreenPreview() {
             popularKeyword = "삼성전자",
             resentSearchTagData = persistentListOf(),
             errorMessage = null,
-        )
+        ),
+        searchStock = {},
     )
 }
 
@@ -155,7 +158,8 @@ private fun SearchBox(
     searchTextState: String,
     popularKeyword: String,
     onSearchTextChange: (String) -> Unit,
-    onArrowClick: () -> Unit
+    onArrowClick: () -> Unit,
+    onSearchClick: (String) -> Unit
 ) {
     Row(
         modifier = modifier.padding(horizontal = 24.dp, vertical = 16.dp),
