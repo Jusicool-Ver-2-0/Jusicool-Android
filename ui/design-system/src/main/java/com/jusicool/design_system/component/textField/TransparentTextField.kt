@@ -27,7 +27,7 @@ fun TransparentTextField(
     onTextChange: (String) -> Unit,
     icon: @Composable () -> Unit = {}
 ) {
-    JusicoolTheme { colors, _ ->
+    JusicoolTheme { colors, typography ->
         Column(
             modifier = modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -40,7 +40,7 @@ fun TransparentTextField(
                 onValueChange = { newText -> onTextChange(newText) },
                 visualTransformation = visualTransformation,
                 maxLines = 1,
-                textStyle = TextStyle.Default,
+                textStyle = typography.bodySmall,
                 decorationBox = { innerTextField ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -51,7 +51,7 @@ fun TransparentTextField(
                                 Text(
                                     text = placeHolder,
                                     color = colors.gray400,
-                                    style = TextStyle.Default
+                                    style = typography.bodySmall
                                 )
                             }
                             innerTextField()
