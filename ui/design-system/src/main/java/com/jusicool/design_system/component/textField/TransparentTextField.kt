@@ -27,7 +27,7 @@ fun TransparentTextField(
     onTextChange: (String) -> Unit,
     icon: @Composable () -> Unit = {}
 ) {
-    JusicoolTheme { colors, typography ->
+    JusicoolTheme { colors, _ ->
         Column(
             modifier = modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp)
