@@ -2,6 +2,7 @@ package com.jusicool.chart.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -68,9 +69,7 @@ private fun StockSearchScreen(
 ) {
     JusicoolTheme { colors, _ ->
         Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp)
+            modifier = modifier.fillMaxSize()
         ) {
             SearchBox(
                 searchTextState = uiState.searchTextState,
@@ -97,7 +96,7 @@ private fun StockSearchScreen(
     }
 }
 
-@Preview
+@Preview(showBackground = true,backgroundColor = 0xFFFFFF)
 @Composable
 private fun StockSearchScreenPreview() {
     StockSearchScreen(
@@ -113,7 +112,28 @@ private fun StockSearchScreenPreview() {
             isLoading = false,
             searchTextState = "",
             popularKeyword = "삼성전자",
-            resentSearchTagData = persistentListOf(),
+            resentSearchTagData = persistentListOf(
+                StockSearchTagData(
+                    stockName = "삼성전자",
+                    stockChangeRate = 12.1,
+                    onClearClick = {},
+                ),
+                StockSearchTagData(
+                    stockName = "SK하이닉스",
+                    stockChangeRate = 10.2,
+                    onClearClick = {},
+                ),
+                StockSearchTagData(
+                    stockName = "네이버",
+                    stockChangeRate = 9.3,
+                    onClearClick = {},
+                ),
+                StockSearchTagData(
+                    stockName = "카카오",
+                    stockChangeRate = 10.3,
+                    onClearClick = {},
+                )
+            ),
             errorMessage = null,
         ),
         searchStock = {},
