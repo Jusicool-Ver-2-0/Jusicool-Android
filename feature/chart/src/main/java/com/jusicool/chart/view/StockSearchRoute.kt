@@ -151,6 +151,7 @@ private fun RecentSearchSection(data: PersistentList<StockSearchTagData>) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
         itemsIndexed(data, key = { _, item -> item.stockName }) { _, item ->
             RecentSearchTag(
