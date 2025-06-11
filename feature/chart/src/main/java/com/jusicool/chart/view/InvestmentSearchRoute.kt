@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.chart.component.RecentSearchTag
-import com.jusicool.chart.viewModel.StockSearchUiState
-import com.jusicool.chart.viewModel.StockSearchViewModel
+import com.jusicool.chart.viewModel.InvestmentSearchUiState
+import com.jusicool.chart.viewModel.InvestmentSearchViewModel
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.TransparentTextField
 import com.jusicool.design_system.theme.JusicoolTheme
@@ -36,10 +36,10 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-internal fun StockSearchRoute(
+internal fun InvestmentSearchRoute(
     modifier: Modifier = Modifier,
     popUpBackStack: () -> Unit,
-    viewModel: StockSearchViewModel = hiltViewModel(),
+    viewModel: InvestmentSearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -48,11 +48,11 @@ internal fun StockSearchRoute(
         uiState.isLoading -> {}
         uiState.errorMessage != null -> {}
         else -> {
-            StockSearchScreen(
+            InvestmentSearchScreen(
                 modifier = modifier,
                 uiState = uiState,
                 popUpBackStack = popUpBackStack,
-                searchStock = viewModel::searchStock,
+                searchInvestment = viewModel::searchInvestment,
                 onSearchTextChange = viewModel::onSearchTextChange,
             )
         }
@@ -60,11 +60,11 @@ internal fun StockSearchRoute(
 }
 
 @Composable
-private fun StockSearchScreen(
+private fun InvestmentSearchScreen(
     modifier: Modifier = Modifier,
-    uiState: StockSearchUiState,
+    uiState: InvestmentSearchUiState,
     popUpBackStack: () -> Unit,
-    searchStock: (String) -> Unit,
+    searchInvestment: (String) -> Unit,
     onSearchTextChange: (String) -> Unit
 ) {
     JusicoolTheme { colors, _ ->
@@ -76,7 +76,7 @@ private fun StockSearchScreen(
                 popularKeyword = uiState.popularKeyword,
                 onSearchTextChange = onSearchTextChange,
                 onArrowClick = popUpBackStack,
-                onSearchClick = { searchStock(it) }
+                onSearchClick = { searchInvestment(it) }
             )
 
             Divider(
@@ -98,11 +98,11 @@ private fun StockSearchScreen(
 
 @Preview(showBackground = true,backgroundColor = 0xFFFFFF)
 @Composable
-private fun StockSearchScreenPreview() {
-    StockSearchScreen(
+private fun InvestmentSearchScreenPreview() {
+    InvestmentSearchScreen(
         onSearchTextChange = {},
         popUpBackStack = {},
-        uiState = StockSearchUiState(
+        uiState = InvestmentSearchUiState(
             popularKeywordData = persistentListOf(
                 "삼성전자" to 12.1,
                 "SK하이닉스" to 10.2,
@@ -113,50 +113,50 @@ private fun StockSearchScreenPreview() {
             searchTextState = "",
             popularKeyword = "삼성전자",
             resentSearchTagData = persistentListOf(
-                StockSearchTagData(
-                    stockName = "삼성전자",
-                    stockChangeRate = 12.1,
+                InvestmentSearchTagData(
+                    investmentName = "삼성전자",
+                    investmentChangeRate = 12.1,
                     onClearClick = {},
                 ),
-                StockSearchTagData(
-                    stockName = "SK하이닉스",
-                    stockChangeRate = 10.2,
+                InvestmentSearchTagData(
+                    investmentName = "SK하이닉스",
+                    investmentChangeRate = 10.2,
                     onClearClick = {},
                 ),
-                StockSearchTagData(
-                    stockName = "네이버",
-                    stockChangeRate = 9.3,
+                InvestmentSearchTagData(
+                    investmentName = "네이버",
+                    investmentChangeRate = 9.3,
                     onClearClick = {},
                 ),
-                StockSearchTagData(
-                    stockName = "카카오",
-                    stockChangeRate = 10.3,
+                InvestmentSearchTagData(
+                    investmentName = "카카오",
+                    investmentChangeRate = 10.3,
                     onClearClick = {},
                 )
             ),
             errorMessage = null,
         ),
-        searchStock = {},
+        searchInvestment = {},
     )
 }
 
-data class StockSearchTagData(
-    val stockName: String,
-    val stockChangeRate: Double,
+data class InvestmentSearchTagData(
+    val investmentName: String,
+    val investmentChangeRate: Double,
     val onClearClick: () -> Unit,
 )
 
 @Composable
-private fun RecentSearchSection(data: PersistentList<StockSearchTagData>) {
+private fun RecentSearchSection(data: PersistentList<InvestmentSearchTagData>) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
-        itemsIndexed(data, key = { _, item -> item.stockName }) { _, item ->
+        itemsIndexed(data, key = { _, item -> item.investmentName }) { _, item ->
             RecentSearchTag(
-                stockName = item.stockName,
-                stockChangeRate = item.stockChangeRate,
+                investmentName = item.investmentName,
+                investmentChangeRate = item.investmentChangeRate,
                 onClearClick = item.onClearClick
             )
         }

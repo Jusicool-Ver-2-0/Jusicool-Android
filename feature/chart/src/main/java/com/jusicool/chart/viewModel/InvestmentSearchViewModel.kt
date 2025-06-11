@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class StockSearchViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow(StockSearchUiState(isLoading = true))
-    val uiState: StateFlow<StockSearchUiState> = _uiState.asStateFlow()
+class InvestmentSearchViewModel @Inject constructor() : ViewModel() {
+    private val _uiState = MutableStateFlow(InvestmentSearchUiState(isLoading = true))
+    val uiState: StateFlow<InvestmentSearchUiState> = _uiState.asStateFlow()
 
-    fun searchStock(searchText: String) {
+    fun searchInvestment(searchText: String) {
 
     }
 

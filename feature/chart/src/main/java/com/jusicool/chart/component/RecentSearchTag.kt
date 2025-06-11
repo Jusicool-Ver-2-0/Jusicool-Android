@@ -22,11 +22,11 @@ import com.school_of_company.design_system.icon.XIcon
 @Composable
 internal fun RecentSearchTag(
     modifier: Modifier = Modifier,
-    stockName: String,
-    stockChangeRate: Double,
+    investmentName: String,
+    investmentChangeRate: Double,
     onClearClick: () -> Unit
 ) {
-    val isPlus = stockChangeRate > 0
+    val isPlus = investmentChangeRate > 0
 
     JusicoolTheme { colors, typography ->
         Row(
@@ -36,13 +36,13 @@ internal fun RecentSearchTag(
                 .padding(8.dp),
         ) {
             Text(
-                text = stockName,
+                text = investmentName,
                 style = typography.label,
                 color = colors.gray600,
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = FormatPercent.format(stockChangeRate),
+                text = FormatPercent.format(investmentChangeRate),
                 style = typography.label,
                 color = if (isPlus) colors.error else colors.main,
             )
@@ -63,8 +63,8 @@ internal fun RecentSearchTag(
 private fun RecentSearchTagPreview() {
     RecentSearchTag(
         modifier = Modifier,
-        stockName = "삼성전자",
-        stockChangeRate = 12.1,
+        investmentName = "삼성전자",
+        investmentChangeRate = 12.1,
         onClearClick = {},
     )
 }
