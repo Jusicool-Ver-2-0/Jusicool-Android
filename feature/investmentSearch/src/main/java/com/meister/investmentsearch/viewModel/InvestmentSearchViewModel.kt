@@ -1,4 +1,4 @@
-package com.jusicool.chart.viewModel
+package com.meister.investmentsearch.viewModel
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

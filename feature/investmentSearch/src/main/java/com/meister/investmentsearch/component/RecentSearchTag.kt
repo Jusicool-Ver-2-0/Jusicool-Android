@@ -1,4 +1,5 @@
-package com.jusicool.chart.component
+package com.meister.investmentsearch.component
+
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row

@@ -1,4 +1,4 @@
-package com.jusicool.chart.view
+package com.meister.investmentsearch.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,13 +24,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jusicool.chart.component.RecentSearchTag
-import com.jusicool.chart.viewModel.InvestmentSearchUiState
-import com.jusicool.chart.viewModel.InvestmentSearchViewModel
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.TransparentTextField
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.utils.FormatPercent
+import com.meister.investmentsearch.component.RecentSearchTag
+import com.meister.investmentsearch.viewModel.InvestmentSearchUiState
+import com.meister.investmentsearch.viewModel.InvestmentSearchViewModel
 import com.school_of_company.design_system.icon.ClarityArrowLineIcon
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
