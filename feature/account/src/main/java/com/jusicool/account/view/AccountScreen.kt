@@ -52,7 +52,7 @@ import kotlinx.collections.immutable.toPersistentList
 
 
 @Composable
-fun AccountRoute(
+internal fun AccountRoute(
     viewModel: AccountViewModel = hiltViewModel(LocalContext.current as ComponentActivity)
 ) {
     val accountUiState by viewModel.accountUiState.collectAsStateWithLifecycle()
@@ -327,7 +327,7 @@ fun AccountScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun AccountScreenPreview() {
+internal fun AccountScreenPreview() {
     val mockHoldingNewsModel = HoldingNewsModel(
         author = "이데일리",
         title = "애플, 사상 최고가... 올해 세계경제 2.6% 성장 전망",

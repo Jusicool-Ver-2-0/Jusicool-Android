@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 @HiltViewModel
-class AccountViewModel @Inject constructor(
+internal class AccountViewModel @Inject constructor(
     private val getAccountResponseUseCase: GetAccountResponseUseCase,
     private val getHoldingUseCase: GetHoldingResponseUseCase,
     private val getCurrentCryptoPriceUseCase: GetCurrentCryptoPriceUseCase,
