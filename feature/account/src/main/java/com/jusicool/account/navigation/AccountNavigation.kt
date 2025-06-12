@@ -20,4 +20,4 @@ fun NavGraphBuilder.accountRoute(
 
         )
     }
-    }
+}
