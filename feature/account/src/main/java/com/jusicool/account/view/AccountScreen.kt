@@ -53,7 +53,7 @@ import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 internal fun AccountRoute(
-    viewModel: AccountViewModel = hiltViewModel(LocalContext.current as ComponentActivity)
+    viewModel: AccountViewModel = hiltViewModel()
 ) {
     val accountUiState by viewModel.accountUiState.collectAsStateWithLifecycle()
     val holdingUiState by viewModel.holdingUiState.collectAsStateWithLifecycle()
