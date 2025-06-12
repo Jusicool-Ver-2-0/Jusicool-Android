@@ -6,3 +6,7 @@ import java.util.Locale
 fun Int.formatMoney(): String {
     return NumberFormat.getNumberInstance(Locale.KOREA).format(this)
 }
+
+fun Long.formatMoney(): String {
+    return NumberFormat.getNumberInstance(Locale.KOREA).format(this)
+}

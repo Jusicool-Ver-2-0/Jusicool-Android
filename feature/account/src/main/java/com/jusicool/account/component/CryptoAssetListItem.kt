@@ -1,0 +1,155 @@
+package com.jusicool.account.component
+
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.jusicool.account.viewModel.uiState.GetCurrentCryptoPriceUiState
+import com.jusicool.design_system.theme.JusicoolTheme
+import com.jusicool.entity.crypto.CurrentCryptoPriceModel
+import com.jusicool.entity.holding.HoldingModel
+import com.jusicool.utils.formatMoney
+
+@Composable
+fun CryptoAssetListItem(
+    modifier: Modifier = Modifier,
+    holding: HoldingModel,
+    getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState
+) {
+    JusicoolTheme { colors, typography ->
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                modifier = Modifier.fillMaxHeight(),
+                horizontalArrangement = Arrangement.spacedBy(14.dp)
+                ,verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .border(width = 1.dp, color = colors.gray100, shape = RoundedCornerShape(size = 20.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AsyncImage(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape),
+                        model = "https://i.pinimg.com/474x/3d/c9/64/3dc9647bffee1578c683db59d9cbaa24.jpg",
+                        contentDescription = null,
+                    )
+                }
+
+                Column(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = holding.koreanName,
+                        color = colors.black,
+                        style = typography.bodySmall
+                    )
+
+                    Text(
+                        text = "${holding.quantity.formatMoney()}주",
+                        color = colors.gray400,
+                        style = typography.label
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                when(getCurrentCryptoPriceData) {
+                    is GetCurrentCryptoPriceUiState.Success -> {
+                        val price = getCurrentCryptoPriceData.markets.find { it.market == holding.marketCode }?.tradePrice ?: 0.0
+
+                        val priceVariation = (price - holding.price).toInt()
+                        val priceVariationPercent = if (holding.price != 0) {
+                            (priceVariation.toDouble() / holding.price) * 100
+                        } else 0.0
+
+                        val textColor = if (priceVariation >= 0) colors.chartPriceIncreased else colors.chartPriceDecreased
+
+
+                        Text(
+                            text = "${"%,d".format((holding.quantity * price).toInt())}원",
+                            color = colors.black,
+                            style = typography.bodySmall
+                        )
+
+                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(
+                                text = if (priceVariation >= 0) {
+                                    (priceVariation * holding.quantity).formatMoney()
+                                } else {
+                                    (priceVariation * holding.quantity).formatMoney()
+                                },
+                                color = textColor,
+                                style = typography.label
+                            )
+
+                            Text(
+                                text = "(${String.format("%.1f", priceVariationPercent)}%)",
+                                color = textColor,
+                                style = typography.label
+                            )
+                        }
+                    }
+                    is GetCurrentCryptoPriceUiState.Error -> {
+
+                    }
+                    is GetCurrentCryptoPriceUiState.Loading -> {
+
+                    }
+                    is GetCurrentCryptoPriceUiState.Blank -> {
+
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CryptoAssetListItemPreview() {
+    CryptoAssetListItem(
+        holding = HoldingModel(
+            id = 1,
+            marketId = 101,
+            koreanName = "삼성전자",
+            englishName = "Samsung Electronics",
+            marketCode = "005930.KQ",
+            marketType = "STOCK",
+            quantity = 15,
+            price = 75000
+        ),
+        getCurrentCryptoPriceData = GetCurrentCryptoPriceUiState.Success(
+            markets = listOf(CurrentCryptoPriceModel(tradePrice = 10000.0, market = "BTC"))
+        )
+    )
+}
