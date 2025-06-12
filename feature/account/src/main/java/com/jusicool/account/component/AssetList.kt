@@ -13,11 +13,13 @@ import com.jusicool.account.viewModel.uiState.GetCurrentCryptoPriceUiState
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.entity.crypto.CurrentCryptoPriceModel
 import com.jusicool.entity.holding.HoldingModel
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun AssetList(
     modifier: Modifier = Modifier,
-    holdings: List<HoldingModel>,
+    holdings: PersistentList<HoldingModel>,
     getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState
 ) {
     JusicoolTheme { colors, typography ->
@@ -72,7 +74,7 @@ fun AssetList(
 @Composable
 fun AssetListPreview() {
     AssetList(
-        holdings = listOf(
+        holdings = persistentListOf(
             HoldingModel(1, 1, "삼성전자", "Samsung", "005930.KQ", "STOCK", 10, 70000),
             HoldingModel(2, 2, "비트코인", "Bitcoin", "BTC", "CRYPTO", 2, 55000000)
         ),
