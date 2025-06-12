@@ -25,7 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.utils.toSignedFormmaterText
+import com.jusicool.utils.toSignedFormmatedText
 import com.meister.investmentsearch.component.RecentSearchTag
 import com.meister.investmentsearch.viewModel.ChartListUiState
 import com.meister.investmentsearch.viewModel.ChartListViewModel
@@ -219,7 +219,7 @@ private fun ChartItem(data: ChartItemData) {
                 horizontalAlignment = Alignment.End,
             ) {
                 Text(
-                    text = data.priceChange.toSignedFormmaterText(),
+                    text = data.priceChange.toSignedFormmatedText(),
                     style = typography.bodySmall,
                     color = textColor
                 )
