@@ -11,5 +11,6 @@ dependencies {
     // todo : Add Other Project Implementation -> ex) implementation(project(":core:___")) / (project(":feature:____"))
 
     implementation(project(":data:model"))
+    implementation(project(":domain:entity"))
 
 }

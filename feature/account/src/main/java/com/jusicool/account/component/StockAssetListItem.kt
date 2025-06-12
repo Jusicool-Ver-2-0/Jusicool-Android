@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,20 +21,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.model.asset.AssetType
-import com.jusicool.model.asset.UserStockCryptoModel
+import com.jusicool.entity.crypto.CurrentCryptoPriceModel
+import com.jusicool.entity.holding.HoldingModel
+import com.jusicool.utils.formatMoney
 
 @Composable
-fun UserAssetCard(
+fun StockAssetListItem(
     modifier: Modifier = Modifier,
-    userStockCryptoModel : UserStockCryptoModel
+    holding: HoldingModel,
 ) {
     JusicoolTheme { colors, typography ->
-        val textColor = when {
-            userStockCryptoModel.priceVariation < 0 -> colors.main
-            userStockCryptoModel.priceVariation > 0 -> colors.error
-            else -> colors.gray400
-        }
+        val textColor = colors.gray400
 
         Row(
             modifier = modifier
@@ -54,8 +52,10 @@ fun UserAssetCard(
                     contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
-                        modifier = Modifier.size(24.dp),
-                        model = userStockCryptoModel.logoUrl,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape),
+                        model = "https://i.pinimg.com/474x/3d/c9/64/3dc9647bffee1578c683db59d9cbaa24.jpg",
                         contentDescription = null,
                     )
                 }
@@ -65,13 +65,13 @@ fun UserAssetCard(
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = userStockCryptoModel.name,
+                        text = holding.koreanName,
                         color = colors.black,
                         style = typography.bodySmall
                     )
 
                     Text(
-                        text = "${"%,d".format(userStockCryptoModel.amount)}주",
+                        text = "${"%,d".format(holding.quantity)}주",
                         color = colors.gray400,
                         style = typography.label
                     )
@@ -84,27 +84,27 @@ fun UserAssetCard(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "${"%,d".format(userStockCryptoModel.price)}원",
+                    text = "${holding.quantity.formatMoney()}주",
                     color = colors.black,
                     style = typography.bodySmall
                 )
 
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(
-                        text = if (userStockCryptoModel.priceVariation >= 0) {
-                            "+%,d".format(userStockCryptoModel.priceVariation)
-                        } else {
-                            "%,d".format(userStockCryptoModel.priceVariation)
-                        },
-                        color = textColor,
-                        style = typography.label
-                    )
-
-                    Text(
-                        text = "(${userStockCryptoModel.priceVariationPercent}%)",
-                        color = textColor,
-                        style = typography.label
-                    )
+//                    Text(
+//                        text = if (userStockCryptoModel.priceVariation >= 0) {
+//                            "+%,d".format(userStockCryptoModel.priceVariation)
+//                        } else {
+//                            "%,d".format(userStockCryptoModel.priceVariation)
+//                        },
+//                        color = textColor,
+//                        style = typography.label
+//                    )
+//
+//                    Text(
+//                        text = "(${userStockCryptoModel.priceVariationPercent}%)",
+//                        color = textColor,
+//                        style = typography.label
+//                    )
                 }
             }
         }
@@ -113,16 +113,17 @@ fun UserAssetCard(
 
 @Preview(showBackground = true)
 @Composable
-fun UserAssetCardPreview() {
-    UserAssetCard(
-        userStockCryptoModel = UserStockCryptoModel(
-            logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/625px-Apple_logo_black.svg.png",
-            type = AssetType.STOCK,
-            name = "애플",
-            amount = 123,
-            price = 11111111,
-            priceVariation = -1111111,
-            priceVariationPercent = 4.0
+fun StockAssetListItemAssetListItemPreview() {
+    StockAssetListItem(
+        holding = HoldingModel(
+            id = 1,
+            marketId = 101,
+            koreanName = "삼성전자",
+            englishName = "Samsung Electronics",
+            marketCode = "005930.KQ",
+            marketType = "STOCK",
+            quantity = 15,
+            price = 75000
         )
     )
 }

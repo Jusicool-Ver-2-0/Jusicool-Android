@@ -10,5 +10,6 @@ android {
 dependencies {
     implementation(project(":domain:usecase"))
     implementation(project(":domain:entity"))
+    implementation(project(":ui:utils"))
 
 }

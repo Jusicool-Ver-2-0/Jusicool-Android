@@ -3,6 +3,7 @@ package com.jusicool.signin.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jusicool.entity.auth.SignInModel
 import com.jusicool.model.auth.SignInRequest
 import com.jusicool.usecase.auth.SignInRequestUseCase
 import com.jusicool.utils.Logger
@@ -54,11 +55,11 @@ class SignInViewModel @Inject constructor(
         _isPasswordError.value = !isPasswordValid
 
         if (isEmailValid && isPasswordValid) {
-            signIn(SignInRequest(email = emailValue, password = passwordValue))
+            signIn(SignInModel(email = emailValue, password = passwordValue))
         }
     }
 
-    private fun signIn(body: SignInRequest) = viewModelScope.launch {
+    private fun signIn(body: SignInModel) = viewModelScope.launch {
         _signInUiState.value = SignInUiState.Loading
         signInRequestUseCase(body)
             .onSuccess {
