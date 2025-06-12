@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.utils.FormatPercent
+import com.jusicool.utils.formatPercent
 import com.school_of_company.design_system.icon.XIcon
 
 
@@ -43,7 +43,7 @@ internal fun RecentSearchTag(
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = FormatPercent.format(investmentChangeRate),
+                text = investmentChangeRate.formatPercent(),
                 style = typography.label,
                 color = if (isPlus) colors.error else colors.main,
             )

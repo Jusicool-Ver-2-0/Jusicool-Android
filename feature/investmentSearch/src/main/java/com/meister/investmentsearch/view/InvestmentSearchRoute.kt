@@ -27,7 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.TransparentTextField
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.utils.FormatPercent
+import com.jusicool.utils.formatPercent
 import com.meister.investmentsearch.component.RecentSearchTag
 import com.meister.investmentsearch.viewModel.InvestmentSearchUiState
 import com.meister.investmentsearch.viewModel.InvestmentSearchViewModel
@@ -256,7 +256,7 @@ private fun SearchKeywordRow(
             }
 
             Text(
-                text = FormatPercent.format(changeRate),
+                text = changeRate.formatPercent(),
                 style = typography.bodySmall,
                 color = if (isPlus) colors.error else colors.main,
             )
