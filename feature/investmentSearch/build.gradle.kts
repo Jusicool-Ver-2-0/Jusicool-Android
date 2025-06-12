@@ -4,12 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.jusicool.chart"
+    namespace = "com.jusicool.investmentsearch"
 }
 
 dependencies {
     implementation(project(":domain:usecase"))
     implementation(project(":domain:entity"))
     implementation(project(":ui:utils"))
-
 }
