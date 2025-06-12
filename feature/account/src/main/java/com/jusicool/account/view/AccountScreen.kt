@@ -289,7 +289,7 @@ fun AccountScreen(
                                     val monthProfitText = when (getMonthOrderData) {
                                         is GetMonthOrderUiState.Success -> {
                                             val profit = getMonthOrderData.account.rate
-                                            "${profit.formatMoney()}원"
+                                            "${profit.toSignedFormattedText()}원"
                                         }
                                         else -> "0원"
                                     }
