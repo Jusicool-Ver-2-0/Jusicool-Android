@@ -24,6 +24,7 @@ import com.jusicool.account.viewModel.uiState.GetCurrentCryptoPriceUiState
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.entity.crypto.CurrentCryptoPriceModel
 import com.jusicool.entity.holding.HoldingModel
+import com.jusicool.usecase.crypto.CurrentCryptoHoldingPrice
 import com.jusicool.utils.formatMoney
 import com.jusicool.utils.formatPercent
 import com.jusicool.utils.toSignedFormattedText
@@ -87,36 +88,36 @@ fun CryptoAssetListItem(
             ) {
                 when(getCurrentCryptoPriceData) {
                     is GetCurrentCryptoPriceUiState.Success -> {
-                        val price = getCurrentCryptoPriceData.markets.find { it.market == holding.marketCode }?.tradePrice ?: 0.0
+                        val priceInfo = getCurrentCryptoPriceData.markets.find {
+                            it.marketCode == holding.marketCode
+                        }
 
-                        val priceVariation = (price - holding.price).toInt()
-                        val priceVariationPercent = if (holding.price != 0) {
-                            (priceVariation.toDouble() / holding.price) * 100
-                        } else 0.0
-
-                        val textColor = if (priceVariation >= 0) colors.chartPriceIncreased else colors.chartPriceDecreased
-
-
-                        Text(
-                            text = "${((holding.quantity * price).toInt().formatMoney())}원",
-                            color = colors.black,
-                            style = typography.bodySmall
-                        )
-
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Text(
-                                text = (priceVariation * holding.quantity).toSignedFormattedText(),
-                                color = textColor,
-                                style = typography.label
-                            )
+                        if (priceInfo != null) {
+                            val textColor =
+                                if (priceInfo.totalVariation >= 0) colors.chartPriceIncreased else colors.chartPriceDecreased
 
                             Text(
-                                text = "(${priceVariationPercent.formatPercent()})",
-                                color = textColor,
-                                style = typography.label
+                                text = "${priceInfo.totalValue.formatMoney()}원",
+                                color = colors.black,
+                                style = typography.bodySmall
                             )
+
+                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = priceInfo.totalVariation.toSignedFormattedText(),
+                                    color = textColor,
+                                    style = typography.label
+                                )
+
+                                Text(
+                                    text = "(${priceInfo.priceVariationPercent.formatPercent()})",
+                                    color = textColor,
+                                    style = typography.label
+                                )
+                            }
                         }
                     }
+
                     is GetCurrentCryptoPriceUiState.Error -> {
 
                     }
@@ -147,7 +148,16 @@ fun CryptoAssetListItemPreview() {
             price = 75000
         ),
         getCurrentCryptoPriceData = GetCurrentCryptoPriceUiState.Success(
-            markets = listOf(CurrentCryptoPriceModel(tradePrice = 10000.0, market = "BTC"))
+            markets = listOf(
+                CurrentCryptoHoldingPrice(
+                    marketCode = "weqwe",
+                    currentPrice = 12.00,
+                    priceVariation= 12,
+                    priceVariationPercent= 12.00,
+                    totalVariation = 1,
+                    totalValue = 1
+                )
+            )
         )
     )
 }

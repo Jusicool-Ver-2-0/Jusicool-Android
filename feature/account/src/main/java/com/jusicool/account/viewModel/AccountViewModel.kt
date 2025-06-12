@@ -10,13 +10,13 @@ import com.jusicool.entity.holding.HoldingModel
 import com.jusicool.usecase.account.GetAccountResponseUseCase
 import com.jusicool.usecase.crypto.GetCurrentCryptoPriceUseCase
 import com.jusicool.usecase.holding.GetHoldingResponseUseCase
+import com.jusicool.usecase.holding.HoldingType
 import com.jusicool.usecase.order.GetMonthOrderUseCase
 import com.jusicool.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 @HiltViewModel
 class AccountViewModel @Inject constructor(
     private val getAccountResponseUseCase: GetAccountResponseUseCase,
@@ -34,59 +34,47 @@ class AccountViewModel @Inject constructor(
     private val _monthOrderUiState = MutableStateFlow<GetMonthOrderUiState>(GetMonthOrderUiState.Loading)
     val monthOrderUiState = _monthOrderUiState.asStateFlow()
 
+    // markets 문자열 (ex: "KRW-BTC,KRW-ETH")
     private val _markets = MutableStateFlow<String?>(null)
+    // holdings 목록 (코인 보유 리스트)
+    private val _cryptoHoldings = MutableStateFlow<List<HoldingModel>>(emptyList())
 
     val currentCryptoPriceUiState: StateFlow<GetCurrentCryptoPriceUiState> =
-        _markets
-            .flatMapLatest { markets ->
-                if (markets.isNullOrBlank()) {
-                    flowOf(GetCurrentCryptoPriceUiState.Blank)
-                } else {
-                    flow {
-                        while (true) {
-                            emit(markets)
-                            kotlinx.coroutines.delay(1000)
+        combine(
+            _markets.filterNotNull().filter { it.isNotBlank() },
+            _cryptoHoldings
+        ) { markets, holdings -> markets to holdings }
+            .flatMapLatest { (markets, holdings) ->
+                flow {
+                    while (true) {
+                        try {
+                            val data = getCurrentCryptoPriceUseCase(markets, holdings)
+                            emit(GetCurrentCryptoPriceUiState.Success(data))
+                        } catch (e: Exception) {
+                            emit(GetCurrentCryptoPriceUiState.Error(e.message ?: "Unknown error"))
                         }
-                    }.flatMapLatest { mkt ->
-                        getCurrentCryptoPriceUseCase(mkt)
-                            .getOrElse {
-                                Logger.e("AccountViewModel", "현재 코인 가격 요청 실패: ${it.message}")
-                                return@flatMapLatest flowOf(
-                                    GetCurrentCryptoPriceUiState.Error(it.message ?: "Unknown error")
-                                )
-                            }
-                            .catch {
-                                Logger.e("AccountViewModel", "가격 로딩 중 에러: ${it.message}")
-                                GetCurrentCryptoPriceUiState.Error(it.message ?: "Unknown error")
-                            }
-                            .map { crypto ->
-                                GetCurrentCryptoPriceUiState.Success(crypto)
-                            }
+                        kotlinx.coroutines.delay(1000)
                     }
                 }
             }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
+                started = SharingStarted.WhileSubscribed(5000),
                 initialValue = GetCurrentCryptoPriceUiState.Loading
             )
 
     fun getAccount() = viewModelScope.launch {
         _accountUiState.value = GetAccountUiState.Loading
         getAccountResponseUseCase()
-            .onSuccess {
-                it.catch {
-                    Logger.e("AccountViewModel", "계정 정보 불러오기 실패: ${it.message}")
-                    _accountUiState.value = GetAccountUiState.Error(it.message ?: "Unknown error")
-                }
-                it.collect { account ->
-                    Logger.d("AccountViewModel", "계정 정보 로드 성공: $account")
+            .onSuccess { flow ->
+                flow.catch { e ->
+                    _accountUiState.value = GetAccountUiState.Error(e.message ?: "Unknown error")
+                }.collect { account ->
                     _accountUiState.value = GetAccountUiState.Success(account)
                 }
             }
-            .onFailure {
-                Logger.e("AccountViewModel", "계정 정보 요청 실패: ${it.message}")
-                _accountUiState.value = GetAccountUiState.Error(it.message ?: "Unknown error")
+            .onFailure { e ->
+                _accountUiState.value = GetAccountUiState.Error(e.message ?: "Unknown error")
             }
     }
 
@@ -95,34 +83,31 @@ class AccountViewModel @Inject constructor(
 
         getHoldingUseCase().fold(
             onSuccess = { holdingType ->
+                // 주식은 일단 로그만 찍고
                 launch {
                     holdingType.stockHoldings
-                        .catch {
-                            Logger.e("AccountViewModel", "주식 정보 로드 실패: ${it.message}")
-                            _holdingUiState.value = GetHoldingUiState.Error(it.message ?: "Unknown error")
+                        .catch { e ->
+                            _holdingUiState.value = GetHoldingUiState.Error(e.message ?: "Unknown error")
                         }
                         .collect { stockList ->
-                            Logger.d("AccountViewModel", "주식 정보 로드 성공: $stockList")
+                            // 필요하면 주식 상태도 관리 가능
                         }
                 }
-
+                // 코인 보유 목록 가져와서 상태 업데이트 및 markets 추출
                 launch {
                     holdingType.cryptoHoldings
-                        .catch {
-                            Logger.e("AccountViewModel", "코인 정보 로드 실패: ${it.message}")
-                            _holdingUiState.value = GetHoldingUiState.Error(it.message ?: "Unknown error")
+                        .catch { e ->
+                            _holdingUiState.value = GetHoldingUiState.Error(e.message ?: "Unknown error")
                         }
                         .collect { cryptoList ->
-                            Logger.d("AccountViewModel", "코인 정보 로드 성공: $cryptoList")
                             _holdingUiState.value = GetHoldingUiState.Success(cryptoList)
-                            val marketValue = extractMarketValueFromHolding(cryptoList)
-                            _markets.value = marketValue
+                            _cryptoHoldings.value = cryptoList
+                            _markets.value = extractMarketValueFromHolding(cryptoList)
                         }
                 }
             },
-            onFailure = { throwable ->
-                Logger.e("AccountViewModel", "가지고 있는 코인&주식 정보 요청 실패: ${throwable.message}")
-                _holdingUiState.value = GetHoldingUiState.Error(throwable.message ?: "Unknown error")
+            onFailure = { e ->
+                _holdingUiState.value = GetHoldingUiState.Error(e.message ?: "Unknown error")
             }
         )
     }
@@ -132,27 +117,22 @@ class AccountViewModel @Inject constructor(
             .filter { it.marketType == "CRYPTO" }
             .mapNotNull { it.marketCode.takeIf { code -> code.matches(Regex("^[A-Z]{3,4}-[A-Z0-9]{2,10}$")) } }
 
-        val markets = cryptoMarketIds.joinToString(separator = ",")
-        Logger.d("AccountViewModel", "추출된 마켓 ID들: $markets")
-        return markets
+        return cryptoMarketIds.joinToString(separator = ",")
     }
 
     fun getMonthOrder() = viewModelScope.launch {
         _monthOrderUiState.value = GetMonthOrderUiState.Loading
         getMonthOrderUseCase()
-            .onSuccess {
-                it.catch {
-                    Logger.e("AccountViewModel", "한달 수익,주문 내역 정보 불러오기 실패: ${it.message}")
-                    _monthOrderUiState.value = GetMonthOrderUiState.Error(it.message ?: "Unknown error")
-                }
-                it.collect{ order ->
-                    Logger.d("AccountViewModel", "한달 수익,주문 내역 불러오기 성공: $order")
+            .onSuccess { flow ->
+                flow.catch { e ->
+                    _monthOrderUiState.value = GetMonthOrderUiState.Error(e.message ?: "Unknown error")
+                }.collect { order ->
                     _monthOrderUiState.value = GetMonthOrderUiState.Success(order)
                 }
             }
-            .onFailure {
-                Logger.e("AccountViewModel", "한달 수익,주문 내역 불러오기 실패: ${it.message}")
-                _monthOrderUiState.value = GetMonthOrderUiState.Error(it.message ?: "Unknown error")
+            .onFailure { e ->
+                _monthOrderUiState.value = GetMonthOrderUiState.Error(e.message ?: "Unknown error")
             }
     }
 }
+

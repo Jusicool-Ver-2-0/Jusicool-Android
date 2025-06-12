@@ -43,6 +43,7 @@ import com.jusicool.entity.crypto.CurrentCryptoPriceModel
 import com.jusicool.entity.holding.HoldingModel
 import com.jusicool.entity.order.OrderModel
 import com.jusicool.model.news.HoldingNewsModel
+import com.jusicool.usecase.crypto.CurrentCryptoHoldingPrice
 import com.jusicool.utils.formatMoney
 import com.jusicool.utils.formatPercent
 import com.jusicool.utils.toSignedFormattedText
@@ -158,7 +159,7 @@ fun AccountScreen(
                                 val holdingValue = when {
                                     getHoldingListData is GetHoldingUiState.Success && getCurrentCryptoPriceData is GetCurrentCryptoPriceUiState.Success -> {
                                         getHoldingListData.account.sumOf { holding ->
-                                            val currentPrice = getCurrentCryptoPriceData.markets.find { it.market == holding.marketCode }?.tradePrice ?: 0.0
+                                            val currentPrice = getCurrentCryptoPriceData.markets.find { it.marketCode == holding.marketCode }?.currentPrice ?: 0.0
                                             (holding.quantity * currentPrice).toLong()
                                         }
                                     }
@@ -179,7 +180,7 @@ fun AccountScreen(
                                     var totalCurrentValue = 0.0
 
                                     getHoldingListData.account.forEach { holding ->
-                                        val currentPrice = getCurrentCryptoPriceData.markets.find { it.market == holding.marketCode }?.tradePrice ?: 0.0
+                                        val currentPrice = getCurrentCryptoPriceData.markets.find { it.marketCode == holding.marketCode }?.currentPrice ?: 0.0
                                         val invested = holding.price * holding.quantity
                                         val current = currentPrice * holding.quantity
                                         totalInvestment += invested
@@ -360,13 +361,21 @@ fun AccountScreenPreview() {
 
     val mockCryptoPriceUiState = GetCurrentCryptoPriceUiState.Success(
         markets = listOf(
-            CurrentCryptoPriceModel(
-                market = "005930.KQ",
-                tradePrice = 71000.0
+            CurrentCryptoHoldingPrice(
+                marketCode = "weqwe",
+                currentPrice = 12.00,
+                priceVariation= 12,
+                priceVariationPercent= 12.00,
+                totalVariation = 1,
+                totalValue = 1
             ),
-            CurrentCryptoPriceModel(
-                market = "BTC",
-                tradePrice = 56000000.0
+            CurrentCryptoHoldingPrice(
+                marketCode = "weqwe",
+                currentPrice = 12.00,
+                priceVariation= 12,
+                priceVariationPercent= 12.00,
+                totalVariation = 1,
+                totalValue = 1
             )
         )
     )

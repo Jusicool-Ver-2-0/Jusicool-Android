@@ -13,6 +13,7 @@ import com.jusicool.account.viewModel.uiState.GetCurrentCryptoPriceUiState
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.entity.crypto.CurrentCryptoPriceModel
 import com.jusicool.entity.holding.HoldingModel
+import com.jusicool.usecase.crypto.CurrentCryptoHoldingPrice
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -79,7 +80,16 @@ fun AssetListPreview() {
             HoldingModel(2, 2, "비트코인", "Bitcoin", "BTC", "CRYPTO", 2, 55000000)
         ),
         getCurrentCryptoPriceData = GetCurrentCryptoPriceUiState.Success(
-            markets = listOf(CurrentCryptoPriceModel(tradePrice = 10000.0, market = "BTC"))
+            markets = listOf(
+                CurrentCryptoHoldingPrice(
+                    marketCode = "weqwe",
+                    currentPrice = 12.00,
+                    priceVariation= 12,
+                    priceVariationPercent= 12.00,
+                    totalVariation = 1,
+                    totalValue = 1
+                )
+            )
         )
     )
 }

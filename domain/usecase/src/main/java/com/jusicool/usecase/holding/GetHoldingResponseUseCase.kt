@@ -9,8 +9,6 @@ import javax.inject.Inject
 class GetHoldingResponseUseCase @Inject constructor(
     private val holdingRepository: HoldingRepository
 ) {
-
-
     operator fun invoke():Result<HoldingType> = runCatching {
         val holding = holdingRepository.getHolding()
 
