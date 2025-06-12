@@ -1,8 +1,8 @@
 package com.jusicool.account.view
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,28 +17,80 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jusicool.account.component.AssetList
 import com.jusicool.account.component.HoldingNewsCard
-import com.jusicool.account.component.UserAssetCard
+import com.jusicool.account.viewModel.uiState.GetAccountUiState
+import com.jusicool.account.viewModel.AccountViewModel
+import com.jusicool.account.viewModel.uiState.GetCurrentCryptoPriceUiState
+import com.jusicool.account.viewModel.uiState.GetHoldingUiState
+import com.jusicool.account.viewModel.uiState.GetMonthOrderUiState
 import com.jusicool.design_system.R
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.model.asset.AssetType
-import com.jusicool.model.asset.UserAssetModel
-import com.jusicool.model.asset.UserStockCryptoModel
+import com.jusicool.entity.crypto.CurrentCryptoPriceModel
+import com.jusicool.entity.holding.HoldingModel
+import com.jusicool.entity.order.OrderModel
 import com.jusicool.model.news.HoldingNewsModel
+import com.jusicool.utils.formatMoney
 import com.school_of_company.design_system.icon.RightArrowIcon
+
+
+@Composable
+fun AccountRoute(
+    viewModel: AccountViewModel = hiltViewModel(LocalContext.current as ComponentActivity)
+) {
+    val accountUiState by viewModel.accountUiState.collectAsStateWithLifecycle()
+    val holdingUiState by viewModel.holdingUiState.collectAsStateWithLifecycle()
+    val currentCryptoPriceUiState by viewModel.currentCryptoPriceUiState.collectAsStateWithLifecycle()
+    val monthOrderUiState by viewModel.monthOrderUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.getAccount()
+        viewModel.getHolding()
+        viewModel.getMonthOrder()
+    }
+
+    val krwBalance = remember(accountUiState) {
+        when (accountUiState) {
+            is GetAccountUiState.Success -> (accountUiState as GetAccountUiState.Success).account.krwBalance
+            else -> 0
+        }
+    }
+
+    val mockHoldingNewsModel = HoldingNewsModel(
+        author = "이데일리",
+        title = "애플, 사상 최고가... 올해 세계경제 2.6% 성장 전망",
+        img = "https://i.pinimg.com/474x/3d/c9/64/3dc9647bffee1578c683db59d9cbaa24.jpg"
+    )
+
+    AccountScreen(
+        krwBalance = krwBalance,
+        getHoldingListData = holdingUiState,
+        getCurrentCryptoPriceData = currentCryptoPriceUiState,
+        getMonthOrderData= monthOrderUiState,
+        holdingNewsModel = mockHoldingNewsModel
+    )
+}
 
 @Composable
 fun AccountScreen(
     modifier: Modifier = Modifier,
-    userAssetModel: UserAssetModel,
-    userStockCryptoModel: List<UserStockCryptoModel>,
+    krwBalance: Long,
+    getHoldingListData: GetHoldingUiState,
+    getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState,
+    getMonthOrderData: GetMonthOrderUiState,
     holdingNewsModel: HoldingNewsModel
 ) {
     val scrollState = rememberScrollState()
@@ -85,7 +137,7 @@ fun AccountScreen(
                         }
 
                         Text(
-                            text = "${"%,d".format(userAssetModel.myAsset)}원",
+                            text = "${krwBalance.formatMoney()}원",
                             color = colors.black,
                             style = typography.titleSmall
                         )
@@ -99,15 +151,55 @@ fun AccountScreen(
                         )
 
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            val totalAssetValue = remember(getHoldingListData, getCurrentCryptoPriceData, krwBalance) {
+                                val holdingValue = when {
+                                    getHoldingListData is GetHoldingUiState.Success && getCurrentCryptoPriceData is GetCurrentCryptoPriceUiState.Success -> {
+                                        getHoldingListData.account.sumOf { holding ->
+                                            val currentPrice = getCurrentCryptoPriceData.markets.find { it.market == holding.marketCode }?.tradePrice ?: 0.0
+                                            (holding.quantity * currentPrice).toLong()
+                                        }
+                                    }
+                                    else -> 0L
+                                }
+                                (krwBalance + holdingValue).formatMoney()
+                            }
+
                             Text(
-                                text = "${"%,d".format(userAssetModel.investAsset)}원",
+                                text = "${totalAssetValue}원",
                                 color = colors.black,
                                 style = typography.titleMedium
                             )
 
+                            val profitAndRate = remember(getHoldingListData, getCurrentCryptoPriceData) {
+                                if (getHoldingListData is GetHoldingUiState.Success && getCurrentCryptoPriceData is GetCurrentCryptoPriceUiState.Success) {
+                                    var totalInvestment = 0.0
+                                    var totalCurrentValue = 0.0
+
+                                    getHoldingListData.account.forEach { holding ->
+                                        val currentPrice = getCurrentCryptoPriceData.markets.find { it.market == holding.marketCode }?.tradePrice ?: 0.0
+                                        val invested = holding.price * holding.quantity
+                                        val current = currentPrice * holding.quantity
+                                        totalInvestment += invested
+                                        totalCurrentValue += current
+                                    }
+
+                                    val profit = totalCurrentValue - totalInvestment
+                                    val rate = if (totalInvestment != 0.0) (profit / totalInvestment * 100).toFloat() else 0f
+
+                                    Pair(profit.toLong(), rate)
+                                } else {
+                                    Pair(0L, 0f)
+                                }
+                            }
+
+
+                            val (profit, rate) = profitAndRate
+                            val profitText = if (profit >= 0) "+${"%,d".format(profit)}원" else "${"%,d".format(profit)}원"
+                            val rateText = "(${String.format("%.1f", rate)}%)"
+
                             Text(
-                                text = "-6,555,555원 (4.0%)",
-                                color = colors.main,
+                                text = "$profitText $rateText",
+                                color = if (profit > 0) colors.chartPriceIncreased else colors.chartPriceDecreased,
                                 style = typography.bodySmall
                             )
                         }
@@ -121,37 +213,21 @@ fun AccountScreen(
                                 style = typography.subTitle
                             )
 
-                            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(
-                                        text = "주식",
-                                        color = colors.black,
-                                        style = typography.bodySmall
+                            when (getHoldingListData) {
+                                is GetHoldingUiState.Success -> {
+                                    AssetList(
+                                        holdings = getHoldingListData.account,
+                                        getCurrentCryptoPriceData = getCurrentCryptoPriceData
                                     )
-
-                                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                                        userStockCryptoModel.filter { it.type == AssetType.STOCK }
-                                            .forEach { asset ->
-                                                UserAssetCard(userStockCryptoModel = asset)
-                                            }
-                                    }
                                 }
-
-                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(
-                                        text = "코인",
-                                        color = colors.black,
-                                        style = typography.bodySmall
-                                    )
-
-                                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                                        userStockCryptoModel.filter { it.type == AssetType.CRYPTO }
-                                            .forEach { asset ->
-                                                UserAssetCard(userStockCryptoModel = asset)
-                                            }
-                                    }
+                                is GetHoldingUiState.Loading -> {
+                                    // 보유 자산 로딩 중 UI
+                                }
+                                is GetHoldingUiState.Error -> {
+                                    // 보유 자산 실패 UI
                                 }
                             }
+
                         }
 
                         Spacer(
@@ -176,8 +252,13 @@ fun AccountScreen(
                                     modifier = Modifier.JusicoolClickable { /*TODO()*/ },
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
+                                    val orderCount = when (getMonthOrderData) {
+                                        is GetMonthOrderUiState.Success -> getMonthOrderData.account.orderCount.formatMoney()
+                                        else -> 0
+                                    }
+
                                     Text(
-                                        text = "이번 달 ${userAssetModel.orderHistory}건",
+                                        text = "이번 달 ${orderCount}건",
                                         color = colors.gray600,
                                         style = typography.bodySmall
                                     )
@@ -203,12 +284,16 @@ fun AccountScreen(
                                     modifier = Modifier.JusicoolClickable { /*TODO()*/ },
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
+                                    val monthProfitText = when (getMonthOrderData) {
+                                        is GetMonthOrderUiState.Success -> {
+                                            val profit = getMonthOrderData.account.rate
+                                            profit.formatMoney()
+                                        }
+                                        else -> "0원"
+                                    }
+
                                     Text(
-                                        text = if (userAssetModel.monthProfit >= 0) {
-                                            "+%,d".format(userAssetModel.monthProfit)
-                                        } else {
-                                            "%,d".format(userAssetModel.monthProfit)
-                                        },
+                                        text = monthProfitText,
                                         color = colors.gray600,
                                         style = typography.bodySmall
                                     )
@@ -236,72 +321,65 @@ fun AccountScreen(
     }
 }
 
+@Preview(showBackground = true)
 @Composable
 fun AccountScreenPreview() {
-    val mockUserAssetModel = UserAssetModel(
-        myAsset = 50000000,
-        investAsset = 1000000000,
-        orderHistory = 10,
-        monthProfit = 111111111
-    )
-
-    val mockUserStockCryptoModel = listOf(
-        UserStockCryptoModel(
-            logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/625px-Apple_logo_black.svg.png",
-            type = AssetType.STOCK,
-            name = "애플",
-            amount = 123,
-            price = 11111111,
-            priceVariation = -1111111,
-            priceVariationPercent = 4.0
-        ),
-        UserStockCryptoModel(
-            logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png",
-            type = AssetType.CRYPTO,
-            name = "비트코인",
-            amount = 10,
-            price = 50000000,
-            priceVariation = 1000000,
-            priceVariationPercent = 2.0
-        ),
-        UserStockCryptoModel(
-            logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png",
-            type = AssetType.CRYPTO,
-            name = "비트코인",
-            amount = 10,
-            price = 50000000,
-            priceVariation = 1000000,
-            priceVariationPercent = 2.0
-        ),
-        UserStockCryptoModel(
-            logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png",
-            type = AssetType.CRYPTO,
-            name = "비트코인",
-            amount = 10,
-            price = 50000000,
-            priceVariation = 0,
-            priceVariationPercent = 0.0
-        ),
-        UserStockCryptoModel(
-            logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png",
-            type = AssetType.STOCK,
-            name = "구글",
-            amount = 50,
-            price = 2500000,
-            priceVariation = 50000,
-            priceVariationPercent = 2.1
-        )
-    )
-
     val mockHoldingNewsModel = HoldingNewsModel(
         author = "이데일리",
         title = "애플, 사상 최고가... 올해 세계경제 2.6% 성장 전망",
         img = "https://i.pinimg.com/474x/3d/c9/64/3dc9647bffee1578c683db59d9cbaa24.jpg"
     )
 
+    val mockHoldings = listOf(
+        HoldingModel(
+            id = 1,
+            marketId = 101,
+            koreanName = "삼성전자",
+            englishName = "Samsung Electronics",
+            marketCode = "005930.KQ",
+            marketType = "stock",
+            quantity = 10,
+            price = 70000
+        ),
+        HoldingModel(
+            id = 2,
+            marketId = 202,
+            koreanName = "비트코인",
+            englishName = "Bitcoin",
+            marketCode = "BTC",
+            marketType = "crypto",
+            quantity = 2,
+            price = 55000000
+        )
+    )
+
+    val mockUiState = GetHoldingUiState.Success(mockHoldings)
+
+    val mockCryptoPriceUiState = GetCurrentCryptoPriceUiState.Success(
+        markets = listOf(
+            CurrentCryptoPriceModel(
+                market = "005930.KQ",
+                tradePrice = 71000.0
+            ),
+            CurrentCryptoPriceModel(
+                market = "BTC",
+                tradePrice = 56000000.0
+            )
+        )
+    )
+
+    val mockMonthOrderUiState = GetMonthOrderUiState.Success(
+        account = OrderModel(
+            orderCount = 12,
+            rate = 35000
+        )
+    )
+
     AccountScreen(
-        userAssetModel = mockUserAssetModel,
-        userStockCryptoModel = mockUserStockCryptoModel,
+        krwBalance = 100000,
+        getHoldingListData = mockUiState,
+        getCurrentCryptoPriceData = mockCryptoPriceUiState,
+        getMonthOrderData = mockMonthOrderUiState,
         holdingNewsModel = mockHoldingNewsModel
     )
 }
