@@ -44,8 +44,8 @@ fun CryptoAssetListItem(
         ) {
             Row(
                 modifier = Modifier.fillMaxHeight(),
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
-                ,verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
