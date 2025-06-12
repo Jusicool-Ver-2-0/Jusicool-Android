@@ -170,8 +170,9 @@ private fun ChartItem(data: ChartItemData) {
                 )
 
                 Text(
-                    text = "(${data.percentageChange}%)",
-                    style = typography.label
+                    text = "(${abs(data.percentageChange)}%)",
+                    style = typography.label,
+                    color = textColor,
                 )
             }
         }
