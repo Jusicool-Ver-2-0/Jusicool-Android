@@ -13,12 +13,7 @@ import com.jusicool.usecase.holding.GetHoldingResponseUseCase
 import com.jusicool.usecase.order.GetMonthOrderUseCase
 import com.jusicool.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,13 +31,45 @@ class AccountViewModel @Inject constructor(
     private val _holdingUiState = MutableStateFlow<GetHoldingUiState>(GetHoldingUiState.Loading)
     val holdingUiState = _holdingUiState.asStateFlow()
 
-    private val _currentCryptoPriceUiState = MutableStateFlow<GetCurrentCryptoPriceUiState>(GetCurrentCryptoPriceUiState.Loading)
-    val currentCryptoPriceUiState = _currentCryptoPriceUiState.asStateFlow()
-
     private val _monthOrderUiState = MutableStateFlow<GetMonthOrderUiState>(GetMonthOrderUiState.Loading)
     val monthOrderUiState = _monthOrderUiState.asStateFlow()
 
-    private var cryptoPollingJob: Job? = null
+    private val _markets = MutableStateFlow<String?>(null)
+
+    val currentCryptoPriceUiState: StateFlow<GetCurrentCryptoPriceUiState> =
+        _markets
+            .flatMapLatest { markets ->
+                if (markets.isNullOrBlank()) {
+                    flowOf(GetCurrentCryptoPriceUiState.Blank)
+                } else {
+                    flow {
+                        while (true) {
+                            emit(markets)
+                            kotlinx.coroutines.delay(1000)
+                        }
+                    }.flatMapLatest { mkt ->
+                        getCurrentCryptoPriceUseCase(mkt)
+                            .getOrElse {
+                                Logger.e("AccountViewModel", "현재 코인 가격 요청 실패: ${it.message}")
+                                return@flatMapLatest flowOf(
+                                    GetCurrentCryptoPriceUiState.Error(it.message ?: "Unknown error")
+                                )
+                            }
+                            .catch {
+                                Logger.e("AccountViewModel", "가격 로딩 중 에러: ${it.message}")
+                                GetCurrentCryptoPriceUiState.Error(it.message ?: "Unknown error")
+                            }
+                            .map { crypto ->
+                                GetCurrentCryptoPriceUiState.Success(crypto)
+                            }
+                    }
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = GetCurrentCryptoPriceUiState.Loading
+            )
 
     fun getAccount() = viewModelScope.launch {
         _accountUiState.value = GetAccountUiState.Loading
@@ -76,7 +103,6 @@ class AccountViewModel @Inject constructor(
                         }
                         .collect { stockList ->
                             Logger.d("AccountViewModel", "주식 정보 로드 성공: $stockList")
-                            // TODO()
                         }
                 }
 
@@ -90,7 +116,7 @@ class AccountViewModel @Inject constructor(
                             Logger.d("AccountViewModel", "코인 정보 로드 성공: $cryptoList")
                             _holdingUiState.value = GetHoldingUiState.Success(cryptoList)
                             val marketValue = extractMarketValueFromHolding(cryptoList)
-                            startCryptoPricePolling(marketValue)
+                            _markets.value = marketValue
                         }
                 }
             },
@@ -100,7 +126,6 @@ class AccountViewModel @Inject constructor(
             }
         )
     }
-
 
     private fun extractMarketValueFromHolding(holding: List<HoldingModel>): String {
         val cryptoMarketIds = holding
@@ -112,46 +137,6 @@ class AccountViewModel @Inject constructor(
         return markets
     }
 
-    private fun startCryptoPricePolling(markets: String) {
-        cryptoPollingJob?.cancel()
-
-        cryptoPollingJob = viewModelScope.launch {
-            if (markets.isBlank()) {
-                Logger.d("AccountViewModel", "마켓 정보가 비어 있어 폴링을 시작할 수 없습니다.")
-                _currentCryptoPriceUiState.value = GetCurrentCryptoPriceUiState.Blank
-                return@launch
-            }
-
-            while (isActive) {
-                getCurrentCryptoPrice(markets)
-                delay(1000)
-            }
-        }
-    }
-
-    private suspend fun getCurrentCryptoPrice(markets: String) {
-        getCurrentCryptoPriceUseCase(markets = markets)
-            .onSuccess {
-                it.catch {
-                    Logger.e("AccountViewModel", "현재 코인 정보 불러오기 실패: ${it.message}")
-                    _currentCryptoPriceUiState.value = GetCurrentCryptoPriceUiState.Error(it.message ?: "Unknown error")
-                }
-                it.collect { crypto ->
-                    Logger.d("AccountViewModel", "현재 코인 정보 로드 성공: $crypto")
-                    _currentCryptoPriceUiState.value = GetCurrentCryptoPriceUiState.Success(crypto)
-                }
-            }
-            .onFailure {
-                Logger.e("AccountViewModel", "현재 코인 정보 요청 실패: ${it.message}")
-                _currentCryptoPriceUiState.value = GetCurrentCryptoPriceUiState.Error(it.message ?: "Unknown error")
-            }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        cryptoPollingJob?.cancel()
-    }
-
     fun getMonthOrder() = viewModelScope.launch {
         _monthOrderUiState.value = GetMonthOrderUiState.Loading
         getMonthOrderUseCase()
@@ -161,7 +146,7 @@ class AccountViewModel @Inject constructor(
                     _monthOrderUiState.value = GetMonthOrderUiState.Error(it.message ?: "Unknown error")
                 }
                 it.collect{ order ->
-                    Logger.d("AccountViewModel", "한달 수익,주문 내역 불러오기 성공: ${order}")
+                    Logger.d("AccountViewModel", "한달 수익,주문 내역 불러오기 성공: $order")
                     _monthOrderUiState.value = GetMonthOrderUiState.Success(order)
                 }
             }
