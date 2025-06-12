@@ -14,6 +14,7 @@ import com.jusicool.usecase.holding.HoldingType
 import com.jusicool.usecase.order.GetMonthOrderUseCase
 import com.jusicool.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -53,7 +54,7 @@ class AccountViewModel @Inject constructor(
                         } catch (e: Exception) {
                             emit(GetCurrentCryptoPriceUiState.Error(e.message ?: "Unknown error"))
                         }
-                        kotlinx.coroutines.delay(1000)
+                        delay(1000)
                     }
                 }
             }
