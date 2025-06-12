@@ -25,9 +25,7 @@ fun AssetList(
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
-            val stockHoldings = holdings.filter { it.marketType == "STOCK" }
-            if (stockHoldings.isNotEmpty()) {
+            if (holdings.any { it.marketType == "STOCK" }) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
                         text = "주식",
@@ -36,7 +34,7 @@ fun AssetList(
                     )
 
                     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        stockHoldings.forEach { asset ->
+                        holdings.filter { it.marketType == "STOCK" }.forEach { asset ->
                             StockAssetListItem(
                                 holding = asset
                             )
@@ -46,9 +44,7 @@ fun AssetList(
             }
 
 
-            val cryptoHoldings = holdings.filter { it.marketType == "CRYPTO" }
-
-            if (cryptoHoldings.isNotEmpty()) {
+            if (holdings.any { it.marketType == "CRYPTO" }) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
                         text = "코인",
@@ -58,7 +54,7 @@ fun AssetList(
 
 
                     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        cryptoHoldings.forEach { holding ->
+                        holdings.filter { it.marketType == "CRYPTO" }.forEach { holding ->
                             CryptoAssetListItem(
                                 holding = holding,
                                 getCurrentCryptoPriceData = getCurrentCryptoPriceData

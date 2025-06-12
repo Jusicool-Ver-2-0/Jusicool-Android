@@ -65,25 +65,42 @@ class AccountViewModel @Inject constructor(
 
     fun getHolding() = viewModelScope.launch {
         _holdingUiState.value = GetHoldingUiState.Loading
-        getHoldingUseCase()
-            .onSuccess {
-                it.catch {
-                    Logger.e("AccountViewModel", "가지고 있는 코인&주식 정보 불러오기 실패: ${it.message}")
-                    _holdingUiState.value = GetHoldingUiState.Error(it.message ?: "Unknown error")
-                }
-                it.collect { holding ->
-                    Logger.d("AccountViewModel", "가지고 있는 코인&주식 정보 로드 성공: $holding")
-                    _holdingUiState.value = GetHoldingUiState.Success(holding)
 
-                    val marketValue = extractMarketValueFromHolding(holding)
-                    startCryptoPricePolling(marketValue)
+        getHoldingUseCase().fold(
+            onSuccess = { holdingType ->
+                launch {
+                    holdingType.stockHoldings
+                        .catch {
+                            Logger.e("AccountViewModel", "주식 정보 로드 실패: ${it.message}")
+                            _holdingUiState.value = GetHoldingUiState.Error(it.message ?: "Unknown error")
+                        }
+                        .collect { stockList ->
+                            Logger.d("AccountViewModel", "주식 정보 로드 성공: $stockList")
+                            // TODO()
+                        }
                 }
+
+                launch {
+                    holdingType.cryptoHoldings
+                        .catch {
+                            Logger.e("AccountViewModel", "코인 정보 로드 실패: ${it.message}")
+                            _holdingUiState.value = GetHoldingUiState.Error(it.message ?: "Unknown error")
+                        }
+                        .collect { cryptoList ->
+                            Logger.d("AccountViewModel", "코인 정보 로드 성공: $cryptoList")
+                            _holdingUiState.value = GetHoldingUiState.Success(cryptoList)
+                            val marketValue = extractMarketValueFromHolding(cryptoList)
+                            startCryptoPricePolling(marketValue)
+                        }
+                }
+            },
+            onFailure = { throwable ->
+                Logger.e("AccountViewModel", "가지고 있는 코인&주식 정보 요청 실패: ${throwable.message}")
+                _holdingUiState.value = GetHoldingUiState.Error(throwable.message ?: "Unknown error")
             }
-            .onFailure {
-                Logger.e("AccountViewModel", "가지고 있는 코인&주식 정보 요청 실패: ${it.message}")
-                _holdingUiState.value = GetHoldingUiState.Error(it.message ?: "Unknown error")
-            }
+        )
     }
+
 
     private fun extractMarketValueFromHolding(holding: List<HoldingModel>): String {
         val cryptoMarketIds = holding
