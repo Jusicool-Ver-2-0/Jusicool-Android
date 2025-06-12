@@ -1,7 +1,5 @@
 package com.meister.investmentsearch.view
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,27 +14,27 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.utils.toSignedText
 import com.meister.investmentsearch.component.RecentSearchTag
 import com.meister.investmentsearch.viewModel.ChartListUiState
 import com.meister.investmentsearch.viewModel.ChartListViewModel
+import com.school_of_company.design_system.icon.RightArrowIcon
 import com.school_of_company.design_system.icon.SearchIcon
 import com.school_of_company.design_system.icon.UnionIcon
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlin.math.abs
 
 @Composable
 internal fun ChartListRoute(
@@ -68,27 +66,83 @@ internal fun ChartListScreen(
     uiState: ChartListUiState,
     onSearchCLick: () -> Unit,
 ) {
-    JusicoolTheme { colors, typography ->
-        Column(
-            modifier = modifier.fillMaxSize()
-        ) {
-            JusicoolTopBar(
-                modifier = Modifier.fillMaxWidth(),
-                startIcon = { UnionIcon() },
-                endIcon = {
-                    SearchIcon(modifier = Modifier.clickable(onClick = onSearchCLick))
-                }
-            )
-
-            if (uiState.resentSearchTagData.isNotEmpty()) {
-                RecentSearchSection(data = uiState.resentSearchTagData)
-
-                Spacer(Modifier.height(16.dp))
+    Column(
+        modifier = modifier.fillMaxSize()
+    ) {
+        JusicoolTopBar(
+            modifier = Modifier.fillMaxWidth(),
+            startIcon = { UnionIcon() },
+            endIcon = {
+                SearchIcon(modifier = Modifier.clickable(onClick = onSearchCLick))
             }
+        )
 
-            ChartListSection(data = uiState.chartListData)
+        if (uiState.resentSearchTagData.isNotEmpty()) {
+            RecentSearchSection(data = uiState.resentSearchTagData)
+
+            Spacer(Modifier.height(16.dp))
         }
+
+        ChartListSection(data = uiState.chartListData)
     }
+}
+
+@Preview
+@Composable
+private fun ChartListScreenPreview() {
+    ChartListScreen(
+        uiState = ChartListUiState(
+            isLoading = false,
+            resentSearchTagData = persistentListOf(
+                InvestmentSearchTagData(
+                    investmentName = "Apple Inc.",
+                    investmentChangeRate = 1.5,
+                    onClearClick = {}
+                ),
+                InvestmentSearchTagData(
+                    investmentName = "Microsoft Corporation",
+                    investmentChangeRate = -2.3,
+                    onClearClick = {}
+                ),
+                InvestmentSearchTagData(
+                    investmentName = "Amazon.com, Inc.",
+                    investmentChangeRate = 0.0,
+                    onClearClick = {},
+                ), InvestmentSearchTagData(
+                    investmentName = "Google LLC",
+                    investmentChangeRate = 3.1,
+                    onClearClick = {},
+                )
+            ),
+            chartListData = persistentListOf(
+                ChartItemData(
+                    name = "Apple Inc.",
+                    logoUrl = "https://example.com/apple-logo.png",
+                    priceChange = 1.5,
+                    percentageChange = 0.5,
+                ),
+                ChartItemData(
+                    name = "Microsoft Corporation",
+                    logoUrl = "https://example.com/microsoft-logo.png",
+                    priceChange = -2.3,
+                    percentageChange = -0.7,
+                ),
+                ChartItemData(
+                    name = "Amazon.com, Inc.",
+                    logoUrl = "https://example.com/amazon-logo.png",
+                    priceChange = 0.0,
+                    percentageChange = 0.0,
+                ),
+                ChartItemData(
+                    name = "Google LLC",
+                    logoUrl = "https://example.com/google-logo.png",
+                    priceChange = 3.1,
+                    percentageChange = 1.2,
+                ),
+            ),
+        ),
+        onSearchCLick = {},
+    )
 }
 
 @Composable
@@ -142,7 +196,7 @@ private fun ChartItem(data: ChartItemData) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                AsyncImage(
+                /*AsyncImage(
                     model = data.logoUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
@@ -151,9 +205,10 @@ private fun ChartItem(data: ChartItemData) {
                         .clip(CircleShape)
                         .border(2.dp, color = colors.gray100, CircleShape)
                         .background(color = colors.white),
-                )
-
-
+                )*/
+                RightArrowIcon(modifier = Modifier.size(40.dp))
+                // TODO: 임시 코드 
+                
                 Text(
                     text = data.name,
                     style = typography.subTitle
