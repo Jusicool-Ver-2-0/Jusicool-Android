@@ -24,10 +24,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
-    val getAccountResponseUseCase: GetAccountResponseUseCase,
-    val getHoldingUseCase: GetHoldingResponseUseCase,
-    val getCurrentCryptoPriceUseCase: GetCurrentCryptoPriceUseCase,
-    val getMonthOrderUseCase: GetMonthOrderUseCase
+    private val getAccountResponseUseCase: GetAccountResponseUseCase,
+    private val getHoldingUseCase: GetHoldingResponseUseCase,
+    private val getCurrentCryptoPriceUseCase: GetCurrentCryptoPriceUseCase,
+    private val getMonthOrderUseCase: GetMonthOrderUseCase
 ) : ViewModel() {
 
     private val _accountUiState = MutableStateFlow<GetAccountUiState>(GetAccountUiState.Loading)
