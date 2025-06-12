@@ -1,13 +1,13 @@
 package com.jusicool.usecase.auth
 
+import com.jusicool.entity.auth.SignInModel
 import com.jusicool.repository.auth.AuthRepository
-import com.jusicool.model.auth.SignInRequest
 import javax.inject.Inject
 
 class SignInRequestUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ){
-    operator fun invoke(body: SignInRequest) = runCatching {
+    operator fun invoke(body: SignInModel) = runCatching {
         authRepository.signIn(body = body)
     }
 }
