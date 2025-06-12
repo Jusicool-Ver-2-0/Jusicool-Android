@@ -44,6 +44,8 @@ import com.jusicool.entity.holding.HoldingModel
 import com.jusicool.entity.order.OrderModel
 import com.jusicool.model.news.HoldingNewsModel
 import com.jusicool.utils.formatMoney
+import com.jusicool.utils.formatPercent
+import com.jusicool.utils.toSignedFormattedText
 import com.school_of_company.design_system.icon.RightArrowIcon
 
 
@@ -194,8 +196,8 @@ fun AccountScreen(
 
 
                             val (profit, rate) = profitAndRate
-                            val profitText = if (profit >= 0) "+${"%,d".format(profit)}원" else "${"%,d".format(profit)}원"
-                            val rateText = "(${String.format("%.1f", rate)}%)"
+                            val profitText ="${profit.toSignedFormattedText()}원"
+                            val rateText = "(${rate.formatPercent()})"
 
                             Text(
                                 text = "$profitText $rateText",
@@ -287,7 +289,7 @@ fun AccountScreen(
                                     val monthProfitText = when (getMonthOrderData) {
                                         is GetMonthOrderUiState.Success -> {
                                             val profit = getMonthOrderData.account.rate
-                                            profit.formatMoney()
+                                            "${profit.formatMoney()}원"
                                         }
                                         else -> "0원"
                                     }

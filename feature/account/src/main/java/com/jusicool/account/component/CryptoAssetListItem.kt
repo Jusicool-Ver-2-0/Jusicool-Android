@@ -25,6 +25,8 @@ import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.entity.crypto.CurrentCryptoPriceModel
 import com.jusicool.entity.holding.HoldingModel
 import com.jusicool.utils.formatMoney
+import com.jusicool.utils.formatPercent
+import com.jusicool.utils.toSignedFormattedText
 
 @Composable
 fun CryptoAssetListItem(
@@ -96,24 +98,20 @@ fun CryptoAssetListItem(
 
 
                         Text(
-                            text = "${"%,d".format((holding.quantity * price).toInt())}원",
+                            text = "${((holding.quantity * price).toInt().formatMoney())}원",
                             color = colors.black,
                             style = typography.bodySmall
                         )
 
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = if (priceVariation >= 0) {
-                                    (priceVariation * holding.quantity).formatMoney()
-                                } else {
-                                    (priceVariation * holding.quantity).formatMoney()
-                                },
+                                text = (priceVariation * holding.quantity).toSignedFormattedText(),
                                 color = textColor,
                                 style = typography.label
                             )
 
                             Text(
-                                text = "(${String.format("%.1f", priceVariationPercent)}%)",
+                                text = "(${priceVariationPercent.formatPercent()})",
                                 color = textColor,
                                 style = typography.label
                             )
