@@ -47,6 +47,7 @@ import com.jusicool.utils.formatMoney
 import com.jusicool.utils.formatPercent
 import com.jusicool.utils.toSignedFormattedText
 import com.school_of_company.design_system.icon.RightArrowIcon
+import kotlinx.collections.immutable.toPersistentList
 
 
 @Composable
@@ -218,7 +219,7 @@ fun AccountScreen(
                             when (getHoldingListData) {
                                 is GetHoldingUiState.Success -> {
                                     AssetList(
-                                        holdings = getHoldingListData.account,
+                                        holdings = getHoldingListData.account.toPersistentList(),
                                         getCurrentCryptoPriceData = getCurrentCryptoPriceData
                                     )
                                 }
