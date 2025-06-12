@@ -12,4 +12,5 @@ dependencies {
 
     implementation(project(":domain:repository"))
     implementation(project(":data:model"))
+    implementation(project(":domain:entity"))
 }
