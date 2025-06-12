@@ -144,7 +144,7 @@ class AccountViewModel @Inject constructor(
                     _monthOrderUiState.value = GetMonthOrderUiState.Error(it.message ?: "Unknown error")
                 }
                 it.collect{ order ->
-                    Logger.e("AccountViewModel", "한달 수익,주문 내역 불러오기 실패: ${order}")
+                    Logger.d("AccountViewModel", "한달 수익,주문 내역 불러오기 성공: ${order}")
                     _monthOrderUiState.value = GetMonthOrderUiState.Success(order)
                 }
             }
