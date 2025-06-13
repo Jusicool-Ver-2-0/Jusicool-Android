@@ -1,6 +1,5 @@
 package com.jusicool.account.view
 
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,7 +37,6 @@ import com.jusicool.design_system.R
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.entity.crypto.CurrentCryptoPriceModel
 import com.jusicool.entity.holding.HoldingModel
 import com.jusicool.entity.order.OrderModel
 import com.jusicool.model.news.HoldingNewsModel
@@ -54,7 +51,7 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 internal fun AccountRoute(
     viewModel: AccountViewModel = hiltViewModel(),
-    navigateToChart: () -> Unit
+    navigateToChart: (marketCode: String, name: String) -> Unit
 ) {
     val accountUiState by viewModel.accountUiState.collectAsStateWithLifecycle()
     val holdingUiState by viewModel.holdingUiState.collectAsStateWithLifecycle()
@@ -84,7 +81,7 @@ internal fun AccountRoute(
         krwBalance = krwBalance,
         getHoldingListData = holdingUiState,
         getCurrentCryptoPriceData = currentCryptoPriceUiState,
-        getMonthOrderData= monthOrderUiState,
+        getMonthOrderData = monthOrderUiState,
         holdingNewsModel = mockHoldingNewsModel,
         navigateToChart = navigateToChart
     )
@@ -98,7 +95,7 @@ private fun AccountScreen(
     getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState,
     getMonthOrderData: GetMonthOrderUiState,
     holdingNewsModel: HoldingNewsModel,
-    navigateToChart: () -> Unit
+    navigateToChart: (marketCode: String, name: String) -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -397,6 +394,6 @@ private fun AccountScreenPreview() {
         getCurrentCryptoPriceData = mockCryptoPriceUiState,
         getMonthOrderData = mockMonthOrderUiState,
         holdingNewsModel = mockHoldingNewsModel,
-        navigateToChart = {}
+        navigateToChart = { marketCode, name -> }
     )
 }

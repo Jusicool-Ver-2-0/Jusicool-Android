@@ -23,7 +23,6 @@ import coil.compose.AsyncImage
 import com.jusicool.account.viewModel.uiState.GetCurrentCryptoPriceUiState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.entity.crypto.CurrentCryptoPriceModel
 import com.jusicool.entity.holding.HoldingModel
 import com.jusicool.usecase.crypto.CurrentCryptoHoldingPrice
 import com.jusicool.utils.formatMoney
@@ -35,14 +34,14 @@ fun CryptoAssetListItem(
     modifier: Modifier = Modifier,
     holding: HoldingModel,
     getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState,
-    navigateToChart: () -> Unit
+    navigateToChart: (marketCode: String, name: String) -> Unit
 ) {
     JusicoolTheme { colors, typography ->
         Row(
             modifier = modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min)
-                .JusicoolClickable { navigateToChart() },
+                .JusicoolClickable {     navigateToChart(holding.marketCode, holding.koreanName) },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -162,6 +161,6 @@ fun CryptoAssetListItemPreview() {
                 )
             )
         ),
-        navigateToChart = {}
+        navigateToChart = { marketCode, name -> }
     )
 }

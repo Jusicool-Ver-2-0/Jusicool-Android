@@ -49,6 +49,8 @@ import com.school_of_company.design_system.icon.LetsIconsSettingFillIcon
 
 @Composable
 fun ChartRoute(
+    marketCode: String,
+    koreanName: String,
     popUpBackStack: () -> Unit
 ) {
     val mockCandles = listOf(
@@ -222,13 +224,15 @@ fun ChartRoute(
         ),
         news = mockNews,
         community = mockCommunity,
-        popUpBackStack = popUpBackStack
+        popUpBackStack = popUpBackStack,
+        koreanName = koreanName
     )
 }
 
 @Composable
 fun ChartScreen(
     modifier: Modifier = Modifier,
+    koreanName: String,
     chartInformation: ChartInformationModel,
     candles: List<CandleChartModel>,
     price: ChartPriceModel,
@@ -251,7 +255,7 @@ fun ChartScreen(
         ) {
             JusicoolTopBar(
                 modifier = Modifier.fillMaxWidth(),
-                betweenText = chartInformation.name,
+                betweenText = koreanName,
                 startIcon = { ClarityArrowLineIcon(modifier = Modifier.JusicoolClickable { popUpBackStack() }) },
                 endIcon = { LetsIconsSettingFillIcon(modifier = Modifier.JusicoolClickable { /*TODO()*/ }) }
             )
@@ -620,6 +624,7 @@ fun ChartScreenPreview() {
     )
 
     ChartScreen(
+        koreanName = "삼성전자",
         chartInformation = ChartInformationModel(
             name = "AK 홀딩스",
             price = 218851,

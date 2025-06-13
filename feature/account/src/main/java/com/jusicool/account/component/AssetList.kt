@@ -4,14 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jusicool.account.viewModel.uiState.GetCurrentCryptoPriceUiState
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.entity.crypto.CurrentCryptoPriceModel
 import com.jusicool.entity.holding.HoldingModel
 import com.jusicool.usecase.crypto.CurrentCryptoHoldingPrice
 import kotlinx.collections.immutable.PersistentList
@@ -22,7 +19,7 @@ fun AssetList(
     modifier: Modifier = Modifier,
     holdings: PersistentList<HoldingModel>,
     getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState,
-    navigateToChart: () -> Unit,
+    navigateToChart: (marketCode: String, name: String) -> Unit,
 ) {
     JusicoolTheme { colors, typography ->
         Column(
@@ -93,6 +90,6 @@ fun AssetListPreview() {
                 )
             )
         ),
-        navigateToChart = {}
+        navigateToChart = { marketCode, name -> }
     )
 }
