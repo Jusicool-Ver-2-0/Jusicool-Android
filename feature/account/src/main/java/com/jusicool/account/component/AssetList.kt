@@ -21,7 +21,8 @@ import kotlinx.collections.immutable.persistentListOf
 fun AssetList(
     modifier: Modifier = Modifier,
     holdings: PersistentList<HoldingModel>,
-    getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState
+    getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState,
+    navigateToChart: () -> Unit,
 ) {
     JusicoolTheme { colors, typography ->
         Column(
@@ -60,7 +61,8 @@ fun AssetList(
                         holdings.filter { it.marketType == "CRYPTO" }.forEach { holding ->
                             CryptoAssetListItem(
                                 holding = holding,
-                                getCurrentCryptoPriceData = getCurrentCryptoPriceData
+                                getCurrentCryptoPriceData = getCurrentCryptoPriceData,
+                                navigateToChart = navigateToChart
                             )
                         }
                     }
@@ -90,6 +92,7 @@ fun AssetListPreview() {
                     totalValue = 1
                 )
             )
-        )
+        ),
+        navigateToChart = {}
     )
 }

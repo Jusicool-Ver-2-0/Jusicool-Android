@@ -53,7 +53,8 @@ import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 internal fun AccountRoute(
-    viewModel: AccountViewModel = hiltViewModel()
+    viewModel: AccountViewModel = hiltViewModel(),
+    navigateToChart: () -> Unit
 ) {
     val accountUiState by viewModel.accountUiState.collectAsStateWithLifecycle()
     val holdingUiState by viewModel.holdingUiState.collectAsStateWithLifecycle()
@@ -84,7 +85,8 @@ internal fun AccountRoute(
         getHoldingListData = holdingUiState,
         getCurrentCryptoPriceData = currentCryptoPriceUiState,
         getMonthOrderData= monthOrderUiState,
-        holdingNewsModel = mockHoldingNewsModel
+        holdingNewsModel = mockHoldingNewsModel,
+        navigateToChart = navigateToChart
     )
 }
 
@@ -95,7 +97,8 @@ private fun AccountScreen(
     getHoldingListData: GetHoldingUiState,
     getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState,
     getMonthOrderData: GetMonthOrderUiState,
-    holdingNewsModel: HoldingNewsModel
+    holdingNewsModel: HoldingNewsModel,
+    navigateToChart: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -221,7 +224,8 @@ private fun AccountScreen(
                                 is GetHoldingUiState.Success -> {
                                     AssetList(
                                         holdings = getHoldingListData.account.toPersistentList(),
-                                        getCurrentCryptoPriceData = getCurrentCryptoPriceData
+                                        getCurrentCryptoPriceData = getCurrentCryptoPriceData,
+                                        navigateToChart = navigateToChart
                                     )
                                 }
                                 is GetHoldingUiState.Loading -> {
@@ -392,6 +396,7 @@ private fun AccountScreenPreview() {
         getHoldingListData = mockUiState,
         getCurrentCryptoPriceData = mockCryptoPriceUiState,
         getMonthOrderData = mockMonthOrderUiState,
-        holdingNewsModel = mockHoldingNewsModel
+        holdingNewsModel = mockHoldingNewsModel,
+        navigateToChart = {}
     )
 }
