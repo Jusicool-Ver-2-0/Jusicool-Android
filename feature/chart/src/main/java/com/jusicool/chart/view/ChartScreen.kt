@@ -284,6 +284,7 @@ fun ChartScreen(
     }
 }
 
+@Preview
 @Composable
 fun ChartScreenPreview() {
     val mockCandles = listOf(
