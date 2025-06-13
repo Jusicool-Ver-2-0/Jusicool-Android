@@ -7,7 +7,6 @@ import com.jusicool.network.util.BasicCookieJar
 import com.jusicool.network.BuildConfig
 import com.jusicool.network.api.AccountApi
 import com.jusicool.network.api.AuthApi
-import com.jusicool.network.api.ChartApi
 import com.jusicool.network.api.CryptoApi
 import com.jusicool.network.api.HoldingApi
 import com.jusicool.network.api.OrderApi
@@ -97,10 +96,6 @@ object NetworkModule {
             .client(okHttpClient)
             .addConverterFactory(moshiConverterFactory)
             .build()
-
-    @Provides
-    fun provideChartApi(@UpbitRetrofit retrofit: Retrofit): ChartApi =
-        retrofit.create(ChartApi::class.java)
 
     @Provides
     fun provideAuthApi(@BaseApiRetrofit retrofit: Retrofit): AuthApi =
