@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.jusicool.account.navigation.accountRoute
+import com.jusicool.account.navigation.navigateToAccountRoute
 import com.jusicool.signin.navigation.signInRoute
 
 @Composable
@@ -19,7 +21,11 @@ fun JusicoolNavHost(
     ) {
         signInRoute(
             navigateToSignUp = { /*TODO()*/ },
-            navigateToAccount = { /*TODO()*/ }
+            navigateToAccount = navController::navigateToAccountRoute
+        )
+
+        accountRoute(
+
         )
 
     }

@@ -5,8 +5,12 @@ import com.jusicool.network.util.BaseApiRetrofit
 import com.jusicool.network.util.UpbitRetrofit
 import com.jusicool.network.util.BasicCookieJar
 import com.jusicool.network.BuildConfig
+import com.jusicool.network.api.AccountApi
 import com.jusicool.network.api.AuthApi
 import com.jusicool.network.api.ChartApi
+import com.jusicool.network.api.CryptoApi
+import com.jusicool.network.api.HoldingApi
+import com.jusicool.network.api.OrderApi
 import com.jusicool.network.api.KoreaInvestmentApi
 import com.jusicool.network.util.KoreaInvestmentRetrofit
 import com.squareup.moshi.Moshi
@@ -91,7 +95,7 @@ object NetworkModule {
         moshiConverterFactory: MoshiConverterFactory
     ): Retrofit =
         Retrofit.Builder()
-            .baseUrl("https://api.upbit.com/")
+            .baseUrl("https://api.upbit.com")
             .client(okHttpClient)
             .addConverterFactory(moshiConverterFactory)
             .build()
@@ -103,6 +107,22 @@ object NetworkModule {
     @Provides
     fun provideAuthApi(@BaseApiRetrofit retrofit: Retrofit): AuthApi =
         retrofit.create(AuthApi::class.java)
+
+    @Provides
+    fun provideAccountApi(@BaseApiRetrofit retrofit: Retrofit): AccountApi =
+        retrofit.create(AccountApi::class.java)
+
+    @Provides
+    fun provideHoldingApi(@BaseApiRetrofit retrofit: Retrofit): HoldingApi =
+        retrofit.create(HoldingApi::class.java)
+
+    @Provides
+    fun provideCryptoApi(@UpbitRetrofit retrofit: Retrofit): CryptoApi =
+        retrofit.create(CryptoApi::class.java)
+
+    @Provides
+    fun provideOrderApi(@BaseApiRetrofit retrofit: Retrofit): OrderApi =
+        retrofit.create(OrderApi::class.java)
 
     @Provides
     fun provideKoreaInvestmentApi(@KoreaInvestmentRetrofit retrofit: Retrofit): KoreaInvestmentApi =
