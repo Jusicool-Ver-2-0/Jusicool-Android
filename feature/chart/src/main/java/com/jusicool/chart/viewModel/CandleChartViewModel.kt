@@ -23,8 +23,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -32,7 +30,7 @@ import java.util.TimeZone
 import javax.inject.Inject
 
 @HiltViewModel
-class ChartViewModel @Inject constructor(
+class CandleChartViewModel @Inject constructor(
     private val getMinuteCandleUseCase: GetMinuteCandleUseCase,
     private val getCurrentMinuteCandleUseCase: GetCurrentMinuteCandleUseCase
 ) : ViewModel() {

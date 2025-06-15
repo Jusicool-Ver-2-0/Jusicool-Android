@@ -1,15 +1,11 @@
 package com.jusicool.chart.view
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.runtime.collectAsState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,7 +33,7 @@ import com.jusicool.chart.component.ChartPrice
 import com.jusicool.chart.component.CommunityCard
 import com.jusicool.chart.component.NewsCard
 import com.jusicool.chart.component.PriceBarChart
-import com.jusicool.chart.viewModel.ChartViewModel
+import com.jusicool.chart.viewModel.CandleChartViewModel
 import com.jusicool.chart.viewModel.uiState.GetCurrentMinuteCandleUiState
 import com.jusicool.chart.viewModel.uiState.GetMinuteCandleUiState
 import com.jusicool.design_system.component.button.JusicoolFilledButton
@@ -45,19 +41,16 @@ import com.jusicool.design_system.component.button.state.ButtonState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.entity.crypto.CurrentMinuteCandleModel
 import com.jusicool.model.community.CommunityModel
 import com.jusicool.model.news.NewsModel
-import com.jusicool.utils.formatMoney
 import com.school_of_company.design_system.icon.ClarityArrowLineIcon
 import com.school_of_company.design_system.icon.LetsIconsSettingFillIcon
-import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun ChartRoute(
-    viewModel: ChartViewModel = hiltViewModel(),
+    viewModel: CandleChartViewModel = hiltViewModel(),
     marketCode: String,
     koreanName: String,
     popUpBackStack: () -> Unit
