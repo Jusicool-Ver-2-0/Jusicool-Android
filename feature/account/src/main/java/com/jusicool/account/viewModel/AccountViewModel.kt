@@ -54,7 +54,7 @@ internal class AccountViewModel @Inject constructor(
                         } catch (e: Exception) {
                             emit(GetCurrentCryptoPriceUiState.Error(e.message ?: "Unknown error"))
                         }
-                        delay(1000)
+                        delay(500)
                     }
                 }
             }
