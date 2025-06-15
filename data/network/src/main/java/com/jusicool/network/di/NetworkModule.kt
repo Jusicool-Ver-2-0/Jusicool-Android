@@ -12,6 +12,8 @@ import com.jusicool.network.api.CryptoApi
 import com.jusicool.network.api.HoldingApi
 import com.jusicool.network.api.OrderApi
 import com.jusicool.network.api.KoreaInvestmentApi
+import com.jusicool.network.util.KoreaInvestmentAuthManager
+import com.jusicool.network.util.KoreaInvestmentAuthInterceptor
 import com.jusicool.network.util.KoreaInvestmentRetrofit
 import com.squareup.moshi.Moshi
 import dagger.Module
@@ -24,6 +26,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -55,6 +58,21 @@ object NetworkModule {
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor(httpLoggingInterceptor)
+            .build()
+
+
+    @Provides
+    @Singleton
+    fun provideKoreaInvestmentOkHttpClient(
+        httpLoggingInterceptor: HttpLoggingInterceptor,
+        koreaInvestmentAuthManager: KoreaInvestmentAuthManager
+    ): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(httpLoggingInterceptor)
+            .addInterceptor(KoreaInvestmentAuthInterceptor(koreaInvestmentAuthManager))
+            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
             .build()
 
 
@@ -96,6 +114,19 @@ object NetworkModule {
     ): Retrofit =
         Retrofit.Builder()
             .baseUrl("https://api.upbit.com")
+            .client(okHttpClient)
+            .addConverterFactory(moshiConverterFactory)
+            .build()
+
+    @Provides
+    @Singleton
+    @KoreaInvestmentRetrofit
+    fun provideKoreaInvestmentRetrofit(
+        @Named("koreaInvestmentOkHttpClient") okHttpClient: OkHttpClient,
+        moshiConverterFactory: MoshiConverterFactory
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(BuildConfig.KOREAINVESTMENT_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(moshiConverterFactory)
             .build()
