@@ -58,7 +58,7 @@ fun CandleChart(
         var isFirstLoad by remember { mutableStateOf(true) }
         var previousSize by remember { mutableStateOf(candles.size) }
 
-
+        // 현재 화면에 보이는 캔들 리스트 계산
         val visibleCandles = remember(
             listState.firstVisibleItemIndex,
             listState.layoutInfo.visibleItemsInfo,
@@ -70,19 +70,23 @@ fun CandleChart(
             else candles.subList(start.coerceAtLeast(0), (end + 1).coerceAtMost(candles.size))
         }
 
+        // 현재 캔들 데이터에서 최신 캔들 하나 가져오기
         val currentCandle = if (currentCandlesData is GetCurrentMinuteCandleUiState.Success && currentCandlesData.candles.isNotEmpty()) {
             currentCandlesData.candles.first()
         } else null
 
+        // 현재 캔들이 화면에 보이는지 여부 확인
         val isCurrentCandleVisible = listState.layoutInfo.visibleItemsInfo
             .any { it.index == candles.lastIndex + 1 }
 
+        // 현재 캔들이 보이면 현재 캔들도 포함, 아니면 그냥 visibleCandles만 사용
         val visibleWithCurrent = if (isCurrentCandleVisible && currentCandle != null) {
             visibleCandles + currentCandle
         } else {
             visibleCandles
         }
 
+        // 보이는 캔들들 중 최고가 계산
         val maxHigh = visibleWithCurrent.maxOfOrNull { candle ->
             when (candle) {
                 is MinuteCandleModel -> candle.highPrice
@@ -90,6 +94,8 @@ fun CandleChart(
                 else -> 0.0
             }
         } ?: 0.0
+
+        // 보이는 캔들들 중 최저가 계산
         val minLow = visibleWithCurrent.minOfOrNull { candle ->
             when (candle) {
                 is MinuteCandleModel -> candle.lowPrice
@@ -98,11 +104,15 @@ fun CandleChart(
             }
         } ?: 0.0
 
+        // 가격 라벨 간격 계산
         val priceStep = (maxHigh - minLow) / (numberOfLabels - 1)
+
+        // Y축에 표시될 가격 라벨 리스트 생성 (높은 가격이 위로 오도록 뒤집음)
         val priceLabels = List(numberOfLabels) { index ->
             priceStep * index + minLow
         }.reversed()
 
+        // 기준 캔들 선택: 현재 캔들이 보이면 그것을, 아니면 마지막 보이는 캔들을 사용
         val referenceCandle = when {
             isCurrentCandleVisible && currentCandle != null -> currentCandle
             else -> visibleCandles.lastOrNull()
