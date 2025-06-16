@@ -66,7 +66,7 @@ fun ChartRoute(
     val refreshCandleData = viewModel::refreshCandleData
 
     LaunchedEffect(Unit) {
-        viewModel.getMinuteCandle(market = marketCode, to = formattedNow, count = 50)
+        viewModel.getMinuteCandle(market = marketCode, to = formattedNow, count = 200)
         viewModel.getChartData(market = marketCode)
         viewModel.startPeriodicRequest(market = marketCode)
     }
