@@ -137,10 +137,6 @@ object NetworkModule {
             .build()
 
     @Provides
-    fun provideChartApi(@UpbitRetrofit retrofit: Retrofit): ChartApi =
-        retrofit.create(ChartApi::class.java)
-
-    @Provides
     fun provideAuthApi(@BaseApiRetrofit retrofit: Retrofit): AuthApi =
         retrofit.create(AuthApi::class.java)
 
