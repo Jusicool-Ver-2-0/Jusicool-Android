@@ -15,12 +15,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,11 +33,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jusicool.chart.component.BuyBottomSheet
 import com.jusicool.chart.component.CandleChart
 import com.jusicool.chart.component.ChartPrice
 import com.jusicool.chart.component.CommunityCard
 import com.jusicool.chart.component.NewsCard
 import com.jusicool.chart.component.PriceBarChart
+import com.jusicool.chart.component.SellBottomSheet
 import com.jusicool.chart.viewModel.CandleChartViewModel
 import com.jusicool.chart.viewModel.uiState.GetCurrentMinuteCandleUiState
 import com.jusicool.chart.viewModel.uiState.GetMinuteCandleUiState
@@ -45,6 +52,7 @@ import com.jusicool.model.community.CommunityModel
 import com.jusicool.model.news.NewsModel
 import com.school_of_company.design_system.icon.ClarityArrowLineIcon
 import com.school_of_company.design_system.icon.LetsIconsSettingFillIcon
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -53,6 +61,7 @@ fun ChartRoute(
     viewModel: CandleChartViewModel = hiltViewModel(),
     marketCode: String,
     koreanName: String,
+    quantity: Int,
     popUpBackStack: () -> Unit
 ) {
     val minuteCandleUiState by viewModel.minuteCandleUiState.collectAsStateWithLifecycle()
@@ -166,15 +175,18 @@ fun ChartRoute(
         popUpBackStack = popUpBackStack,
         koreanName = koreanName,
         marketCode = marketCode,
+        quantity = quantity,
         onRefresh = refreshCandleData
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChartScreen(
     modifier: Modifier = Modifier,
     koreanName: String,
     marketCode: String,
+    quantity: Int,
     minuteCandleData: GetMinuteCandleUiState,
     currentMinuteCandleData: GetCurrentMinuteCandleUiState,
     chartInformation: ChartInformationModel,
@@ -187,7 +199,38 @@ fun ChartScreen(
     val scrollState = rememberScrollState()
     var selectedInfo by remember { mutableStateOf("종목 정보") }
 
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val coroutineScope = rememberCoroutineScope()
+    var showBuyBottomSheet by remember { mutableStateOf(false) }
+    var showSellBottomSheet by remember { mutableStateOf(false) }
+
     JusicoolTheme { colors, typography ->
+        if (showBuyBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBuyBottomSheet = false },
+                sheetState = sheetState,
+                dragHandle = { BottomSheetDefaults.DragHandle() },
+                containerColor = colors.white,
+            ) {
+                BuyBottomSheet(
+                    name = koreanName,
+                )
+            }
+        }
+
+        if (showSellBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showSellBottomSheet = false },
+                sheetState = sheetState,
+                dragHandle = { BottomSheetDefaults.DragHandle() },
+                containerColor = colors.white,
+            ) {
+                SellBottomSheet(
+                    name = koreanName,
+                )
+            }
+        }
+
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -223,15 +266,56 @@ fun ChartScreen(
                     onRefresh = { onRefresh(marketCode) }
                 )
 
-                JusicoolFilledButton(
-                    modifier = Modifier
+                if (quantity < 1) {
+                    JusicoolFilledButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp),
+                        text = "구매하기",
+                        state = ButtonState.Enable,
+                        filledColor = colors.error,
+                        onClick = {
+                            coroutineScope.launch {
+                                showBuyBottomSheet = true
+                                sheetState.show()
+                            }
+                        }
+                    )
+                }
+                else {
+                    Row(
+                        modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp),
-                    text = "구매하기",
-                    state = ButtonState.Enable,
-                    filledColor = colors.error,
-                    onClick = {}
-                )
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        JusicoolFilledButton(
+                            modifier = Modifier.weight(1f),
+                            text = "구매하기",
+                            state = ButtonState.Enable,
+                            filledColor = colors.error,
+                            onClick = {
+                                coroutineScope.launch {
+                                    showBuyBottomSheet = true
+                                    sheetState.show()
+                                }
+                            }
+                        )
+
+                        JusicoolFilledButton(
+                            modifier = Modifier.weight(1f),
+                            text = "판매하기",
+                            state = ButtonState.Enable,
+                            filledColor = colors.main,
+                            onClick = {
+                                coroutineScope.launch {
+                                    showSellBottomSheet = true
+                                    sheetState.show()
+                                }
+                            }
+                        )
+                    }
+                }
 
                 Column(
                     modifier = Modifier
@@ -454,6 +538,7 @@ fun ChartScreenPreview() {
         ),
         popUpBackStack = {},
         marketCode = "",
+        quantity = 0,
         onRefresh = {}
     )
 }
