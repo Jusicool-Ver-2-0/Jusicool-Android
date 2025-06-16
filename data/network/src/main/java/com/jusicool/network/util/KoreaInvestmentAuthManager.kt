@@ -1,14 +1,16 @@
 package com.jusicool.network.util
 
 import android.content.Context
+import com.jusicool.model.koreaInvestment.AccessKeyRequest
+import com.jusicool.network.BuildConfig
 import com.jusicool.network.api.KoreaInvestmentApi
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class KoreaInvestmentAuthManager @Inject constructor(
-    private val koreaInvestmentApi: KoreaInvestmentApi, // 토큰 발급용 API
-    private val context: Context
+    private val koreaInvestmentApi: KoreaInvestmentApi,
+    context: Context
 ) {
 
     private val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
@@ -28,8 +30,13 @@ class KoreaInvestmentAuthManager @Inject constructor(
             return accessToken!!
         }
 
-        // 🔐 발급 요청
-        val response = koreaInvestmentApi.getAccessToken()
+        val response = koreaInvestmentApi.getAccessToken(
+            body = AccessKeyRequest(
+                grantType = "client_credentials",
+                appKey = BuildConfig.KOREAINVESTMENT_API_KEY,
+                secretKey = BuildConfig.KOREAINVESTMENT_APP_SECRET,
+            )
+        )
 
         accessToken = response.accessToken
         expiresAt = (now + (response.expiresIn * 1000L) - 5 * 60 * 1000L).toLong() // 만료 5분 전 갱신
