@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jusicool.chart.view.ChartPriceModel
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.model.chart.ChartPriceModel
 
 @Composable
 fun PriceBarChart(

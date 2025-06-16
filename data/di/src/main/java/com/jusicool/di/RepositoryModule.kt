@@ -4,8 +4,6 @@ import com.jusicool.repository.account.AccountRepository
 import com.jusicool.repository.account.AccountRepositoryImpl
 import com.jusicool.repository.auth.AuthRepository
 import com.jusicool.repository.auth.AuthRepositoryImpl
-import com.jusicool.repository.chart.ChartRepositoryImpl
-import com.jusicool.repository.chart.ChartRepository
 import com.jusicool.repository.crypto.CryptoRepository
 import com.jusicool.repository.crypto.CryptoRepositoryImpl
 import com.jusicool.repository.holding.HoldingRepository
@@ -21,10 +19,6 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
     // todo : Add Repository Instance
-    @Binds
-    abstract fun bindChartRepository(
-        chartRepositoryImpl: ChartRepositoryImpl
-    ): ChartRepository
 
     @Binds
     abstract fun bindAuthRepository(
