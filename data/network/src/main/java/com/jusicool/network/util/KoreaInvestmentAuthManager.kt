@@ -12,19 +12,30 @@ class KoreaInvestmentAuthManager @Inject constructor(
     private val koreaInvestmentApi: KoreaInvestmentApi,
     context: Context
 ) {
-
     private val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
 
     private var accessToken: String? = null
     private var expiresAt: Long = 0L
 
-    suspend fun getValidAccessToken(): String {
+    suspend fun getValidAccessToken(forceRefresh: Boolean = false): String {
         val now = System.currentTimeMillis()
-        if (accessToken != null && now < expiresAt) return accessToken!!
+
+        if (
+            !forceRefresh
+            && accessToken != null
+            && now < expiresAt
+        ) {
+            return accessToken!!
+        }
 
         val storedToken = prefs.getString("access_token", null)
         val storedExpires = prefs.getLong("expires_at", 0L)
-        if (storedToken != null && now < storedExpires) {
+
+        if (
+            !forceRefresh
+            && storedToken != null
+            && now < storedExpires
+        ) {
             accessToken = storedToken
             expiresAt = storedExpires
             return accessToken!!
@@ -39,7 +50,7 @@ class KoreaInvestmentAuthManager @Inject constructor(
         )
 
         accessToken = response.accessToken
-        expiresAt = (now + (response.expiresIn * 1000L) - 5 * 60 * 1000L).toLong() // 만료 5분 전 갱신
+        expiresAt = (now + (response.expiresIn * 1000L) - 5 * 60 * 1000L).toLong()
 
         prefs.edit().apply {
             putString("access_token", accessToken)
