@@ -25,7 +25,7 @@ fun SellBottomSheet(
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .background(color = colors.white, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 0.dp, bottomEnd = 0.dp))
+                .background(color = colors.white, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                 .padding(start = 24.dp, end = 24.dp, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
