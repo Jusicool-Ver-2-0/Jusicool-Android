@@ -63,9 +63,7 @@ fun ChartRoute(
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
     val formattedNow = oneMinuteLater.format(formatter)
 
-    val refreshCandleData: (String) -> Unit = { market ->
-        viewModel.refreshCandleData(market)
-    }
+    val refreshCandleData = viewModel::refreshCandleData
 
     LaunchedEffect(Unit) {
         viewModel.getMinuteCandle(market = marketCode, to = formattedNow, count = 50)
