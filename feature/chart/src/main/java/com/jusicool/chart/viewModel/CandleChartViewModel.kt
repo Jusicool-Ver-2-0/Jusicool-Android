@@ -76,7 +76,7 @@ class CandleChartViewModel @Inject constructor(
                 initialValue = GetCurrentMinuteCandleUiState.Loading
             )
 
-    fun getChartData(market: String) {
+    fun getMarkets(market: String) {
         _markets.value = market
     }
 

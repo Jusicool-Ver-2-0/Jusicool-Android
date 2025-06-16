@@ -67,7 +67,7 @@ fun ChartRoute(
 
     LaunchedEffect(Unit) {
         viewModel.getMinuteCandle(market = marketCode, to = formattedNow, count = 200)
-        viewModel.getChartData(market = marketCode)
+        viewModel.getMarkets(market = marketCode)
         viewModel.startPeriodicRequest(market = marketCode)
     }
 
