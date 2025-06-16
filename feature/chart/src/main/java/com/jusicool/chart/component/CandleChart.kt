@@ -1,5 +1,6 @@
 package com.jusicool.chart.component
 
+import android.util.Log
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -23,27 +24,41 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jusicool.chart.viewModel.uiState.GetCurrentMinuteCandleUiState
+import com.jusicool.chart.viewModel.uiState.GetMinuteCandleUiState
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.model.chart.CandleChartModel
+import com.jusicool.entity.crypto.CurrentMinuteCandleModel
+import com.jusicool.entity.crypto.MinuteCandleModel
+import com.jusicool.utils.Logger
 import java.text.NumberFormat
 
 @Composable
 fun CandleChart(
     modifier: Modifier = Modifier,
-    candles: List<CandleChartModel>
+    candles: List<MinuteCandleModel>,
+    currentCandlesData: GetCurrentMinuteCandleUiState,
+    market: String,
+    onRefresh: (String) -> Unit
 ) {
     JusicoolTheme { colors, typography ->
         val totalHeight = 270
         val numberOfLabels = 5
 
         val listState = rememberLazyListState()
+        var isFirstLoad by remember { mutableStateOf(true) }
+        var previousSize by remember { mutableStateOf(candles.size) }
 
+        // 현재 화면에 보이는 캔들 리스트 계산
         val visibleCandles = remember(
             listState.firstVisibleItemIndex,
             listState.layoutInfo.visibleItemsInfo,
@@ -55,36 +70,97 @@ fun CandleChart(
             else candles.subList(start.coerceAtLeast(0), (end + 1).coerceAtMost(candles.size))
         }
 
-        val maxHigh = visibleCandles.maxOfOrNull { it.shadowHigh } ?: 0
-        val minLow = visibleCandles.minOfOrNull { it.shadowLow } ?: 0
+        // 현재 캔들 데이터에서 최신 캔들 하나 가져오기
+        val currentCandle = if (currentCandlesData is GetCurrentMinuteCandleUiState.Success && currentCandlesData.candles.isNotEmpty()) {
+            currentCandlesData.candles.first()
+        } else null
 
+        // 현재 캔들이 화면에 보이는지 여부 확인
+        val isCurrentCandleVisible = listState.layoutInfo.visibleItemsInfo
+            .any { it.index == candles.lastIndex + 1 }
+
+        // 현재 캔들이 보이면 현재 캔들도 포함, 아니면 그냥 visibleCandles만 사용
+        val visibleWithCurrent = if (isCurrentCandleVisible && currentCandle != null) {
+            visibleCandles + currentCandle
+        } else {
+            visibleCandles
+        }
+
+        // 보이는 캔들들 중 최고가 계산
+        val maxHigh = visibleWithCurrent.maxOfOrNull { candle ->
+            when (candle) {
+                is MinuteCandleModel -> candle.highPrice
+                is CurrentMinuteCandleModel -> candle.highPrice
+                else -> 0.0
+            }
+        } ?: 0.0
+
+        // 보이는 캔들들 중 최저가 계산
+        val minLow = visibleWithCurrent.minOfOrNull { candle ->
+            when (candle) {
+                is MinuteCandleModel -> candle.lowPrice
+                is CurrentMinuteCandleModel -> candle.lowPrice
+                else -> Double.MAX_VALUE
+            }
+        } ?: 0.0
+
+        // 가격 라벨 간격 계산
         val priceStep = (maxHigh - minLow) / (numberOfLabels - 1)
+
+        // Y축에 표시될 가격 라벨 리스트 생성 (높은 가격이 위로 오도록 뒤집음)
         val priceLabels = List(numberOfLabels) { index ->
             priceStep * index + minLow
         }.reversed()
 
-        val lastVisibleCandle = run {
-            val lastItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-            lastItem?.let {
-                visibleCandles.getOrNull(it.index - listState.firstVisibleItemIndex)
-            }
+        // 기준 캔들 선택: 현재 캔들이 보이면 그것을, 아니면 마지막 보이는 캔들을 사용
+        val referenceCandle = when {
+            isCurrentCandleVisible && currentCandle != null -> currentCandle
+            else -> visibleCandles.lastOrNull()
         }
 
-        val chartLineColor = when {
-            lastVisibleCandle == null -> colors.gray300
-            lastVisibleCandle.close > lastVisibleCandle.open -> colors.chartPriceIncreased
-            lastVisibleCandle.close < lastVisibleCandle.open -> colors.chartPriceDecreased
+        val chartLineColor = when (referenceCandle) {
+            is MinuteCandleModel -> when {
+                referenceCandle.tradePrice > referenceCandle.openingPrice -> colors.chartPriceIncreased
+                referenceCandle.tradePrice < referenceCandle.openingPrice -> colors.chartPriceDecreased
+                else -> colors.gray300
+            }
+            is CurrentMinuteCandleModel -> when {
+                referenceCandle.tradePrice > referenceCandle.openingPrice -> colors.chartPriceIncreased
+                referenceCandle.tradePrice < referenceCandle.openingPrice -> colors.chartPriceDecreased
+                else -> colors.gray300
+            }
             else -> colors.gray300
         }
 
-        val formattedClosePrice = lastVisibleCandle?.let {
-            NumberFormat.getNumberInstance().format(it.close)
-        } ?: ""
+        val formattedClosePrice = when (referenceCandle) {
+            is MinuteCandleModel -> NumberFormat.getNumberInstance().format(referenceCandle.tradePrice)
+            is CurrentMinuteCandleModel -> NumberFormat.getNumberInstance().format(referenceCandle.tradePrice)
+            else -> ""
+        }
 
         LaunchedEffect(candles.size) {
-            if (candles.isNotEmpty()) {
+            if (isFirstLoad && candles.isNotEmpty()) {
                 listState.scrollToItem(candles.size - 1)
+                isFirstLoad = false
+            } else if (candles.size > previousSize) {
+                val addedCount = candles.size - previousSize
+                val newIndex = listState.firstVisibleItemIndex + addedCount
+                listState.scrollToItem(newIndex.coerceAtMost(candles.size - 1))
             }
+            previousSize = candles.size
+        }
+
+        var isInitialLoad by remember { mutableStateOf(true) }
+        LaunchedEffect(listState) {
+            snapshotFlow { listState.firstVisibleItemIndex }
+                .collect { index ->
+                    if (index == 0 && !isInitialLoad) {
+                        onRefresh(market)
+                    }
+                    if (isInitialLoad) {
+                        isInitialLoad = false
+                    }
+                }
         }
 
         Row(
@@ -101,10 +177,9 @@ fun CandleChart(
                     state = listState
                 ) {
                     items(candles) { candle ->
-                        val candleTop =
-                            ((maxHigh - candle.shadowHigh).toFloat() / (maxHigh - minLow)) * totalHeight
-                        val candleHeight =
-                            ((candle.shadowHigh - candle.shadowLow).toFloat() / (maxHigh - minLow)) * totalHeight
+                        val candleTop = ((maxHigh - candle.highPrice) / (maxHigh - minLow)) * totalHeight
+                        val candleHeight = ((candle.highPrice - candle.lowPrice) / (maxHigh - minLow)) * totalHeight
+                        val adjustedCandleHeight = candleHeight.coerceAtLeast(1.0)
 
                         Column(
                             modifier = Modifier.height(totalHeight.dp),
@@ -114,26 +189,50 @@ fun CandleChart(
                             Spacer(modifier = Modifier.height(candleTop.dp))
 
                             CandleStick(
-                                open = candle.open,
-                                close = candle.close,
-                                shadowHigh = candle.shadowHigh,
-                                shadowLow = candle.shadowLow,
-                                height = candleHeight
+                                open = candle.openingPrice,
+                                close = candle.tradePrice,
+                                shadowHigh = candle.highPrice,
+                                shadowLow = candle.lowPrice,
+                                height = adjustedCandleHeight
                             )
 
                             Spacer(modifier = Modifier.height((totalHeight - candleTop - candleHeight).dp))
                         }
                     }
+
+                    if (currentCandle != null) {
+                        val currentCandleTop = ((maxHigh - currentCandle.highPrice) / (maxHigh - minLow)) * totalHeight
+                        val currentCandleHeight = ((currentCandle.highPrice - currentCandle.lowPrice) / (maxHigh - minLow)) * totalHeight
+                        val adjustedCandleHeight = currentCandleHeight.coerceAtLeast(1.0)
+
+                        item {
+                            Column(
+                                modifier = Modifier.height(totalHeight.dp),
+                                verticalArrangement = Arrangement.Top,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Spacer(modifier = Modifier.height(currentCandleTop.dp))
+
+                                CurrentCandleStick(
+                                    height = adjustedCandleHeight,
+                                    currentCandlesData = currentCandlesData
+                                )
+
+                                Spacer(modifier = Modifier.height((totalHeight - currentCandleTop - currentCandleHeight).dp))
+                            }
+                        }
+                    }
                 }
 
                 Canvas(modifier = Modifier.matchParentSize()) {
-                    lastVisibleCandle?.let { candle ->
-                        val y = ((maxHigh - candle.close).toFloat() / (maxHigh - minLow)) * size.height
+                    referenceCandle?.let { candle ->
+                        val price = getTradePrice(candle)
+                        val y = (((maxHigh - price) / (maxHigh - minLow)) * size.height).toFloat()
 
                         drawLine(
                             color = chartLineColor,
                             start = Offset(0f, y),
-                            end = Offset(size.width+24, y),
+                            end = Offset(size.width + 24f, y),
                             strokeWidth = 2f,
                             pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f))
                         )
@@ -141,7 +240,7 @@ fun CandleChart(
                 }
             }
 
-            Box(modifier = Modifier.weight(1f),) {
+            Box(modifier = Modifier.weight(1f)) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -160,11 +259,19 @@ fun CandleChart(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
+                    val yOffset = referenceCandle?.let {
+                        val tradePrice = getTradePrice(it)
+                        val range = maxHigh - minLow
+                        if (range == 0.0) {
+                            0f
+                        } else {
+                            ((maxHigh - tradePrice) / range * totalHeight).toFloat() - 8f
+                        }
+                    } ?: 0f
+
                     Box(
                         modifier = Modifier
-                            .offset(y = (lastVisibleCandle?.let {
-                                ((maxHigh - it.close).toFloat() / (maxHigh - minLow)) * totalHeight - 8f
-                            } ?: 0f).dp)
+                            .offset(y = yOffset.dp)
                             .background(color = colors.white)
                             .border(
                                 width = 0.5.dp,
@@ -185,89 +292,55 @@ fun CandleChart(
     }
 }
 
+fun getTradePrice(candle: Any): Double = when (candle) {
+    is MinuteCandleModel -> candle.tradePrice
+    is CurrentMinuteCandleModel -> candle.tradePrice
+    else -> 0.0
+}
+
 @Preview(showBackground = true)
 @Composable
 fun CandleChartPreview() {
     val mockCandles = listOf(
-        CandleChartModel(open = 65000, close = 65500, shadowHigh = 65800, shadowLow = 64800),
-        CandleChartModel(open = 65500, close = 66000, shadowHigh = 66300, shadowLow = 65200),
-        CandleChartModel(open = 66000, close = 67000, shadowHigh = 67200, shadowLow = 65800),
-        CandleChartModel(open = 67000, close = 67500, shadowHigh = 67800, shadowLow = 66600),
-        CandleChartModel(open = 67500, close = 68500, shadowHigh = 69000, shadowLow = 67300),
-        CandleChartModel(open = 68500, close = 67800, shadowHigh = 68800, shadowLow = 67500),
-        CandleChartModel(open = 67800, close = 68000, shadowHigh = 68400, shadowLow = 67600),
-        CandleChartModel(open = 68000, close = 67400, shadowHigh = 68200, shadowLow = 67000),
-        CandleChartModel(open = 67400, close = 68000, shadowHigh = 68400, shadowLow = 67200),
-        CandleChartModel(open = 68000, close = 69000, shadowHigh = 69500, shadowLow = 67800),
-        CandleChartModel(open = 69000, close = 68800, shadowHigh = 69300, shadowLow = 68500),
-        CandleChartModel(open = 68800, close = 68700, shadowHigh = 69000, shadowLow = 68200),
-        CandleChartModel(open = 68700, close = 69000, shadowHigh = 69200, shadowLow = 68500),
-        CandleChartModel(open = 69000, close = 70000, shadowHigh = 70500, shadowLow = 68800),
-        CandleChartModel(open = 70000, close = 71000, shadowHigh = 71500, shadowLow = 69800),
-        CandleChartModel(open = 71000, close = 72000, shadowHigh = 72500, shadowLow = 70700),
-        CandleChartModel(open = 72000, close = 70500, shadowHigh = 72300, shadowLow = 70000),
-        CandleChartModel(open = 70500, close = 69500, shadowHigh = 70800, shadowLow = 69000),
-        CandleChartModel(open = 69500, close = 70000, shadowHigh = 70200, shadowLow = 69300),
-        CandleChartModel(open = 70000, close = 69800, shadowHigh = 70100, shadowLow = 69000),
-        CandleChartModel(open = 69800, close = 69000, shadowHigh = 69900, shadowLow = 68500),
-        CandleChartModel(open = 69000, close = 68800, shadowHigh = 69400, shadowLow = 68400),
-        CandleChartModel(open = 68800, close = 68000, shadowHigh = 69000, shadowLow = 67800),
-        CandleChartModel(open = 68000, close = 68300, shadowHigh = 68500, shadowLow = 67800),
-        CandleChartModel(open = 68300, close = 68100, shadowHigh = 68600, shadowLow = 67500),
-        CandleChartModel(open = 68100, close = 69000, shadowHigh = 69300, shadowLow = 67900),
-        CandleChartModel(open = 69000, close = 69200, shadowHigh = 69500, shadowLow = 68800),
-        CandleChartModel(open = 69200, close = 69800, shadowHigh = 70000, shadowLow = 69000),
-        CandleChartModel(open = 69800, close = 69300, shadowHigh = 69900, shadowLow = 68800),
-        CandleChartModel(open = 69300, close = 69500, shadowHigh = 69700, shadowLow = 69000),
-        CandleChartModel(open = 69500, close = 69000, shadowHigh = 69600, shadowLow = 68500),
-        CandleChartModel(open = 69000, close = 68400, shadowHigh = 69200, shadowLow = 68000),
-        CandleChartModel(open = 68400, close = 67500, shadowHigh = 68600, shadowLow = 67000),
-        CandleChartModel(open = 67500, close = 66800, shadowHigh = 67800, shadowLow = 66500),
-        CandleChartModel(open = 66800, close = 67200, shadowHigh = 67500, shadowLow = 66600),
-        CandleChartModel(open = 67200, close = 66500, shadowHigh = 67300, shadowLow = 66200),
-        CandleChartModel(open = 66500, close = 67000, shadowHigh = 67300, shadowLow = 66000),
-        CandleChartModel(open = 67000, close = 67500, shadowHigh = 67800, shadowLow = 66700),
-        CandleChartModel(open = 67500, close = 68000, shadowHigh = 68200, shadowLow = 67000),
-        CandleChartModel(open = 68000, close = 67800, shadowHigh = 68500, shadowLow = 67500),
-        CandleChartModel(open = 67800, close = 68200, shadowHigh = 68400, shadowLow = 67600),
-        CandleChartModel(open = 68200, close = 68800, shadowHigh = 69000, shadowLow = 68000),
-        CandleChartModel(open = 68800, close = 68500, shadowHigh = 69000, shadowLow = 68200),
-        CandleChartModel(open = 68500, close = 69000, shadowHigh = 69200, shadowLow = 68300),
-        CandleChartModel(open = 69000, close = 70000, shadowHigh = 70500, shadowLow = 68800),
-        CandleChartModel(open = 70000, close = 70500, shadowHigh = 71000, shadowLow = 69800),
-        CandleChartModel(open = 70500, close = 70200, shadowHigh = 70800, shadowLow = 70000),
-        CandleChartModel(open = 70200, close = 71000, shadowHigh = 71200, shadowLow = 70000),
-        CandleChartModel(open = 71000, close = 72000, shadowHigh = 72500, shadowLow = 70800),
-        CandleChartModel(open = 72000, close = 72500, shadowHigh = 72800, shadowLow = 71800),
-        CandleChartModel(open = 72500, close = 73000, shadowHigh = 73500, shadowLow = 72000),
-        CandleChartModel(open = 73000, close = 73500, shadowHigh = 74000, shadowLow = 72800),
-        CandleChartModel(open = 73500, close = 73200, shadowHigh = 73800, shadowLow = 73000),
-        CandleChartModel(open = 73200, close = 72800, shadowHigh = 73500, shadowLow = 72500),
-        CandleChartModel(open = 72800, close = 72200, shadowHigh = 73000, shadowLow = 72000),
-        CandleChartModel(open = 72200, close = 71500, shadowHigh = 72500, shadowLow = 71000),
-        CandleChartModel(open = 71500, close = 71800, shadowHigh = 72000, shadowLow = 71200),
-        CandleChartModel(open = 71800, close = 71000, shadowHigh = 72000, shadowLow = 70500),
-        CandleChartModel(open = 71000, close = 70500, shadowHigh = 71200, shadowLow = 70000),
-        CandleChartModel(open = 70500, close = 69800, shadowHigh = 70700, shadowLow = 69500),
-        CandleChartModel(open = 69800, close = 69000, shadowHigh = 70000, shadowLow = 68500),
-        CandleChartModel(open = 69000, close = 68800, shadowHigh = 69200, shadowLow = 68500),
-        CandleChartModel(open = 68800, close = 68200, shadowHigh = 69000, shadowLow = 68000),
-        CandleChartModel(open = 68200, close = 67800, shadowHigh = 68500, shadowLow = 67500),
-        CandleChartModel(open = 67800, close = 67000, shadowHigh = 68000, shadowLow = 66800),
-        CandleChartModel(open = 67000, close = 66000, shadowHigh = 67200, shadowLow = 65800),
-        CandleChartModel(open = 66000, close = 65500, shadowHigh = 66200, shadowLow = 65200),
-        CandleChartModel(open = 65500, close = 65000, shadowHigh = 65800, shadowLow = 64500),
-        CandleChartModel(open = 65000, close = 64500, shadowHigh = 65200, shadowLow = 64000),
-        CandleChartModel(open = 64500, close = 64000, shadowHigh = 64800, shadowLow = 63800),
-        CandleChartModel(open = 64000, close = 64200, shadowHigh = 64500, shadowLow = 63800),
-        CandleChartModel(open = 64200, close = 64800, shadowHigh = 65000, shadowLow = 64000),
-        CandleChartModel(open = 64800, close = 65200, shadowHigh = 65500, shadowLow = 64500),
-        CandleChartModel(open = 65200, close = 66000, shadowHigh = 66200, shadowLow = 65000),
-        CandleChartModel(open = 66000, close = 65800, shadowHigh = 66300, shadowLow = 65500),
-        CandleChartModel(open = 65800, close = 65500, shadowHigh = 66000, shadowLow = 65000),
-        CandleChartModel(open = 65500, close = 64800, shadowHigh = 65700, shadowLow = 64500),
-        CandleChartModel(open = 64800, close = 64000, shadowHigh = 65000, shadowLow = 63800)
+        MinuteCandleModel(
+            candleDateTimeKst = "2025-06-13 12:00",
+            openingPrice = 30000.0,
+            highPrice = 31000.0,
+            lowPrice = 29500.0,
+            tradePrice = 30500.0
+        ),
+        MinuteCandleModel(
+            candleDateTimeKst = "2025-06-13 12:01",
+            openingPrice = 30500.0,
+            highPrice = 31200.0,
+            lowPrice = 30400.0,
+            tradePrice = 31000.0
+        ),
+        MinuteCandleModel(
+            candleDateTimeKst = "2025-06-13 12:02",
+            openingPrice = 31000.0,
+            highPrice = 31500.0,
+            lowPrice = 30900.0,
+            tradePrice = 31300.0
+        )
     )
 
-    CandleChart(candles = mockCandles)
+    val mockCurrentCandlesData = GetCurrentMinuteCandleUiState.Success(
+        candles = listOf(
+            CurrentMinuteCandleModel(
+                candleDateTimeKst = "",
+                openingPrice = 31300.0,
+                highPrice = 31600.0,
+                lowPrice = 31200.0,
+                tradePrice = 31500.0,
+            )
+        )
+    )
+
+    CandleChart(
+        candles = mockCandles,
+        currentCandlesData = mockCurrentCandlesData,
+        market = "",
+        onRefresh = {}
+    )
 }

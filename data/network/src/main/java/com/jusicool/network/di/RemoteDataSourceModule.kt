@@ -4,8 +4,6 @@ import com.jusicool.network.datasource.account.AccountDataSource
 import com.jusicool.network.datasource.account.AccountDataSourceImpl
 import com.jusicool.network.datasource.auth.AuthDataSource
 import com.jusicool.network.datasource.auth.AuthDataSourceImpl
-import com.jusicool.network.datasource.chart.ChartDataSource
-import com.jusicool.network.datasource.chart.ChartDataSourceImpl
 import com.jusicool.network.datasource.crypto.CryptoDataSource
 import com.jusicool.network.datasource.crypto.CryptoDataSourceImpl
 import com.jusicool.network.datasource.holding.HoldingDataSource
@@ -26,11 +24,6 @@ abstract class RemoteDataSourceModule {
             authDataSourceImpl: AuthDataSourceImpl
         ) : AuthDataSource
     */
-
-    @Binds
-    abstract fun bindChartDataSource(
-        chartDataSourceImpl: ChartDataSourceImpl
-    ): ChartDataSource
 
     @Binds
     abstract fun bindAuthDataSource(

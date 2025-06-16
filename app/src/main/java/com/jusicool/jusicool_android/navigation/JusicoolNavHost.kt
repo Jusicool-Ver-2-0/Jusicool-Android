@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.jusicool.account.navigation.accountRoute
 import com.jusicool.account.navigation.navigateToAccountRoute
+import com.jusicool.chart.navigation.chartRoute
+import com.jusicool.chart.navigation.navigateToChartRoute
 import com.jusicool.signin.navigation.signInRoute
 
 @Composable
@@ -25,7 +27,11 @@ fun JusicoolNavHost(
         )
 
         accountRoute(
+            navigateToChart = navController::navigateToChartRoute
+        )
 
+        chartRoute(
+            popUpBackStack = navController::popBackStack
         )
 
     }

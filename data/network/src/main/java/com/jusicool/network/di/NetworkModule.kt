@@ -4,7 +4,6 @@ import android.util.Log
 import com.jusicool.network.BuildConfig
 import com.jusicool.network.api.AccountApi
 import com.jusicool.network.api.AuthApi
-import com.jusicool.network.api.ChartApi
 import com.jusicool.network.api.CryptoApi
 import com.jusicool.network.api.HoldingApi
 import com.jusicool.network.api.KoreaInvestmentApi

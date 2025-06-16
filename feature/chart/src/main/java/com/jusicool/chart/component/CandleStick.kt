@@ -12,28 +12,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jusicool.design_system.theme.JusicoolTheme
+import kotlin.math.abs
 
 @Composable
 fun CandleStick(
     modifier: Modifier = Modifier,
-    open: Int,
-    close: Int,
-    shadowHigh: Int,
-    shadowLow: Int,
-    height: Float
+    open: Double,
+    close: Double,
+    shadowHigh: Double,
+    shadowLow: Double,
+    height: Double
 ) {
-    JusicoolTheme { colors, typography ->
+    JusicoolTheme { colors, _ ->
         val bodyColor = when {
             close > open -> colors.chartPriceIncreased
             close < open -> colors.chartPriceDecreased
             else -> colors.gray300
         }
 
-        val total = shadowHigh - shadowLow
+        val total = (shadowHigh - shadowLow).takeIf { it != 0.0 } ?: 1.0
 
-        val upperShadowHeight = (shadowHigh - maxOf(open, close)).toFloat() / total * height
-        val bodyHeight = (kotlin.math.abs(open - close).toFloat() / total) * height
-        val lowerShadowHeight = (minOf(open, close) - shadowLow).toFloat() / total * height
+        val upperShadowHeight = ((shadowHigh - maxOf(open, close)) / total * height)
+        val bodyHeight = (abs(open - close) / total * height).coerceAtLeast(1.0)
+        val lowerShadowHeight = ((minOf(open, close) - shadowLow) / total * height)
 
         Column(
             modifier = modifier.height(height.dp),
@@ -52,7 +53,7 @@ fun CandleStick(
             Box(
                 modifier = Modifier
                     .width(9.dp)
-                    .height(if (bodyHeight < 1f) 1.dp else bodyHeight.dp)
+                    .height(bodyHeight.dp)
                     .background(bodyColor, shape = RoundedCornerShape(2.dp))
             )
 
