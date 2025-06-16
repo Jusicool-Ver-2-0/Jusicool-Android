@@ -8,6 +8,8 @@ import com.jusicool.repository.CryptoRepository
 import com.jusicool.repository.CryptoRepositoryImpl
 import com.jusicool.repository.HoldingRepository
 import com.jusicool.repository.HoldingRepositoryImpl
+import com.jusicool.repository.KoreaInvestmentRepository
+import com.jusicool.repository.KoreaInvestmentRepositoryImpl
 import com.jusicool.repository.OrderRepository
 import com.jusicool.repository.OrderRepositoryImpl
 import dagger.Binds
@@ -39,6 +41,11 @@ abstract class RepositoryModule {
     abstract fun bindCryptoRepository(
         cryptoRepositoryImpl: CryptoRepositoryImpl
     ): CryptoRepository
+
+    @Binds
+    abstract fun bindKoreaInvestmentRepository(
+        koreaInvestmentRepositoryImpl: KoreaInvestmentRepositoryImpl
+    ): KoreaInvestmentRepository
 
     @Binds
     abstract fun binOrderRepository(
