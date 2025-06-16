@@ -1,4 +1,4 @@
-package com.jusicool.repository.auth
+package com.jusicool.repository
 
 import com.jusicool.entity.auth.SignInModel
 import com.jusicool.model.mapper.auth.toDto

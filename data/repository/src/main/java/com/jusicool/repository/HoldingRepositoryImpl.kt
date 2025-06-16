@@ -1,4 +1,4 @@
-package com.jusicool.repository.holding
+package com.jusicool.repository
 
 import com.jusicool.entity.holding.HoldingModel
 import com.jusicool.model.mapper.holding.toModel
@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class HoldingRepositoryImpl @Inject constructor(
     private val holdingDataSource: HoldingDataSource
-): HoldingRepository{
+): HoldingRepository {
     override fun getHolding(): Flow<List<HoldingModel>> {
         return holdingDataSource.getHolding().map { list -> list.map { it.toModel() } }
     }

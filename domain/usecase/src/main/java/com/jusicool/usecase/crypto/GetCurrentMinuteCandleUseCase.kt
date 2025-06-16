@@ -1,7 +1,6 @@
 package com.jusicool.usecase.crypto
 
-import com.jusicool.repository.crypto.CryptoRepository
-import java.time.Instant
+import com.jusicool.repository.CryptoRepository
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject

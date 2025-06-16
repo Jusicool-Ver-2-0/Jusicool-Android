@@ -1,7 +1,7 @@
 package com.jusicool.usecase.holding
 
 import com.jusicool.entity.holding.HoldingModel
-import com.jusicool.repository.holding.HoldingRepository
+import com.jusicool.repository.HoldingRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

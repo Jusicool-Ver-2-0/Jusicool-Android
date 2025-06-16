@@ -1,6 +1,6 @@
 package com.jusicool.usecase.crypto
 
-import com.jusicool.repository.crypto.CryptoRepository
+import com.jusicool.repository.CryptoRepository
 import javax.inject.Inject
 
 class GetMinuteCandleUseCase @Inject constructor(
