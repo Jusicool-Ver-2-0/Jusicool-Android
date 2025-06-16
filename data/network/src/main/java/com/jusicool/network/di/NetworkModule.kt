@@ -1,20 +1,20 @@
 package com.jusicool.network.di
 
 import android.util.Log
-import com.jusicool.network.util.BaseApiRetrofit
-import com.jusicool.network.util.UpbitRetrofit
-import com.jusicool.network.util.BasicCookieJar
 import com.jusicool.network.BuildConfig
 import com.jusicool.network.api.AccountApi
 import com.jusicool.network.api.AuthApi
 import com.jusicool.network.api.ChartApi
 import com.jusicool.network.api.CryptoApi
 import com.jusicool.network.api.HoldingApi
-import com.jusicool.network.api.OrderApi
 import com.jusicool.network.api.KoreaInvestmentApi
+import com.jusicool.network.api.OrderApi
+import com.jusicool.network.util.BaseApiRetrofit
+import com.jusicool.network.util.BasicCookieJar
 import com.jusicool.network.util.KoreaInvestmentAuthManager
-import com.jusicool.network.util.KoreaInvestmentAuthInterceptor
+import com.jusicool.network.util.KoreaInvestmentAuthenticator
 import com.jusicool.network.util.KoreaInvestmentRetrofit
+import com.jusicool.network.util.UpbitRetrofit
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -28,7 +28,6 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
-
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -63,18 +62,25 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @Named("koreaInvestmentOkHttpClient")
     fun provideKoreaInvestmentOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
-        koreaInvestmentAuthManager: KoreaInvestmentAuthManager
+        koreaInvestmentAuthenticator: KoreaInvestmentAuthenticator,
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
-            .addInterceptor(KoreaInvestmentAuthInterceptor(koreaInvestmentAuthManager))
+            .authenticator(koreaInvestmentAuthenticator)
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
             .build()
 
+
+    @Provides
+    @Singleton
+    fun provideKoreaInvestmentAuthenticator(
+        koreaInvestmentAuthManager: KoreaInvestmentAuthManager
+    ): KoreaInvestmentAuthenticator = KoreaInvestmentAuthenticator(koreaInvestmentAuthManager)
 
     @Provides
     @Singleton
