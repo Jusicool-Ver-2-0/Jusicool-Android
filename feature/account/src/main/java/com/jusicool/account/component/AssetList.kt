@@ -19,7 +19,7 @@ fun AssetList(
     modifier: Modifier = Modifier,
     holdings: PersistentList<HoldingModel>,
     getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState,
-    navigateToChart: (marketCode: String, name: String) -> Unit,
+    navigateToChart: (marketCode: String, name: String, quantity: Int) -> Unit,
 ) {
     JusicoolTheme { colors, typography ->
         Column(
@@ -90,6 +90,6 @@ fun AssetListPreview() {
                 )
             )
         ),
-        navigateToChart = { marketCode, name -> }
+        navigateToChart = { marketCode, name, quantity -> }
     )
 }

@@ -51,7 +51,7 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 internal fun AccountRoute(
     viewModel: AccountViewModel = hiltViewModel(),
-    navigateToChart: (marketCode: String, name: String) -> Unit
+    navigateToChart: (marketCode: String, name: String, quantity: Int) -> Unit
 ) {
     val accountUiState by viewModel.accountUiState.collectAsStateWithLifecycle()
     val holdingUiState by viewModel.holdingUiState.collectAsStateWithLifecycle()
@@ -95,7 +95,7 @@ private fun AccountScreen(
     getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState,
     getMonthOrderData: GetMonthOrderUiState,
     holdingNewsModel: HoldingNewsModel,
-    navigateToChart: (marketCode: String, name: String) -> Unit
+    navigateToChart: (marketCode: String, name: String, quantity: Int) -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -394,6 +394,6 @@ private fun AccountScreenPreview() {
         getCurrentCryptoPriceData = mockCryptoPriceUiState,
         getMonthOrderData = mockMonthOrderUiState,
         holdingNewsModel = mockHoldingNewsModel,
-        navigateToChart = { marketCode, name -> }
+        navigateToChart = { marketCode, name, quantity -> }
     )
 }
