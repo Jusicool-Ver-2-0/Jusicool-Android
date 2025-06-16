@@ -13,14 +13,6 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
     private val dataSource: KoreaInvestmentDataSource
 ) : KoreaInvestmentRepository {
 
-    override suspend fun getAccessToken(request: AccessKeyRequest): AccessTokenResponse {
-        return dataSource.getAccessToken(request)
-    }
-
-    override suspend fun getWebSocketAccessToken(request: AccessKeyRequest): WebSocketAccessKeyResponse {
-        return dataSource.getWebSocketAccessToken(request)
-    }
-
     override suspend fun getStockOrder(
         condMrktDivCode: String,
         inputIsCd: String,

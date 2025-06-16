@@ -1,15 +1,11 @@
 package com.jusicool.repository
 
-import com.jusicool.model.koreaInvestment.AccessKeyRequest
-import com.jusicool.model.koreaInvestment.AccessTokenResponse
 import com.jusicool.model.koreaInvestment.StockMinutePriceResponse
-import com.jusicool.model.koreaInvestment.WebSocketAccessKeyResponse
 import StockCandleResponse
 import StockPriceResponse
 
 interface KoreaInvestmentRepository {
-    suspend fun getAccessToken(request: AccessKeyRequest): AccessTokenResponse
-    suspend fun getWebSocketAccessToken(request: AccessKeyRequest): WebSocketAccessKeyResponse
+
     suspend fun getStockOrder(
         condMrktDivCode: String,
         inputIsCd: String,

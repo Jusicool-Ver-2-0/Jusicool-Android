@@ -9,10 +9,6 @@ import com.jusicool.model.koreaInvestment.WebSocketAccessKeyResponse
 
 interface KoreaInvestmentDataSource {
 
-    suspend fun getAccessToken(request: AccessKeyRequest): AccessTokenResponse
-
-    suspend fun getWebSocketAccessToken(request: AccessKeyRequest): WebSocketAccessKeyResponse
-
     suspend fun getStockOrder(
         condMrktDivCode: String,
         inputIsCd: String,

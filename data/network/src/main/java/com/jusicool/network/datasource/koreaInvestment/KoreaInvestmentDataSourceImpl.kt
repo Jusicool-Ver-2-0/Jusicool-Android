@@ -13,14 +13,6 @@ class KoreaInvestmentDataSourceImpl(
     private val api: KoreaInvestmentApi
 ) : KoreaInvestmentDataSource {
 
-    override suspend fun getAccessToken(request: AccessKeyRequest): AccessTokenResponse {
-        return api.getAccessToken(request)
-    }
-
-    override suspend fun getWebSocketAccessToken(request: AccessKeyRequest): WebSocketAccessKeyResponse {
-        return api.getWebSocketAccessToken(request)
-    }
-
     override suspend fun getStockOrder(
         condMrktDivCode: String,
         inputIsCd: String,
