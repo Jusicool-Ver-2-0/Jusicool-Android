@@ -10,16 +10,12 @@ import com.jusicool.chart.view.ChartRoute
 
 const val chartRoute = "chartRoute"
 
-fun chartRouteWithArgs(marketCode: String, koreanName: String): String {
-    return "$chartRoute/$marketCode/$koreanName"
-}
-
 fun NavController.navigateToChartRoute(
     marketCode: String,
     koreanName: String,
-    napOptions: NavOptions? = null
+    navOptions: NavOptions? = null
 ) {
-    this.navigate(chartRouteWithArgs(marketCode, koreanName), napOptions)
+    this.navigate(("$chartRoute/$marketCode/$koreanName"), navOptions)
 }
 
 fun NavGraphBuilder.chartRoute(
