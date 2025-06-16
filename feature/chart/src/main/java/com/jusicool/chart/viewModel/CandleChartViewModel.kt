@@ -37,8 +37,6 @@ class CandleChartViewModel @Inject constructor(
     private val _minuteCandleUiState = MutableStateFlow<GetMinuteCandleUiState>(GetMinuteCandleUiState.Loading)
     val minuteCandleUiState = _minuteCandleUiState.asStateFlow()
 
-    private val _currentMinuteCandle = MutableStateFlow<GetCurrentMinuteCandleUiState>(GetCurrentMinuteCandleUiState.Loading)
-
     private val _markets = MutableStateFlow<String?>(null)
 
     private var oldestDate: Date? = null
