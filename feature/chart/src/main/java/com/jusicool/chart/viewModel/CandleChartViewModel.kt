@@ -78,22 +78,8 @@ class CandleChartViewModel @Inject constructor(
                 initialValue = GetCurrentMinuteCandleUiState.Loading
             )
 
-    fun getChartData(market: String) = viewModelScope.launch {
+    fun getChartData(market: String) {
         _markets.value = market
-        getCurrentMinuteCandleUseCase(market = market)
-            .onSuccess { flow ->
-                flow.catch { e ->
-                    Logger.e("ChartViewModel", "현재 코인 가격 요청 실패: ${e.message}")
-                    _currentMinuteCandle.value = GetCurrentMinuteCandleUiState.Error(e.message ?: "Unknown error")
-                }.collect { candles ->
-                    Logger.d("ChartViewModel", "현재 코인 가격 요청 성공: $candles")
-                    _currentMinuteCandle.value = GetCurrentMinuteCandleUiState.Success(candles)
-                }
-            }
-            .onFailure { e ->
-                Logger.e("ChartViewModel", "현재 코인 가격 요청 실패: ${e.message}")
-                _currentMinuteCandle.value = GetCurrentMinuteCandleUiState.Error(e.message ?: "Unknown error")
-            }
     }
 
     fun getMinuteCandle(market: String, to: String, count: Int) = viewModelScope.launch {
