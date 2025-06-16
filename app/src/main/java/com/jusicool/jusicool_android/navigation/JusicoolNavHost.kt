@@ -9,6 +9,10 @@ import com.jusicool.account.navigation.navigateToAccountRoute
 import com.jusicool.chart.navigation.chartRoute
 import com.jusicool.chart.navigation.navigateToChartRoute
 import com.jusicool.signin.navigation.signInRoute
+import com.jusicool.trade.navigation.buyReserveRoute
+import com.jusicool.trade.navigation.buyRoute
+import com.jusicool.trade.navigation.sellReserveRoute
+import com.jusicool.trade.navigation.sellRoute
 
 @Composable
 fun JusicoolNavHost(
@@ -34,5 +38,20 @@ fun JusicoolNavHost(
             popUpBackStack = navController::popBackStack
         )
 
+        buyRoute(
+            popUpBackStack = navController::popBackStack
+        )
+
+        sellRoute(
+            popUpBackStack = navController::popBackStack
+        )
+
+        buyReserveRoute(
+            popUpBackStack = navController::popBackStack
+        )
+
+        sellReserveRoute(
+            popUpBackStack = navController::popBackStack
+        )
     }
 }
