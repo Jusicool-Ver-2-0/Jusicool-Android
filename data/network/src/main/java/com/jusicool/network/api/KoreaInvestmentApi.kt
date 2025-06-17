@@ -27,7 +27,6 @@ interface KoreaInvestmentApi {
 
     @GET("/uapi/domestic-stock/v1/quotations/inquire-time-dailychartprice")
     suspend fun getStockOrder(
-        @Header("content-type") contentType: String,
         @Header("appkey") appKey: String,
         @Header("appsecret") appSecret: String,
         @Header("tr_id") trId: String,
@@ -44,7 +43,6 @@ interface KoreaInvestmentApi {
 
     @GET("/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice")
     suspend fun getMinutePrice(
-        @Header("content-type") contentType: String,
         @Header("appkey") appKey: String,
         @Header("appsecret") appSecret: String,
         @Header("tr_id") trId: String,
@@ -60,7 +58,6 @@ interface KoreaInvestmentApi {
 
     @GET("/uapi/domestic-stock/v1/quotations/inquire-price")
     suspend fun getStockCurrentPrice(
-        @Header("content-type") contentType: String,
         @Header("appkey") appKey: String,
         @Header("appsecret") appSecret: String,
         @Header("tr_id") trId: String,
