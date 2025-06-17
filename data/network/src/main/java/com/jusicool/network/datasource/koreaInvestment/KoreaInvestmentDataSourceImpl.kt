@@ -15,8 +15,6 @@ class KoreaInvestmentDataSourceImpl(
         inputIsCd: String,
         inputHour1: String,
         inputDate1: String,
-        pwDataIncuYn: String,
-        fakeTickIncuYn: String?
     ): StockCandleResponse {
         return api.getStockOrder(
             appKey = BuildConfig.KOREAINVESTMENT_API_KEY,
@@ -25,12 +23,11 @@ class KoreaInvestmentDataSourceImpl(
             trCont = null,
             custType = "P",
 
-            condMrktDivCode = condMrktDivCode,
+            condMrktDivCode = "J",
+            pwDataIncuYn = "N",
             inputIsCd = inputIsCd,
             inputHour1 = inputHour1,
             inputDate1 = inputDate1,
-            pwDataIncuYn = pwDataIncuYn,
-            fakeTickIncuYn = fakeTickIncuYn
         )
     }
 
@@ -38,8 +35,6 @@ class KoreaInvestmentDataSourceImpl(
         condMrktDivCode: String,
         inputIsCd: String,
         inputHour1: String,
-        pwDataIncuYn: String,
-        etcClsCode: String
     ): StockMinutePriceResponse {
         return api.getMinutePrice(
             appKey = BuildConfig.KOREAINVESTMENT_API_KEY,
@@ -48,11 +43,11 @@ class KoreaInvestmentDataSourceImpl(
             trCont = null,
             custType = "P",
 
-            condMrktDivCode = condMrktDivCode,
+            condMrktDivCode = "J",
+            pwDataIncuYn = "N",
             inputIsCd = inputIsCd,
             inputHour1 = inputHour1,
-            pwDataIncuYn = pwDataIncuYn,
-            etcClsCode = etcClsCode
+            etcClsCode = "00"
         )
     }
 
