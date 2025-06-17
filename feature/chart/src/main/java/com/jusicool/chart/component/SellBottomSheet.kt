@@ -20,6 +20,9 @@ import com.jusicool.utils.formatMoney
 fun SellBottomSheet(
     modifier: Modifier = Modifier,
     name: String,
+    quantity: Int,
+    navigateToSell: (String, Int) -> Unit,
+    navigateToReserveSell: (String, Int) -> Unit,
 ) {
     JusicoolTheme { colors, typography ->
         Column(
@@ -44,7 +47,7 @@ fun SellBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                     text = "현재가 판매하기",
                     outlineColor = colors.main,
-                    onClick = {}
+                    onClick = {navigateToSell(name,quantity)}
                 )
 
 
@@ -52,7 +55,7 @@ fun SellBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                     text = "예약 판매하기",
                     outlineColor = colors.main,
-                    onClick = {}
+                    onClick = {navigateToSell(name,quantity)}
                 )
             }
         }
@@ -62,5 +65,10 @@ fun SellBottomSheet(
 @Preview(showBackground = true)
 @Composable
 fun SellBottomSheetPreview() {
-    SellBottomSheet(name = "마이크로소프트")
+    SellBottomSheet(
+        name = "마이크로소프트",
+        quantity = 1,
+        navigateToSell = { _,_ -> },
+        navigateToReserveSell = { _,_ -> }
+    )
 }

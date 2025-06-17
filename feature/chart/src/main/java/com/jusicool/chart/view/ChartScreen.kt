@@ -62,6 +62,11 @@ fun ChartRoute(
     marketCode: String,
     koreanName: String,
     quantity: Int,
+    money: Long,
+    navigateToBuy: (String, Long) -> Unit,
+    navigateToSell: (String, Int) -> Unit,
+    navigateToReserveBuy: (String, Long) -> Unit,
+    navigateToReserveSell: (String, Int) -> Unit,
     popUpBackStack: () -> Unit
 ) {
     val minuteCandleUiState by viewModel.minuteCandleUiState.collectAsStateWithLifecycle()
@@ -176,7 +181,12 @@ fun ChartRoute(
         koreanName = koreanName,
         marketCode = marketCode,
         quantity = quantity,
-        onRefresh = refreshCandleData
+        money = money,
+        onRefresh = refreshCandleData,
+        navigateToBuy = navigateToBuy,
+        navigateToSell = navigateToSell,
+        navigateToReserveBuy = navigateToReserveBuy,
+        navigateToReserveSell = navigateToReserveSell
     )
 }
 
@@ -187,12 +197,17 @@ fun ChartScreen(
     koreanName: String,
     marketCode: String,
     quantity: Int,
+    money: Long,
     minuteCandleData: GetMinuteCandleUiState,
     currentMinuteCandleData: GetCurrentMinuteCandleUiState,
     chartInformation: ChartInformationModel,
     price: ChartPriceModel,
     news: List<NewsModel>,
     community: List<CommunityModel>,
+    navigateToBuy: (String, Long) -> Unit,
+    navigateToSell: (String, Int) -> Unit,
+    navigateToReserveBuy: (String, Long) -> Unit,
+    navigateToReserveSell: (String, Int) -> Unit,
     onRefresh: (String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
@@ -214,6 +229,9 @@ fun ChartScreen(
             ) {
                 BuyBottomSheet(
                     name = koreanName,
+                    money = money,
+                    navigateToBuy = navigateToBuy,
+                    navigateToReserveBuy = navigateToReserveBuy
                 )
             }
         }
@@ -227,6 +245,9 @@ fun ChartScreen(
             ) {
                 SellBottomSheet(
                     name = koreanName,
+                    quantity = quantity,
+                    navigateToSell = navigateToSell,
+                    navigateToReserveSell = navigateToReserveSell
                 )
             }
         }
@@ -539,7 +560,12 @@ fun ChartScreenPreview() {
         popUpBackStack = {},
         marketCode = "",
         quantity = 0,
-        onRefresh = {}
+        money = 1,
+        onRefresh = {},
+        navigateToBuy = { _,_ -> },
+        navigateToSell = { _,_ -> },
+        navigateToReserveBuy = { _,_ ->},
+        navigateToReserveSell = { _,_ -> }
     )
 }
 

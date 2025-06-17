@@ -14,29 +14,41 @@ fun NavController.navigateToChartRoute(
     marketCode: String,
     koreanName: String,
     quantity: Int,
+    money: Long,
     navOptions: NavOptions? = null
 ) {
-    this.navigate(("$chartRoute/$marketCode/$koreanName/$quantity"), navOptions)
+    this.navigate(("$chartRoute/$marketCode/$koreanName/$quantity/$money"), navOptions)
 }
 
 fun NavGraphBuilder.chartRoute(
-    popUpBackStack: () -> Unit
+    popUpBackStack: () -> Unit,
+    navigateToBuy: (String, Long) -> Unit,
+    navigateToSell: (String, Int) -> Unit,
+    navigateToReserveBuy: (String, Long) -> Unit,
+    navigateToReserveSell: (String, Int) -> Unit,
 ) {
     composable(
-        route = "$chartRoute/{marketCode}/{koreanName}/{quantity}",
+        route = "$chartRoute/{marketCode}/{koreanName}/{quantity}/{money}",
         arguments = listOf(
             navArgument("marketCode") { type = NavType.StringType },
             navArgument("koreanName") { type = NavType.StringType },
-            navArgument("quantity") { type = NavType.IntType }
+            navArgument("quantity") { type = NavType.IntType },
+            navArgument("money") { type = NavType.LongType }
         )
     ) { backStackEntry ->
         val marketCode = backStackEntry.arguments?.getString("marketCode") ?: ""
         val koreanName = backStackEntry.arguments?.getString("koreanName") ?: ""
         val quantity = backStackEntry.arguments?.getInt("quantity") ?: 0
+        val money = backStackEntry.arguments?.getLong("money") ?: 0L
         ChartRoute(
             marketCode = marketCode,
             koreanName = koreanName,
             quantity = quantity,
+            money = money,
+            navigateToBuy = navigateToBuy,
+            navigateToSell = navigateToSell,
+            navigateToReserveBuy = navigateToReserveBuy,
+            navigateToReserveSell = navigateToReserveSell,
             popUpBackStack = popUpBackStack
         )
     }
