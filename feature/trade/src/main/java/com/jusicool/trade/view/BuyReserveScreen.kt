@@ -1,6 +1,7 @@
 package com.jusicool.trade.view
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -91,7 +92,11 @@ fun BuyReserveScreen(
 
 
     JusicoolTheme { colors, typography ->
-        Column(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(color = colors.white)
+        ) {
             JusicoolTopBar(
                 startIcon = {
                     ClarityArrowLineIcon(

@@ -1,6 +1,7 @@
 package com.jusicool.trade.view
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -68,8 +69,10 @@ fun SellReserveScreen(
 ) {
     JusicoolTheme { colors, typography ->
         Column(
-            modifier = modifier.fillMaxSize()
-        ) {
+            modifier = modifier
+                .fillMaxSize()
+                .background(color = colors.white)
+        )  {
             val availableCount = 10L
 
             val titleText = if (type.uppercase() == "CRYPTO") "코인" else "주식"

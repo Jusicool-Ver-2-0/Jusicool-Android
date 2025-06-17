@@ -1,5 +1,6 @@
 package com.jusicool.trade.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
@@ -53,7 +54,9 @@ fun BuyScreen(
 ) {
     JusicoolTheme { colors, typography ->
         Column(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
+                .fillMaxSize()
+                .background(color = colors.white)
         ) {
             val availableMoney = 100000L
             val maxBuyAble = (availableMoney / price).coerceAtLeast(0L)
