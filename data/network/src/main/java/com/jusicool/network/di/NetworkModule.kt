@@ -78,9 +78,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideKoreaInvestmentAuthenticator(
-        koreaInvestmentAuthManager: KoreaInvestmentAuthManager
-    ): KoreaInvestmentAuthenticator = KoreaInvestmentAuthenticator(koreaInvestmentAuthManager)
-
+        authManager: dagger.Lazy<KoreaInvestmentAuthManager>  // <- Lazy 주입
+    ): KoreaInvestmentAuthenticator {
+        return KoreaInvestmentAuthenticator(authManager)
+    }
     @Provides
     @Singleton
     fun provideCookieJar(): CookieJar {
