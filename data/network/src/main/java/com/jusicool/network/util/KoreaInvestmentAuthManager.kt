@@ -4,13 +4,14 @@ import android.content.Context
 import com.jusicool.model.koreaInvestment.AccessKeyRequest
 import com.jusicool.network.BuildConfig
 import com.jusicool.network.api.KoreaInvestmentApi
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class KoreaInvestmentAuthManager @Inject constructor(
     private val koreaInvestmentApi: KoreaInvestmentApi,
-    context: Context
+    @ApplicationContext private val context: Context,
 ) {
     private val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
 
