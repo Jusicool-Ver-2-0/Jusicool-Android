@@ -110,7 +110,7 @@ fun CandleChart(
         // Y축에 표시될 가격 라벨 리스트 생성 (높은 가격이 위로 오도록 뒤집음)
         val priceLabels = List(numberOfLabels) { index ->
             priceStep * index + minLow
-        }.reversed()
+        }.asReversed()
 
         // 기준 캔들 선택: 현재 캔들이 보이면 그것을, 아니면 마지막 보이는 캔들을 사용
         val referenceCandle = when {
