@@ -38,7 +38,6 @@ interface KoreaInvestmentApi {
         @Query("FID_INPUT_HOUR_1") inputHour1: String,
         @Query("FID_INPUT_DATE_1") inputDate1: String,
         @Query("FID_PW_DATA_INCU_YN") pwDataIncuYn: String,
-        @Query("FID_FAKE_TICK_INCU_YN") fakeTickIncuYn: String?,
     ): StockCandleResponse
 
     @GET("/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice")
