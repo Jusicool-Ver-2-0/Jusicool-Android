@@ -32,16 +32,17 @@ import com.jusicool.utils.toSignedFormattedText
 @Composable
 fun CryptoAssetListItem(
     modifier: Modifier = Modifier,
+    krwBalance: Long,
     holding: HoldingModel,
     getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState,
-    navigateToChart: (marketCode: String, name: String) -> Unit
+    navigateToChart: (marketCode: String, name: String, quantity: Int, money: Long) -> Unit
 ) {
     JusicoolTheme { colors, typography ->
         Row(
             modifier = modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min)
-                .JusicoolClickable {     navigateToChart(holding.marketCode, holding.koreanName) },
+                .JusicoolClickable { navigateToChart(holding.marketCode, holding.koreanName, holding.quantity, krwBalance) },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -161,6 +162,7 @@ fun CryptoAssetListItemPreview() {
                 )
             )
         ),
-        navigateToChart = { marketCode, name -> }
+        krwBalance = 1,
+        navigateToChart = { marketCode, name, quantity, money -> }
     )
 }

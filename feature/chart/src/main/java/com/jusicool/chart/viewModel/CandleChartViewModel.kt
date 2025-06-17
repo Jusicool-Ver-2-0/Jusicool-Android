@@ -76,7 +76,7 @@ class CandleChartViewModel @Inject constructor(
                 initialValue = GetCurrentMinuteCandleUiState.Loading
             )
 
-    fun getChartData(market: String) {
+    fun getMarkets(market: String) {
         _markets.value = market
     }
 
@@ -90,7 +90,7 @@ class CandleChartViewModel @Inject constructor(
                     }
                     .collect { candleList ->
 
-                        val newCandles = candleList.reversed()
+                        val newCandles = candleList.asReversed()
                         val existingCandles = (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart ?: emptyList()
 
                         val combined = (existingCandles + newCandles)
@@ -163,7 +163,7 @@ class CandleChartViewModel @Inject constructor(
                         }
                         .collect { newCandles ->
                             Logger.d("ChartViewModel", "새로고침으로 $newCandles")
-                            val reversedNewCandles = newCandles.reversed()
+                            val reversedNewCandles = newCandles.asReversed()
                             val existingCandles = (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart ?: emptyList()
 
                             val combined = (existingCandles + reversedNewCandles)

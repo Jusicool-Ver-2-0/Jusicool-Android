@@ -35,7 +35,11 @@ fun JusicoolNavHost(
         )
 
         chartRoute(
-            popUpBackStack = navController::popBackStack
+            popUpBackStack = navController::popBackStack,
+            navigateToBuy = {_,_ ->},
+            navigateToSell = {_,_ ->},
+            navigateToReserveBuy = {_,_ ->},
+            navigateToReserveSell ={_,_ ->}
         )
 
         buyRoute(
