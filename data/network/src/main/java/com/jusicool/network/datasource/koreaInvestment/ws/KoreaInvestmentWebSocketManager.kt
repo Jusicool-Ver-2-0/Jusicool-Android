@@ -28,7 +28,7 @@ class KoreaInvestmentWebSocketManager @Inject constructor(
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    override fun connect(trId: String, stockCode: String) {
+    override fun connect(stockCode: String) {
         if (webSocket != null) {
             disconnect()
         }

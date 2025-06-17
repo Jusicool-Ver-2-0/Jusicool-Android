@@ -5,6 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface WsKoreaInvestmentRepository {
     fun observeStockTicker(): Flow<StockPriceEntity>
-    fun connectToStockTicker(trId: String, stockCode: String)
+    fun connectToStockTicker(stockCode: String)
     fun disconnectFromStockTicker()
 }

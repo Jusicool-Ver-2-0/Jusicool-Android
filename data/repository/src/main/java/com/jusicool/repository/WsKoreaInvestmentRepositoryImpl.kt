@@ -15,8 +15,8 @@ class WsKoreaInvestmentRepositoryImpl @Inject constructor(
         return webSocketManager.stockTickerFlow.map { it.toEntity() }
     }
 
-    override fun connectToStockTicker(trId: String, stockCode: String) {
-        webSocketManager.connect(trId, stockCode)
+    override fun connectToStockTicker(stockCode: String) {
+        webSocketManager.connect(stockCode)
     }
 
     override fun disconnectFromStockTicker() {
