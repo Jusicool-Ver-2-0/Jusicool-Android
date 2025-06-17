@@ -12,6 +12,8 @@ import com.jusicool.repository.KoreaInvestmentRepository
 import com.jusicool.repository.KoreaInvestmentRepositoryImpl
 import com.jusicool.repository.OrderRepository
 import com.jusicool.repository.OrderRepositoryImpl
+import com.jusicool.repository.WsKoreaInvestmentRepository
+import com.jusicool.repository.WsKoreaInvestmentRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -46,6 +48,11 @@ abstract class RepositoryModule {
     abstract fun bindKoreaInvestmentRepository(
         koreaInvestmentRepositoryImpl: KoreaInvestmentRepositoryImpl
     ): KoreaInvestmentRepository
+
+    @Binds
+    abstract fun bindWsKoreaInvestmentRepository(
+        wsKoreaInvestmentRepositoryImpl: WsKoreaInvestmentRepositoryImpl
+    ): WsKoreaInvestmentRepository
 
     @Binds
     abstract fun binOrderRepository(
