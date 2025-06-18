@@ -102,7 +102,6 @@ private fun SignInScreen(
                 onTextChange = onEmailChange,
                 placeHolder = "이메일을 입력해주세요",
                 isError = isEmailError,
-                icon = {}
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -115,7 +114,6 @@ private fun SignInScreen(
                 isError = isPasswordError,
                 errorText = "아이디와 비밀번호를 다시 확인해주세요",
                 visualTransformation = PasswordVisualTransformation(),
-                icon = {}
             )
 
             Spacer(modifier = Modifier.weight(1f))

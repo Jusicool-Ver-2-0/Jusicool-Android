@@ -22,13 +22,26 @@ fun AccountImage(
 }
 
 @Composable
-fun ClarityArrowLineIcon(
+fun LeftClarityArrowLineIcon(
     modifier: Modifier = Modifier,
     tint: Color = Color.Unspecified
 ) {
     Icon(
-        painter = painterResource(id = R.drawable.clarity_arrow_line),
-        contentDescription = stringResource(id = R.string.clarity_arrow_line_description),
+        painter = painterResource(id = R.drawable.left_clarity_arrow_line),
+        contentDescription = stringResource(id = R.string.left_clarity_arrow_line),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun RightClarityArrowLineIcon(
+    modifier: Modifier = Modifier,
+    tint: Color = Color.Unspecified
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.right_clarity_arrow_line),
+        contentDescription = stringResource(id = R.string.right_clarity_arrow_line),
         modifier = modifier,
         tint = tint
     )
@@ -61,13 +74,13 @@ fun ChartLineIcon(
 }
 
 @Composable
-fun FlatCylinderImage(
+fun TradeSuccessImage(
     modifier: Modifier = Modifier,
     tint: Color = Color.Unspecified
 ) {
     Icon(
-        painter = painterResource(id = R.drawable.flat_cylinder_3),
-        contentDescription = stringResource(id = R.string.flat_cylinder_description),
+        painter = painterResource(id = R.drawable.trade_succes),
+        contentDescription = stringResource(id = R.string.trade_success),
         modifier = modifier,
         tint = tint
     )

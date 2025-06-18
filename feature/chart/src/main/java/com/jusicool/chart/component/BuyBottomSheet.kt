@@ -19,10 +19,12 @@ import com.jusicool.utils.formatMoney
 @Composable
 fun BuyBottomSheet(
     modifier: Modifier = Modifier,
-    navigateToBuy: (String, Long) -> Unit,
-    navigateToReserveBuy: (String, Long) -> Unit,
-    money: Long,
+    navigateToBuy: (String, String, Long, Long) -> Unit,
+    navigateToReserveBuy: (String, String, Long, Long) -> Unit,
     name: String,
+    type: String,
+    money: Long,
+    krwBalance: Long
 ) {
     JusicoolTheme { colors, typography ->
         Column(
@@ -50,7 +52,7 @@ fun BuyBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                     text = "현재가 구매하기",
                     outlineColor = colors.error,
-                    onClick = {navigateToBuy(name, money)}
+                    onClick = {navigateToBuy(name,type, money,krwBalance)}
                 )
 
 
@@ -58,7 +60,7 @@ fun BuyBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                     text = "예약 구매하기",
                     outlineColor = colors.error,
-                    onClick = {navigateToReserveBuy(name, money)}
+                    onClick = {navigateToReserveBuy(name,type, money,krwBalance)}
                 )
             }
         }
@@ -71,7 +73,9 @@ fun BuyBottomSheetPreview() {
     BuyBottomSheet(
         name = "마이크로소프트",
         money = 1,
-        navigateToBuy = { _,_ ->},
-        navigateToReserveBuy = { _,_ ->}
+        krwBalance = 1,
+        type = "",
+        navigateToBuy = { _,_,_,_ ->},
+        navigateToReserveBuy = { _,_,_,_ ->}
     )
 }
