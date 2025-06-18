@@ -35,7 +35,6 @@ import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BuyReserveRoute(
     name: String,
@@ -48,9 +47,6 @@ fun BuyReserveRoute(
     var quantity by remember { mutableStateOf("") }
     var reservePrice by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
-
-    val pagerState = rememberPagerState { 2 }
-    val coroutine = rememberCoroutineScope()
 
     BuyReserveScreen(
         name = name,
@@ -66,8 +62,6 @@ fun BuyReserveRoute(
         onReservePriceChange = { reservePrice = it },
         isError = isError,
         setError = { isError = it },
-        pagerState = pagerState,
-        coroutineScope = coroutine,
         navigateToTradeCompleted = navigateToTradeCompleted,
         popUpBackStack = popUpBackStack
     )
@@ -85,8 +79,6 @@ fun BuyReserveScreen(
     quantity: String,
     reservePrice: String,
     isError: Boolean,
-    pagerState: PagerState,
-    coroutineScope: CoroutineScope,
     setError: (Boolean) -> Unit,
     onQuantityChange: (String) -> Unit,
     onReservePriceChange: (String) -> Unit,
@@ -98,6 +90,8 @@ fun BuyReserveScreen(
     val typeText = if (type == "CRYPTO") "코인" else "주식"
     val unitText = if (type == "CRYPTO") "개" else "주"
 
+    val pagerState = rememberPagerState { 2 }
+    val coroutineScope = rememberCoroutineScope()
 
     JusicoolTheme { colors, typography ->
         Column(
@@ -213,13 +207,9 @@ fun BuyReserveScreen(
 
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 fun BuyReserveScreenPreview() {
-    val pagerState = rememberPagerState(initialPage = 0) { 2 }
-    val coroutineScope = rememberCoroutineScope()
-
     BuyReserveScreen(
         name = "",
         type = "CRYPTO",
@@ -231,8 +221,6 @@ fun BuyReserveScreenPreview() {
         onReservePriceChange = {},
         isError = false,
         setError = {},
-        pagerState = pagerState,
-        coroutineScope = coroutineScope,
         navigateToTradeCompleted = { _,_,_,_, ->},
         popUpBackStack = {}
     )

@@ -23,7 +23,6 @@ import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SellReserveRoute(
     name: String,
@@ -36,16 +35,11 @@ fun SellReserveRoute(
     var reservePrice by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
 
-    val pagerState = rememberPagerState { 2 }
-    val coroutine = rememberCoroutineScope()
-
     SellReserveScreen (
         name = name,
         type = type,
         quantity =quantity,
         inputQuantity = inputQuantity,
-        pagerState = pagerState,
-        coroutineScope = coroutine,
         onQuantityChange = {
             inputQuantity = it
             isError = false
@@ -69,14 +63,15 @@ fun SellReserveScreen(
     inputQuantity: String,
     reservePrice:String,
     isError: Boolean,
-    pagerState: PagerState,
-    coroutineScope: CoroutineScope,
     onQuantityChange: (String) -> Unit,
     onReservePriceChange: (String) -> Unit,
     setError: (Boolean) -> Unit,
     navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
+    val pagerState = rememberPagerState { 2 }
+    val coroutineScope = rememberCoroutineScope()
+
     JusicoolTheme { colors, typography ->
         Column(
             modifier = modifier
@@ -188,20 +183,14 @@ fun SellReserveScreen(
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 fun SellReserveScreenPreview() {
-    val pagerState = rememberPagerState(initialPage = 0) { 2 }
-    val coroutineScope = rememberCoroutineScope()
-
     SellReserveScreen(
         name = "",
         type = "CRYPTO",
         quantity = 10,
         inputQuantity = "",
-        pagerState = pagerState,
-        coroutineScope = coroutineScope,
         reservePrice = "",
         onReservePriceChange = { },
         onQuantityChange = {},
