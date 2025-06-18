@@ -8,7 +8,7 @@ import javax.inject.Inject
 class ObserveRealtimeStockPriceUseCase @Inject constructor(
     private val wsKoreaInvestmentRepository: WsKoreaInvestmentRepository
 ) {
-    operator fun invoke(): Flow<StockPriceEntity> {
+    operator fun invoke(): Flow<StockPriceEntity?> {
         return wsKoreaInvestmentRepository.observeStockTicker()
     }
 }

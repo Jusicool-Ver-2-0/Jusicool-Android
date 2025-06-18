@@ -25,8 +25,8 @@ class KoreaInvestmentWebSocketManager @Inject constructor(
 
     private var webSocket: WebSocket? = null
 
-    private val _stockTickerFlow = MutableSharedFlow<StockPriceSummary>(replay = 1)
-    override val stockTickerFlow: SharedFlow<StockPriceSummary> = _stockTickerFlow.asSharedFlow()
+    private val _stockTickerFlow = MutableStateFlow<StockPriceSummary?>(null)
+    override val stockTickerFlow: StateFlow<StockPriceSummary?> = _stockTickerFlow.asStateFlow()
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
