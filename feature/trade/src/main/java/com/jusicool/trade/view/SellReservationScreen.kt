@@ -18,17 +18,21 @@ import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.JusicoolTextField
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.school_of_company.design_system.icon.ClarityArrowLineIcon
+import com.jusicool.trade.view.enum.TradeType
+import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SellReserveRoute(
+    name: String,
     type: String,
+    quantity: Int,
+    navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
-    var quantity by remember { mutableStateOf("") }
+    var inputQuantity by remember { mutableStateOf("") }
     var reservePrice by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
 
@@ -36,18 +40,21 @@ fun SellReserveRoute(
     val coroutine = rememberCoroutineScope()
 
     SellReserveScreen (
+        name = name,
         type = type,
-        quantity = quantity,
+        quantity =quantity,
+        inputQuantity = inputQuantity,
         pagerState = pagerState,
         coroutineScope = coroutine,
         onQuantityChange = {
-            quantity = it
+            inputQuantity = it
             isError = false
         },
         reservePrice = reservePrice,
         onReservePriceChange = { reservePrice = it },
         isError = isError,
         setError = { isError = it },
+        navigateToTradeCompleted = navigateToTradeCompleted,
         popUpBackStack = popUpBackStack
     )
 }
@@ -56,8 +63,10 @@ fun SellReserveRoute(
 @Composable
 fun SellReserveScreen(
     modifier: Modifier = Modifier,
+    name: String,
     type: String,
-    quantity: String,
+    quantity: Int,
+    inputQuantity: String,
     reservePrice:String,
     isError: Boolean,
     pagerState: PagerState,
@@ -65,6 +74,7 @@ fun SellReserveScreen(
     onQuantityChange: (String) -> Unit,
     onReservePriceChange: (String) -> Unit,
     setError: (Boolean) -> Unit,
+    navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
     JusicoolTheme { colors, typography ->
@@ -73,17 +83,15 @@ fun SellReserveScreen(
                 .fillMaxSize()
                 .background(color = colors.white)
         )  {
-            val availableCount = 10L
-
             val titleText = if (type.uppercase() == "CRYPTO") "코인" else "주식"
             val unitText = if (type.uppercase() == "CRYPTO") "개" else "주"
             val unitLabel = "몇 $unitText 판매할까요?"
 
             JusicoolTopBar(
                 startIcon = {
-                    ClarityArrowLineIcon(modifier = Modifier.JusicoolClickable { popUpBackStack() })
+                    LeftClarityArrowLineIcon(modifier = Modifier.JusicoolClickable { popUpBackStack() })
                 },
-                betweenText = "$titleText 판매",
+                betweenText = "$titleText 판매 예약",
                 endIcon = { Spacer(modifier = Modifier.size(24.dp)) }
             )
 
@@ -96,7 +104,7 @@ fun SellReserveScreen(
             ) { page ->
                 when (page) {
                     0 -> {
-                        val isInputValid = reservePrice.isNotEmpty()
+                        val isInputValid = (reservePrice.toLongOrNull() ?: 0L) > 0L
 
                         Column(
                             modifier = Modifier
@@ -142,20 +150,20 @@ fun SellReserveScreen(
                         ) {
                             JusicoolTextField(
                                 label = unitLabel,
-                                textState = quantity,
+                                textState = inputQuantity,
                                 onTextChange = {
                                     if (it.all { char -> char.isDigit() }) {
                                         onQuantityChange(it)
                                     }
                                 },
-                                placeHolder = "최대 $availableCount$unitText 판매 가능",
-                                helperText = if (isError) "" else "보유 $titleText: $availableCount$unitText",
+                                placeHolder = "최대 $quantity$unitText 판매 가능",
+                                helperText = if (isError) "" else "보유 $titleText: $quantity$unitText",
                                 errorText = if (isError) "보유 ${titleText}이 부족합니다" else "",
                                 isError = isError,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
 
-                            val isInputValid = quantity.isNotEmpty()
+                            val isInputValid = (inputQuantity.toLongOrNull() ?: 0L) > 0L
 
                             JusicoolFilledButton(
                                 modifier = Modifier
@@ -164,11 +172,11 @@ fun SellReserveScreen(
                                 text = "판매하기",
                                 state = if (isInputValid) ButtonState.Enable else ButtonState.Disable,
                                 onClick = {
-                                    val count = quantity.toLongOrNull() ?: 0L
-                                    val hasError = availableCount < count
+                                    val count = inputQuantity.toLongOrNull() ?: 0L
+                                    val hasError = quantity < count
                                     setError(hasError)
                                     if (!hasError) {
-                                        // 판매 처리
+                                        navigateToTradeCompleted(name, inputQuantity.toInt(), TradeType.SELLRESERVE, type )
                                     }
                                 }
                             )
@@ -189,8 +197,10 @@ fun SellReserveScreenPreview() {
     val coroutineScope = rememberCoroutineScope()
 
     SellReserveScreen(
+        name = "",
         type = "CRYPTO",
-        quantity = "",
+        quantity = 10,
+        inputQuantity = "",
         pagerState = pagerState,
         coroutineScope = coroutineScope,
         reservePrice = "",
@@ -198,6 +208,7 @@ fun SellReserveScreenPreview() {
         onQuantityChange = {},
         isError = false,
         setError = {},
+        navigateToTradeCompleted = { _,_,_,_, ->},
         popUpBackStack = {}
     )
 }

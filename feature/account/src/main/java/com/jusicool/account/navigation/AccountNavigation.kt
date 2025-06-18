@@ -13,7 +13,7 @@ fun NavController.navigateToAccountRoute(napOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.accountRoute(
-    navigateToChart: (marketCode: String, name: String, quantity: Int, money: Long) -> Unit
+    navigateToChart: (marketCode: String, name: String, type: String, quantity: Int, money: Long, krwBalance: Long) -> Unit
 ) {
     composable(accountRoute) {
         AccountRoute(

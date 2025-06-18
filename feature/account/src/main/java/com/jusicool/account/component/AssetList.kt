@@ -20,7 +20,7 @@ fun AssetList(
     krwBalance: Long,
     holdings: PersistentList<HoldingModel>,
     getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState,
-    navigateToChart: (marketCode: String, name: String, quantity: Int, money: Long) -> Unit,
+    navigateToChart: (marketCode: String, name: String, type: String, quantity: Int, money: Long, krwBalance: Long) -> Unit,
 ) {
     JusicoolTheme { colors, typography ->
         Column(
@@ -93,6 +93,6 @@ fun AssetListPreview() {
             )
         ),
         krwBalance = 1,
-        navigateToChart = { marketCode, name, quantity, money -> }
+        navigateToChart = { marketCode, name,type, quantity, money, krwBalance -> }
     )
 }

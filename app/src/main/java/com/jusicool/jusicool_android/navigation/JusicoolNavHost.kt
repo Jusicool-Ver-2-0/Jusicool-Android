@@ -11,8 +11,14 @@ import com.jusicool.chart.navigation.navigateToChartRoute
 import com.jusicool.signin.navigation.signInRoute
 import com.jusicool.trade.navigation.buyReserveRoute
 import com.jusicool.trade.navigation.buyRoute
+import com.jusicool.trade.navigation.navigateToBuyReserveRoute
+import com.jusicool.trade.navigation.navigateToBuyRoute
+import com.jusicool.trade.navigation.navigateToSellReserveRoute
+import com.jusicool.trade.navigation.navigateToSellRoute
+import com.jusicool.trade.navigation.navigateToTradeCompletedRoute
 import com.jusicool.trade.navigation.sellReserveRoute
 import com.jusicool.trade.navigation.sellRoute
+import com.jusicool.trade.navigation.tradeCompletedRoute
 
 @Composable
 fun JusicoolNavHost(
@@ -36,26 +42,35 @@ fun JusicoolNavHost(
 
         chartRoute(
             popUpBackStack = navController::popBackStack,
-            navigateToBuy = {_,_ ->},
-            navigateToSell = {_,_ ->},
-            navigateToReserveBuy = {_,_ ->},
-            navigateToReserveSell ={_,_ ->}
+            navigateToBuy = navController::navigateToBuyRoute,
+            navigateToSell = navController::navigateToSellRoute,
+            navigateToReserveBuy = navController::navigateToBuyReserveRoute,
+            navigateToReserveSell = navController::navigateToSellReserveRoute,
         )
 
         buyRoute(
+            navigateToTradeCompleted = navController::navigateToTradeCompletedRoute,
             popUpBackStack = navController::popBackStack
         )
 
         sellRoute(
+            navigateToTradeCompleted = navController::navigateToTradeCompletedRoute,
             popUpBackStack = navController::popBackStack
         )
 
         buyReserveRoute(
+            navigateToTradeCompleted = navController::navigateToTradeCompletedRoute,
             popUpBackStack = navController::popBackStack
         )
 
         sellReserveRoute(
+            navigateToTradeCompleted = navController::navigateToTradeCompletedRoute,
             popUpBackStack = navController::popBackStack
+        )
+
+        tradeCompletedRoute(
+            navigateToAccount = navController::navigateToAccountRoute,
+            navigateToOrderHistory = {}
         )
     }
 }

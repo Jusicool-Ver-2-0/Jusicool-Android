@@ -34,7 +34,7 @@ import com.jusicool.utils.formatMoney
 import com.meister.assets.component.DoughnutChart
 import com.meister.assets.viewModel.MonthlyIncomeViewModel
 import com.meister.assets.viewModel.uiState.MonthlyIncomeUiState
-import com.school_of_company.design_system.icon.ClarityArrowLineIcon
+import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.random.Random
 
@@ -79,7 +79,7 @@ private fun MonthlyIncomeScreen(
         ) {
             JusicoolTopBar(
                 startIcon = {
-                    ClarityArrowLineIcon(modifier = Modifier.clickable(onClick = navigateToBack))
+                    LeftClarityArrowLineIcon(modifier = Modifier.clickable(onClick = navigateToBack))
                 },
                 betweenText = "내 자산",
                 endIcon = {

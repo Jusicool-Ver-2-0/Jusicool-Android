@@ -14,21 +14,27 @@ import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.JusicoolTextField
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
+import com.jusicool.trade.view.enum.TradeType
 import com.jusicool.utils.formatMoney
-import com.school_of_company.design_system.icon.ClarityArrowLineIcon
+import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
 
 @Composable
 fun BuyRoute(
+    name: String,
     type: String,
     price: Long,
+    krwBalance: Long,
+    navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
     var quantity by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
 
     BuyScreen(
+        name = name,
         type = type,
         price = price,
+        krwBalance = krwBalance,
         quantity = quantity,
         onQuantityChange = {
             quantity = it
@@ -36,6 +42,7 @@ fun BuyRoute(
         },
         isError = isError,
         setError = { isError = it },
+        navigateToTradeCompleted = navigateToTradeCompleted,
         popUpBackStack = popUpBackStack
     )
 }
@@ -44,12 +51,15 @@ fun BuyRoute(
 @Composable
 fun BuyScreen(
     modifier: Modifier = Modifier,
+    name: String,
     type: String,
     price: Long,
+    krwBalance: Long,
     quantity: String,
     onQuantityChange: (String) -> Unit,
     isError: Boolean,
     setError: (Boolean) -> Unit,
+    navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
     JusicoolTheme { colors, typography ->
@@ -58,8 +68,7 @@ fun BuyScreen(
                 .fillMaxSize()
                 .background(color = colors.white)
         ) {
-            val availableMoney = 100000L
-            val maxBuyAble = (availableMoney / price).coerceAtLeast(0L)
+            val maxBuyAble = (krwBalance / price).coerceAtLeast(0L)
 
             val typeText = if (type == "CRYPTO") "코인" else "주식"
             val unitLabel = if (type == "CRYPTO") "몇 개 구매할까요?" else "몇 주 구매할까요?"
@@ -67,7 +76,7 @@ fun BuyScreen(
 
             JusicoolTopBar(
                 startIcon = {
-                    ClarityArrowLineIcon(
+                    LeftClarityArrowLineIcon(
                         modifier = Modifier.JusicoolClickable { popUpBackStack() }
                     )
                 },
@@ -92,13 +101,13 @@ fun BuyScreen(
                         }
                     },
                     placeHolder = "최대 ${maxBuyAble.formatMoney()}$unitText 구매 가능",
-                    helperText = if (isError) "" else "보유 금액: ${availableMoney.formatMoney()}원",
+                    helperText = if (isError) "" else "보유 금액: ${krwBalance.formatMoney()}원",
                     errorText = if (isError) "보유 금액이 부족합니다" else "",
                     isError = isError,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
 
-                val isInputValid = quantity.isNotEmpty()
+                val isInputValid = (quantity.toLongOrNull() ?: 0L) > 0L
 
                 JusicoolFilledButton(
                     modifier = Modifier
@@ -108,10 +117,10 @@ fun BuyScreen(
                     state = if (isInputValid) ButtonState.Enable else ButtonState.Disable,
                     onClick = {
                         val totalCost = quantity.toLongOrNull()?.let { it * price } ?: 0L
-                        val hasError = totalCost > availableMoney
+                        val hasError = totalCost > krwBalance
                         setError(hasError)
                         if (!hasError) {
-                            // 구매 실행 로직 (ex: ViewModel 등에서 수행)
+                            navigateToTradeCompleted(name, quantity.toInt(), TradeType.BUY, type )
                         }
                     }
                 )
@@ -125,12 +134,15 @@ fun BuyScreen(
 @Composable
 fun BuyScreenPreview() {
     BuyScreen(
+        name = "",
         type = "CRYPTO",
         price = 10000L,
         quantity = "",
+        krwBalance = 1,
         onQuantityChange = {},
         isError = false,
         setError = {},
+        navigateToTradeCompleted = { _,_,_,_, ->},
         popUpBackStack = {}
     )
 }

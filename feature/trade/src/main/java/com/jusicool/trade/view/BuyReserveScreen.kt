@@ -29,16 +29,20 @@ import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.JusicoolTextField
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
+import com.jusicool.trade.view.enum.TradeType
 import com.jusicool.utils.formatMoney
-import com.school_of_company.design_system.icon.ClarityArrowLineIcon
+import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BuyReserveRoute(
+    name: String,
     type: String,
     price: Long,
+    krwBalance:Long,
+    navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
     var quantity by remember { mutableStateOf("") }
@@ -49,9 +53,11 @@ fun BuyReserveRoute(
     val coroutine = rememberCoroutineScope()
 
     BuyReserveScreen(
+        name = name,
         type = type,
         price = price,
         quantity = quantity,
+        krwBalance = krwBalance,
         onQuantityChange = {
             quantity = it
             isError = false
@@ -62,6 +68,7 @@ fun BuyReserveRoute(
         setError = { isError = it },
         pagerState = pagerState,
         coroutineScope = coroutine,
+        navigateToTradeCompleted = navigateToTradeCompleted,
         popUpBackStack = popUpBackStack
     )
 }
@@ -71,8 +78,10 @@ fun BuyReserveRoute(
 @Composable
 fun BuyReserveScreen(
     modifier: Modifier = Modifier,
+    name: String,
     type: String,
     price: Long,
+    krwBalance: Long,
     quantity: String,
     reservePrice: String,
     isError: Boolean,
@@ -81,10 +90,10 @@ fun BuyReserveScreen(
     setError: (Boolean) -> Unit,
     onQuantityChange: (String) -> Unit,
     onReservePriceChange: (String) -> Unit,
+    navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
-    val availableMoney = 100000L
-    val maxBuyAble = (availableMoney / price).coerceAtLeast(0L)
+    val maxBuyAble = (krwBalance / price).coerceAtLeast(0L)
 
     val typeText = if (type == "CRYPTO") "코인" else "주식"
     val unitLabel = if (type == "CRYPTO") "몇 개 구매할까요?" else "몇 주 구매할까요?"
@@ -99,14 +108,14 @@ fun BuyReserveScreen(
         ) {
             JusicoolTopBar(
                 startIcon = {
-                    ClarityArrowLineIcon(
+                    LeftClarityArrowLineIcon(
                         modifier = Modifier.JusicoolClickable {
                             if (pagerState.currentPage == 0) popUpBackStack()
                             else coroutineScope.launch { pagerState.animateScrollToPage(0) }
                         }
                     )
                 },
-                betweenText = "$typeText 구매",
+                betweenText = "$typeText 구매 예약",
                 endIcon = { Spacer(modifier = Modifier.size(24.dp)) }
             )
 
@@ -119,7 +128,7 @@ fun BuyReserveScreen(
             ) { page ->
                 when (page) {
                     0 -> {
-                        val isInputValid = reservePrice.isNotEmpty()
+                        val isInputValid = (reservePrice.toLongOrNull() ?: 0L) > 0L
 
                         Column(
                             modifier = Modifier
@@ -157,7 +166,7 @@ fun BuyReserveScreen(
                     }
 
                     1 -> {
-                        val isInputValid = quantity.isNotEmpty()
+                        val isInputValid = (quantity.toLongOrNull() ?: 0L) > 0L
 
                         Column(
                             modifier = Modifier
@@ -174,7 +183,7 @@ fun BuyReserveScreen(
                                     }
                                 },
                                 placeHolder = "최대 ${maxBuyAble.formatMoney()}$unitText 구매 가능",
-                                helperText = if (isError) "" else "보유 금액: ${availableMoney.formatMoney()}원",
+                                helperText = if (isError) "" else "보유 금액: ${krwBalance.formatMoney()}원",
                                 errorText = if (isError) "보유 금액이 부족합니다" else "",
                                 isError = isError,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -188,10 +197,10 @@ fun BuyReserveScreen(
                                 state = if (isInputValid) ButtonState.Enable else ButtonState.Disable,
                                 onClick = {
                                     val totalCost = quantity.toLongOrNull()?.let { it * price } ?: 0L
-                                    val hasError = totalCost > availableMoney
+                                    val hasError = totalCost > krwBalance
                                     setError(hasError)
                                     if (!hasError) {
-                                        // 구매 로직 수행
+                                        navigateToTradeCompleted(name, quantity.toInt(), TradeType.BUYRESERVE, type )
                                     }
                                 }
                             )
@@ -213,9 +222,11 @@ fun BuyReserveScreenPreview() {
     val coroutineScope = rememberCoroutineScope()
 
     BuyReserveScreen(
+        name = "",
         type = "CRYPTO",
         price = 10000L,
         quantity = "",
+        krwBalance = 1,
         onQuantityChange = {},
         reservePrice = "",
         onReservePriceChange = {},
@@ -223,6 +234,7 @@ fun BuyReserveScreenPreview() {
         setError = {},
         pagerState = pagerState,
         coroutineScope = coroutineScope,
+        navigateToTradeCompleted = { _,_,_,_, ->},
         popUpBackStack = {}
     )
 }

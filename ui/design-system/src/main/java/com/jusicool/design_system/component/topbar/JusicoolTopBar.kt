@@ -82,7 +82,7 @@ private fun JusicoolTopbarPreview1() {
         JusicoolTopBar(
             startIcon = {
                 Image(
-                    painter = painterResource(id = R.drawable.clarity_arrow_line),
+                    painter = painterResource(id = R.drawable.left_clarity_arrow_line),
                     contentDescription = "clarity_arrow_line",
                     modifier = Modifier
                         .width(18.dp)

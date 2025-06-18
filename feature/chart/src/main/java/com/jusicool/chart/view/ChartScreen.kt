@@ -50,7 +50,7 @@ import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.model.community.CommunityModel
 import com.jusicool.model.news.NewsModel
-import com.school_of_company.design_system.icon.ClarityArrowLineIcon
+import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
 import com.school_of_company.design_system.icon.LetsIconsSettingFillIcon
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -63,10 +63,12 @@ fun ChartRoute(
     koreanName: String,
     quantity: Int,
     money: Long,
-    navigateToBuy: (String, Long) -> Unit,
-    navigateToSell: (String, Int) -> Unit,
-    navigateToReserveBuy: (String, Long) -> Unit,
-    navigateToReserveSell: (String, Int) -> Unit,
+    krwBalance: Long,
+    type: String,
+    navigateToBuy: (String, String, Long, Long) -> Unit,
+    navigateToSell: (String, String, Int) -> Unit,
+    navigateToReserveBuy: (String, String, Long, Long) -> Unit,
+    navigateToReserveSell: (String, String, Int) -> Unit,
     popUpBackStack: () -> Unit
 ) {
     val minuteCandleUiState by viewModel.minuteCandleUiState.collectAsStateWithLifecycle()
@@ -182,6 +184,8 @@ fun ChartRoute(
         marketCode = marketCode,
         quantity = quantity,
         money = money,
+        krwBalance = krwBalance,
+        type = type,
         onRefresh = refreshCandleData,
         navigateToBuy = navigateToBuy,
         navigateToSell = navigateToSell,
@@ -198,16 +202,18 @@ fun ChartScreen(
     marketCode: String,
     quantity: Int,
     money: Long,
+    krwBalance: Long,
+    type: String,
     minuteCandleData: GetMinuteCandleUiState,
     currentMinuteCandleData: GetCurrentMinuteCandleUiState,
     chartInformation: ChartInformationModel,
     price: ChartPriceModel,
     news: List<NewsModel>,
     community: List<CommunityModel>,
-    navigateToBuy: (String, Long) -> Unit,
-    navigateToSell: (String, Int) -> Unit,
-    navigateToReserveBuy: (String, Long) -> Unit,
-    navigateToReserveSell: (String, Int) -> Unit,
+    navigateToBuy: (String, String, Long, Long) -> Unit,
+    navigateToSell: (String, String, Int) -> Unit,
+    navigateToReserveBuy: (String, String, Long, Long) -> Unit,
+    navigateToReserveSell: (String, String, Int) -> Unit,
     onRefresh: (String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
@@ -230,6 +236,8 @@ fun ChartScreen(
                 BuyBottomSheet(
                     name = koreanName,
                     money = money,
+                    krwBalance = krwBalance,
+                    type = type,
                     navigateToBuy = navigateToBuy,
                     navigateToReserveBuy = navigateToReserveBuy
                 )
@@ -246,6 +254,7 @@ fun ChartScreen(
                 SellBottomSheet(
                     name = koreanName,
                     quantity = quantity,
+                    type = type,
                     navigateToSell = navigateToSell,
                     navigateToReserveSell = navigateToReserveSell
                 )
@@ -261,7 +270,7 @@ fun ChartScreen(
             JusicoolTopBar(
                 modifier = Modifier.fillMaxWidth(),
                 betweenText = koreanName,
-                startIcon = { ClarityArrowLineIcon(modifier = Modifier.JusicoolClickable { popUpBackStack() }) },
+                startIcon = { LeftClarityArrowLineIcon(modifier = Modifier.JusicoolClickable { popUpBackStack() }) },
                 endIcon = { LetsIconsSettingFillIcon(modifier = Modifier.JusicoolClickable { /*TODO()*/ }) }
             )
 
@@ -561,11 +570,13 @@ fun ChartScreenPreview() {
         marketCode = "",
         quantity = 0,
         money = 1,
+        type = "",
+        krwBalance = 1,
         onRefresh = {},
-        navigateToBuy = { _,_ -> },
-        navigateToSell = { _,_ -> },
-        navigateToReserveBuy = { _,_ ->},
-        navigateToReserveSell = { _,_ -> }
+        navigateToBuy = { _,_,_,_ -> },
+        navigateToSell = { _,_,_ -> },
+        navigateToReserveBuy = { _,_,_,_ ->},
+        navigateToReserveSell = { _,_,_ -> }
     )
 }
 
