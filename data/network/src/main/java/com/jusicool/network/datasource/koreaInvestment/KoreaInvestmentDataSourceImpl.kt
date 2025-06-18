@@ -5,8 +5,9 @@ import StockPriceResponse
 import com.jusicool.model.koreaInvestment.StockMinutePriceResponse
 import com.jusicool.network.BuildConfig
 import com.jusicool.network.api.KoreaInvestmentApi
+import javax.inject.Inject
 
-class KoreaInvestmentDataSourceImpl(
+class KoreaInvestmentDataSourceImpl @Inject constructor(
     private val api: KoreaInvestmentApi
 ) : KoreaInvestmentDataSource {
 
