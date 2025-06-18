@@ -71,7 +71,6 @@ fun BuyScreen(
             val maxBuyAble = (krwBalance / price).coerceAtLeast(0L)
 
             val typeText = if (type == "CRYPTO") "코인" else "주식"
-            val unitLabel = if (type == "CRYPTO") "몇 개 구매할까요?" else "몇 주 구매할까요?"
             val unitText = if (type == "CRYPTO") "개" else "주"
 
             JusicoolTopBar(
@@ -93,7 +92,7 @@ fun BuyScreen(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 JusicoolTextField(
-                    label = unitLabel,
+                    label = "몇 $unitText 구매할까요?",
                     textState = quantity,
                     onTextChange = {
                         if (it.all { char -> char.isDigit() }) {

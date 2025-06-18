@@ -85,7 +85,6 @@ fun SellReserveScreen(
         )  {
             val titleText = if (type.uppercase() == "CRYPTO") "코인" else "주식"
             val unitText = if (type.uppercase() == "CRYPTO") "개" else "주"
-            val unitLabel = "몇 $unitText 판매할까요?"
 
             JusicoolTopBar(
                 startIcon = {
@@ -149,7 +148,7 @@ fun SellReserveScreen(
                             verticalArrangement = Arrangement.SpaceBetween
                         ) {
                             JusicoolTextField(
-                                label = unitLabel,
+                                label = "몇 $unitText 판매할까요?",
                                 textState = inputQuantity,
                                 onTextChange = {
                                     if (it.all { char -> char.isDigit() }) {
