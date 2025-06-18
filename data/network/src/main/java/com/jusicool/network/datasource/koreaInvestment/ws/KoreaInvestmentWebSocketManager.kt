@@ -5,9 +5,9 @@ import com.jusicool.model.koreaInvestment.ws.StockPriceSummary
 import com.jusicool.network.util.KoreaInvestmentAuthManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -40,7 +40,7 @@ class KoreaInvestmentWebSocketManager @Inject constructor(
                 authManager.getApprovalKey()
             }.onSuccess { approvalKey ->
                 val request = Request.Builder()
-                    .url("ws://ops.koreainvestment.com:21000")
+                    .url("ws://ops.koreainvestment.com:21000/tryitout/H0STCNT0")
                     .build()
 
                 webSocket = client.newWebSocket(request, object : WebSocketListener() {
@@ -52,7 +52,7 @@ class KoreaInvestmentWebSocketManager @Inject constructor(
 
                     override fun onMessage(ws: WebSocket, text: String) {
                         Log.d("WebSocket", "📩 수신 메시지: $text")
-                        Log.d("WebSocket", "\uD83D\uDD12 파싱된 페이지: ${StockPriceSummary.fromRawData(text)}")
+                        Log.d("WebSocket", "\uD83D\uDD12 파싱된 페이지: ${StockPriceSummary.parseStockPriceSummary(text)}")
                         parseAndEmit(text)
                     }
 
@@ -100,12 +100,9 @@ class KoreaInvestmentWebSocketManager @Inject constructor(
     }
 
     private fun parseAndEmit(message: String) {
-        // 실시간 데이터 메시지는 '^' 구분된 문자열
-        val parsed = StockPriceSummary.fromRawData(message)
+        val parsed = StockPriceSummary.parseStockPriceSummary(message)
         if (parsed != null) {
-            scope.launch {
-                _stockTickerFlow.emit(parsed)
-            }
+            _stockTickerFlow.value = parsed
         }
     }
 }
