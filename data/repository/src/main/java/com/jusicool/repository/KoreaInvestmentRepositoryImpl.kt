@@ -18,16 +18,12 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
         inputIsCd: String,
         inputHour1: String,
         inputDate1: String,
-        pwDataIncuYn: String,
-        fakeTickIncuYn: String?
     ): StockCandleResponse {
         return dataSource.getStockOrder(
             condMrktDivCode,
             inputIsCd,
             inputHour1,
             inputDate1,
-            pwDataIncuYn,
-            fakeTickIncuYn
         )
     }
 
@@ -35,15 +31,11 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
         condMrktDivCode: String,
         inputIsCd: String,
         inputHour1: String,
-        pwDataIncuYn: String,
-        etcClsCode: String
     ): StockMinutePriceResponse {
         return dataSource.getMinutePrice(
             condMrktDivCode,
             inputIsCd,
             inputHour1,
-            pwDataIncuYn,
-            etcClsCode
         )
     }
 

@@ -11,16 +11,12 @@ interface KoreaInvestmentRepository {
         inputIsCd: String,
         inputHour1: String,
         inputDate1: String,
-        pwDataIncuYn: String,
-        fakeTickIncuYn: String?
     ): StockCandleResponse
 
     suspend fun getMinutePrice(
         condMrktDivCode: String,
         inputIsCd: String,
         inputHour1: String,
-        pwDataIncuYn: String,
-        etcClsCode: String
     ): StockMinutePriceResponse
 
     suspend fun getStockCurrentPrice(
