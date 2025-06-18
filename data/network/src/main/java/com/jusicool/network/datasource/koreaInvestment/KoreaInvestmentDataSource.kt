@@ -10,14 +10,12 @@ import com.jusicool.model.koreaInvestment.WebSocketAccessKeyResponse
 interface KoreaInvestmentDataSource {
 
     suspend fun getStockOrder(
-        condMrktDivCode: String,
         inputIsCd: String,
         inputHour1: String,
         inputDate1: String,
     ): StockCandleResponse
 
     suspend fun getMinutePrice(
-        condMrktDivCode: String,
         inputIsCd: String,
         inputHour1: String,
     ): StockMinutePriceResponse

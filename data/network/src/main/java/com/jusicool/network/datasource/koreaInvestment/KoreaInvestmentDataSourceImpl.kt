@@ -11,7 +11,6 @@ class KoreaInvestmentDataSourceImpl(
 ) : KoreaInvestmentDataSource {
 
     override suspend fun getStockOrder(
-        condMrktDivCode: String,
         inputIsCd: String,
         inputHour1: String,
         inputDate1: String,
@@ -32,7 +31,6 @@ class KoreaInvestmentDataSourceImpl(
     }
 
     override suspend fun getMinutePrice(
-        condMrktDivCode: String,
         inputIsCd: String,
         inputHour1: String,
     ): StockMinutePriceResponse {

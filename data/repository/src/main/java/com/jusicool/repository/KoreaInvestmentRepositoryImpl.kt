@@ -11,13 +11,11 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
 ) : KoreaInvestmentRepository {
 
     override suspend fun getStockOrder(
-        condMrktDivCode: String,
         inputIsCd: String,
         inputHour1: String,
         inputDate1: String,
     ): List<CandleChartEntity> {
         return dataSource.getStockOrder(
-            condMrktDivCode,
             inputIsCd,
             inputHour1,
             inputDate1
@@ -25,12 +23,10 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMinutePrice(
-        condMrktDivCode: String,
         inputIsCd: String,
         inputHour1: String,
     ): List<CandleChartEntity> {
         return dataSource.getMinutePrice(
-            condMrktDivCode,
             inputIsCd,
             inputHour1
         ).details.mapNotNull { it.toCandleEntity() }
