@@ -1,8 +1,7 @@
 package com.jusicool.repository
 
-import com.jusicool.model.koreaInvestment.StockMinutePriceResponse
-import StockCandleResponse
 import StockPriceResponse
+import com.jusicool.entity.koreaInvestment.CandleChartEntity
 
 interface KoreaInvestmentRepository {
 
@@ -11,13 +10,13 @@ interface KoreaInvestmentRepository {
         inputIsCd: String,
         inputHour1: String,
         inputDate1: String,
-    ): StockCandleResponse
+    ): List<CandleChartEntity>
 
     suspend fun getMinutePrice(
         condMrktDivCode: String,
         inputIsCd: String,
         inputHour1: String,
-    ): StockMinutePriceResponse
+    ): List<CandleChartEntity>
 
     suspend fun getStockCurrentPrice(
         marketDivCode: String,
