@@ -9,3 +9,11 @@ data class AccessKeyRequest(
     @Json(name = "appkey") val appKey: String,
     @Json(name = "secretkey") val secretKey: String
 )
+
+@JsonClass(generateAdapter = true)
+data class AccessTokenRequest(
+    @Json(name = "grant_type") val grantType: String,
+    @Json(name = "appkey") val appKey: String,
+    @Json(name = "appsecret") val secretKey: String
+)
+

@@ -3,6 +3,7 @@ package com.jusicool.network.api
 import StockCandleResponse
 import StockPriceResponse
 import com.jusicool.model.koreaInvestment.AccessKeyRequest
+import com.jusicool.model.koreaInvestment.AccessTokenRequest
 import com.jusicool.model.koreaInvestment.AccessTokenResponse
 import com.jusicool.model.koreaInvestment.StockMinutePriceResponse
 import com.jusicool.model.koreaInvestment.WebSocketAccessKeyResponse
@@ -21,7 +22,7 @@ interface KoreaInvestmentApi {
 
     @POST("/oauth2/tokenP")
     suspend fun getAccessToken(
-        @Body body: AccessKeyRequest,
+        @Body body: AccessTokenRequest,
     ): AccessTokenResponse
 
 
