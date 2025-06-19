@@ -11,7 +11,7 @@ import com.jusicool.network.api.OrderApi
 import com.jusicool.network.util.BaseApiRetrofit
 import com.jusicool.network.util.BasicCookieJar
 import com.jusicool.network.util.KoreaInvestmentAuthManager
-import com.jusicool.network.util.KoreaInvestmentAuthenticator
+import com.jusicool.network.util.KoreaInvestmentInterceptor
 import com.jusicool.network.util.KoreaInvestmentRetrofit
 import com.jusicool.network.util.UpbitRetrofit
 import com.squareup.moshi.Moshi
@@ -64,11 +64,11 @@ object NetworkModule {
     @Named("koreaInvestmentOkHttpClient")
     fun provideKoreaInvestmentOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
-        koreaInvestmentAuthenticator: KoreaInvestmentAuthenticator,
+        koreaInvestmentAuthenticator: KoreaInvestmentInterceptor,
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
-            .authenticator(koreaInvestmentAuthenticator)
+            .addInterceptor(koreaInvestmentAuthenticator)
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
@@ -79,8 +79,8 @@ object NetworkModule {
     @Singleton
     fun provideKoreaInvestmentAuthenticator(
         authManager: dagger.Lazy<KoreaInvestmentAuthManager>  // <- Lazy 주입
-    ): KoreaInvestmentAuthenticator {
-        return KoreaInvestmentAuthenticator(authManager)
+    ): KoreaInvestmentInterceptor {
+        return KoreaInvestmentInterceptor(authManager)
     }
     @Provides
     @Singleton
