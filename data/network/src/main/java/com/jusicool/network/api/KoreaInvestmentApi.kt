@@ -31,7 +31,6 @@ interface KoreaInvestmentApi {
         @Header("appkey") appKey: String,
         @Header("appsecret") appSecret: String,
         @Header("tr_id") trId: String,
-        @Header("tr_cont") trCont: String?,
         @Header("custtype") custType: String,
 
         @Query("FID_COND_MRKT_DIV_CODE") condMrktDivCode: String,
@@ -46,7 +45,6 @@ interface KoreaInvestmentApi {
         @Header("appkey") appKey: String,
         @Header("appsecret") appSecret: String,
         @Header("tr_id") trId: String,
-        @Header("tr_cont") trCont: String?,
         @Header("custtype") custType: String,
 
         @Query("FID_COND_MRKT_DIV_CODE") condMrktDivCode: String,
@@ -61,7 +59,6 @@ interface KoreaInvestmentApi {
         @Header("appkey") appKey: String,
         @Header("appsecret") appSecret: String,
         @Header("tr_id") trId: String,
-        @Header("tr_cont") trCont: String?,
         @Header("custtype") custType: String,
 
         @Query("FID_COND_MRKT_DIV_CODE") marketDivCode: String,

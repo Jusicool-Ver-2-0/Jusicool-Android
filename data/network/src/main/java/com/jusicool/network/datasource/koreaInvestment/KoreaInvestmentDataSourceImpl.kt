@@ -20,7 +20,6 @@ class KoreaInvestmentDataSourceImpl @Inject constructor(
             appKey = BuildConfig.KOREAINVESTMENT_API_KEY,
             appSecret = BuildConfig.KOREAINVESTMENT_APP_SECRET,
             trId = "FHKST01010100",
-            trCont = null,
             custType = "P",
 
             condMrktDivCode = "J",
@@ -38,8 +37,7 @@ class KoreaInvestmentDataSourceImpl @Inject constructor(
         return api.getMinutePrice(
             appKey = BuildConfig.KOREAINVESTMENT_API_KEY,
             appSecret = BuildConfig.KOREAINVESTMENT_APP_SECRET,
-            trId = "FHKST01010100",
-            trCont = null,
+            trId = "FHKST03010200",
             custType = "P",
 
             condMrktDivCode = "J",
@@ -58,7 +56,6 @@ class KoreaInvestmentDataSourceImpl @Inject constructor(
             appKey = BuildConfig.KOREAINVESTMENT_API_KEY,
             appSecret = BuildConfig.KOREAINVESTMENT_APP_SECRET,
             trId = "FHKST01010100",
-            trCont = null,
             custType = "P",
 
             marketDivCode = marketDivCode,
