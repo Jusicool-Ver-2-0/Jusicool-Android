@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.jusicool.entity.orderHistory.OrderHistory
 import com.jusicool.entity.orderHistory.OrderHistoryType
 import com.jusicool.usecase.order.GetOrderHistoryUseCase
+import com.meister.orderhistory.viewModel.uiState.CompletedOrderHistoryUiState
+import com.meister.orderhistory.viewModel.uiState.ReservedOrderHistoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow

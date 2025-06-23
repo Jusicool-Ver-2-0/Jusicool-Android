@@ -31,9 +31,9 @@ import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.entity.orderHistory.OrderHistory
 import com.jusicool.utils.formatMoney
-import com.meister.orderhistory.viewModel.CompletedOrderHistoryUiState
+import com.meister.orderhistory.viewModel.uiState.CompletedOrderHistoryUiState
 import com.meister.orderhistory.viewModel.OrderHistoryViewModel
-import com.meister.orderhistory.viewModel.ReservedOrderHistoryUiState
+import com.meister.orderhistory.viewModel.uiState.ReservedOrderHistoryUiState
 import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
