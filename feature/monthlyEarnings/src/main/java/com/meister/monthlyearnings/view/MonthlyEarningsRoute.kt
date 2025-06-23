@@ -95,6 +95,8 @@ private fun MonthlyEarningsScreen(
                 betweenText = "이번 달 수익",
             )
 
+            Spacer(modifier = Modifier.height(8.dp))
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -106,6 +108,8 @@ private fun MonthlyEarningsScreen(
                     profitRate = uiState.monthlyReturnRate,
                 )
 
+                Spacer(modifier = Modifier.height(16.dp))
+                
                 MonthlyEarningsTabLayout(
                     isLoading = uiState.isLoading,
                     totalAssetsHoldingData = uiState.totalHoldingAssetsData,
