@@ -233,8 +233,15 @@ private fun OrderHistoryTabLayout(
 
             HorizontalPager(state = pagerState) { page ->
                 when (page) {
-                    0 -> OrderList(data = completedOrderData)
-                    1 -> OrderList(data = reservedOrderData)
+                    0 -> CompletedOrderList(
+                        data = completedOrderData,
+                        refreshCompletedOrders = refreshCompletedOrders,
+                    )
+
+                    1 -> ReservedOrderList(
+                        data = reservedOrderData,
+                        refreshReservedOrders = refreshReservedOrders,
+                    )
                 }
             }
         }
@@ -242,13 +249,61 @@ private fun OrderHistoryTabLayout(
 }
 
 @Composable
-fun OrderList(data: PersistentList<OrderHistory>) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
+private fun CompletedOrderList(
+    data: CompletedOrderHistoryUiState,
+    refreshCompletedOrders: () -> Unit,
+) {
+    val swipeRefreshState = rememberSwipeRefreshState(data.isLoading)
+
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = refreshCompletedOrders,
+        modifier = Modifier.fillMaxSize()
     ) {
-        items(items = data, key = { item -> item.id }) { item ->
-            OrderHistoryItem(data = item)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+            when {
+                data.isLoading -> {}
+                data.errorMessage != null -> {}
+                else -> {
+
+                    items(items = data.completedOrderData, key = { item -> item.id }) { item ->
+                        OrderHistoryItem(data = item)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ReservedOrderList(
+    data: ReservedOrderHistoryUiState,
+    refreshReservedOrders: () -> Unit,
+) {
+    val swipeRefreshState = rememberSwipeRefreshState(data.isLoading)
+
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = refreshReservedOrders,
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+            when {
+                data.isLoading -> {}
+                data.errorMessage != null -> {}
+                else -> {
+                    items(items = data.reservedOrderData, key = { item -> item.id }) { item ->
+                        OrderHistoryItem(data = item)
+                    }
+                }
+            }
         }
     }
 }
