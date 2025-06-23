@@ -1,6 +1,7 @@
 package com.meister.orderhistory.view
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -64,22 +65,27 @@ private fun OrderHistoryScreen(
     uiState: OrderHistoryUiState,
     popBackStack: () -> Unit,
 ) {
-    Column(
-        modifier = modifier.fillMaxSize()
-    ) {
-        JusicoolTopBar(
-            modifier = Modifier.fillMaxWidth(),
-            startIcon = { LeftClarityArrowLineIcon(modifier = Modifier.JusicoolClickable(onClick = popBackStack)) },
-            betweenText = "주문 내역",
-        )
+    JusicoolTheme { colors, typography ->
 
-        OrderHistoryTabLayout(
-            modifier = Modifier
+        Column(
+            modifier = modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp),
-            completedOrderData = uiState.completedOrderData,
-            reservedOrderData = uiState.reservedOrderData
-        )
+                .background(color = colors.white)
+        ) {
+            JusicoolTopBar(
+                modifier = Modifier.fillMaxWidth(),
+                startIcon = { LeftClarityArrowLineIcon(modifier = Modifier.JusicoolClickable(onClick = popBackStack)) },
+                betweenText = "주문 내역",
+            )
+
+            OrderHistoryTabLayout(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp),
+                completedOrderData = uiState.completedOrderData,
+                reservedOrderData = uiState.reservedOrderData
+            )
+        }
     }
 }
 
@@ -225,33 +231,43 @@ private fun OrderHistoryTabLayout(
             Spacer(modifier = Modifier.height(24.dp))
 
             HorizontalPager(state = pagerState) { page ->
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
-                ) {
-                    val data = when (page) {
-                        0 -> completedOrderData
-                        1 -> reservedOrderData
-                        else -> persistentListOf()
-                    }
-
-                    items(items = data, key = { item -> item.id }) { item ->
-                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                            Text(
-                                text = item.market,
-                                style = typography.bodySmall,
-                            )
-
-                            Text(
-                                text = "${item.calculateTotalPrice().formatMoney()}" +
-                                        "원 구매${if (item.isBuyOrder()) "완료" else "예약"}",
-                                style = typography.label,
-                                color = if (item.isBuyOrder()) colors.error else colors.main,
-                            )
-                        }
-                    }
+                when (page) {
+                    0 -> OrderList(data = completedOrderData)
+                    1 -> OrderList(data = reservedOrderData)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun OrderList(data: PersistentList<OrderHistory>) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+    ) {
+        items(items = data, key = { item -> item.id }) { item ->
+            OrderHistoryItem(data = item)
+        }
+    }
+}
+
+@Composable
+private fun OrderHistoryItem(data: OrderHistory) {
+    JusicoolTheme { colors, typography ->
+
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(
+                text = data.market,
+                style = typography.bodySmall,
+            )
+
+            Text(
+                text = "${data.calculateTotalPrice().formatMoney()}" +
+                        "원 구매${if (data.isBuyOrder()) "완료" else "예약"}",
+                style = typography.label,
+                color = if (data.isBuyOrder()) colors.error else colors.main,
+            )
         }
     }
 }
