@@ -19,7 +19,7 @@ fun JusicoolTopBar(
     modifier: Modifier = Modifier,
     betweenText: String = "",
     startIcon: @Composable () -> Unit,
-    endIcon: @Composable () -> Unit
+    endIcon: @Composable () -> Unit = { Spacer(modifier = Modifier.size(24.dp)) }
 ) {
     JusicoolTheme { colors, typography ->
         Row(
