@@ -208,6 +208,7 @@ private fun OrderHistoryTabLayout(
                         color = colors.black
                     )
                 },
+                containerColor = colors.white,
             ) {
                 tabTitles.forEachIndexed { index, title ->
                     val isSelected = pagerState.currentPage == index
