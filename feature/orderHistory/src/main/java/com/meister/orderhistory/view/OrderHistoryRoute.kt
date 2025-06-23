@@ -225,43 +225,33 @@ private fun OrderHistoryTabLayout(
             Spacer(modifier = Modifier.height(24.dp))
 
             HorizontalPager(state = pagerState) { page ->
-                when (page) {
-                    0 -> OrderList(data = completedOrderData)
-                    1 -> OrderList(data = reservedOrderData)
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                ) {
+                    val data = when (page) {
+                        0 -> completedOrderData
+                        1 -> reservedOrderData
+                        else -> persistentListOf()
+                    }
+
+                    items(items = data, key = { item -> item.id }) { item ->
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text(
+                                text = item.market,
+                                style = typography.bodySmall,
+                            )
+
+                            Text(
+                                text = "${item.calculateTotalPrice().formatMoney()}" +
+                                        "원 구매${if (item.isBuyOrder()) "완료" else "예약"}",
+                                style = typography.label,
+                                color = if (item.isBuyOrder()) colors.error else colors.main,
+                            )
+                        }
+                    }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun OrderList(data: PersistentList<OrderHistory>) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-        items(items = data, key = { item -> item.id }) { item ->
-            OrderHistoryItem(data = item)
-        }
-    }
-}
-
-@Composable
-private fun OrderHistoryItem(data: OrderHistory) {
-    JusicoolTheme { colors, typography ->
-
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(
-                text = data.market,
-                style = typography.bodySmall,
-            )
-
-            Text(
-                text = "${data.calculateTotalPrice().formatMoney()}" +
-                        "원 구매${if (data.isBuyOrder()) "완료" else "예약"}",
-                style = typography.label,
-                color = if (data.isBuyOrder()) colors.error else colors.main,
-            )
         }
     }
 }
