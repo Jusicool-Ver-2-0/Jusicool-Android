@@ -31,12 +31,15 @@ import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.entity.orderHistory.OrderHistory
 import com.jusicool.utils.formatMoney
-import com.meister.orderhistory.viewModel.OrderHistoryUiState
+import com.meister.orderhistory.viewModel.CompletedOrderHistoryUiState
 import com.meister.orderhistory.viewModel.OrderHistoryViewModel
+import com.meister.orderhistory.viewModel.ReservedOrderHistoryUiState
 import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+
 
 @Composable
 internal fun OrderHistoryRoute(
@@ -44,28 +47,29 @@ internal fun OrderHistoryRoute(
     viewModel: OrderHistoryViewModel = hiltViewModel(),
     popBackStack: () -> Unit,
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val reservedOrderHistoryUiState by viewModel.reservedOrderHistoryUiState.collectAsStateWithLifecycle()
+    val completedOrderHistoryUiState by viewModel.completedOrderHistoryUiState.collectAsStateWithLifecycle()
 
-    when {
-        uiState.isLoading -> {}
-        uiState.errorMessage != null -> {}
-        else -> {
-            OrderHistoryScreen(
-                modifier = modifier,
-                uiState = uiState,
-                popBackStack = popBackStack
-            )
-        }
-    }
+    OrderHistoryScreen(
+        modifier = modifier,
+        reservedOrderHistoryUiState = reservedOrderHistoryUiState,
+        completedOrderHistoryUiState = completedOrderHistoryUiState,
+        refreshReservedOrders = viewModel::refreshReservedOrders,
+        refreshCompletedOrders = viewModel::refreshCompletedOrders,
+        popBackStack = popBackStack
+    )
 }
 
 @Composable
 private fun OrderHistoryScreen(
     modifier: Modifier = Modifier,
-    uiState: OrderHistoryUiState,
+    reservedOrderHistoryUiState: ReservedOrderHistoryUiState,
+    completedOrderHistoryUiState: CompletedOrderHistoryUiState,
+    refreshReservedOrders: () -> Unit,
+    refreshCompletedOrders: () -> Unit,
     popBackStack: () -> Unit,
 ) {
-    JusicoolTheme { colors, typography ->
+    JusicoolTheme { colors, _ ->
 
         Column(
             modifier = modifier
@@ -82,8 +86,10 @@ private fun OrderHistoryScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 24.dp),
-                completedOrderData = uiState.completedOrderData,
-                reservedOrderData = uiState.reservedOrderData
+                completedOrderData = completedOrderHistoryUiState,
+                reservedOrderData = reservedOrderHistoryUiState,
+                refreshReservedOrders = refreshReservedOrders,
+                refreshCompletedOrders = refreshCompletedOrders,
             )
         }
     }
@@ -170,16 +176,24 @@ private fun OrderHistoryScreenPreview() {
         )
     )
 
-    val uiState = OrderHistoryUiState(
+    val completedOrderHistoryUiState = CompletedOrderHistoryUiState(
         isLoading = false,
-        errorMessage = null,
         completedOrderData = completedOrders,
-        reservedOrderData = reservedOrders
+        errorMessage = null
+    )
+
+    val reservedOrderHistoryUiState = ReservedOrderHistoryUiState(
+        isLoading = false,
+        reservedOrderData = reservedOrders,
+        errorMessage = null
     )
 
     OrderHistoryScreen(
-        uiState = uiState,
-        popBackStack = {}
+        popBackStack = {},
+        reservedOrderHistoryUiState = reservedOrderHistoryUiState,
+        completedOrderHistoryUiState = completedOrderHistoryUiState,
+        refreshCompletedOrders = {},
+        refreshReservedOrders = {},
     )
 }
 
@@ -188,8 +202,10 @@ private fun OrderHistoryScreenPreview() {
 @Composable
 private fun OrderHistoryTabLayout(
     modifier: Modifier = Modifier,
-    completedOrderData: PersistentList<OrderHistory>,
-    reservedOrderData: PersistentList<OrderHistory>,
+    completedOrderData: CompletedOrderHistoryUiState,
+    reservedOrderData: ReservedOrderHistoryUiState,
+    refreshReservedOrders: () -> Unit,
+    refreshCompletedOrders: () -> Unit,
 ) {
     JusicoolTheme { colors, typography ->
 
