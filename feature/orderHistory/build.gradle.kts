@@ -11,4 +11,5 @@ dependencies {
     implementation(project(":domain:usecase"))
     implementation(project(":domain:entity"))
     implementation(project(":ui:utils"))
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.31.2-alpha")
 }
