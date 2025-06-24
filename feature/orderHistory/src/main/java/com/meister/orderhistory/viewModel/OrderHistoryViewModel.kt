@@ -24,7 +24,7 @@ internal class OrderHistoryViewModel @Inject constructor(
     private val getOrderHistoryUseCase: GetOrderHistoryUseCase
 ) : ViewModel() {
 
-    private val reservedRefreshTrigger = MutableStateFlow(Unit)
+    private val reservedRefreshTrigger = MutableStateFlow(0)
 
     internal val reservedOrderHistoryUiState: StateFlow<ReservedOrderHistoryUiState> =
         reservedRefreshTrigger
@@ -57,9 +57,7 @@ internal class OrderHistoryViewModel @Inject constructor(
         reservedRefreshTrigger.value = Unit
     }
 
-
-
-    private val completedRefreshTrigger = MutableStateFlow(Unit)
+    private val completedRefreshTrigger = MutableStateFlow(0)
 
     internal val completedOrderHistoryUiState: StateFlow<CompletedOrderHistoryUiState> =
         completedRefreshTrigger
