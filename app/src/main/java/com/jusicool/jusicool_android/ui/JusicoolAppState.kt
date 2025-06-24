@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 
@@ -15,7 +15,7 @@ fun rememberJusicoolAppState(
     windowSizeClass: WindowSizeClass,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController()
-) : JusicoolAppState {
+): JusicoolAppState {
     return remember(
         navController,
         coroutineScope,
@@ -35,5 +35,19 @@ class JusicoolAppState(
     val coroutineScope: CoroutineScope,
     val navController: NavHostController,
 ) {
-    /*navigateBar 함수 추가*/
+    val tabs = listOf(
+        TopLevelDestination.ASSET,
+        TopLevelDestination.CHART,
+        TopLevelDestination.NEWS,
+        TopLevelDestination.MY,
+    )
+
+    // 현재 활성화된 경로(Route)
+    val currentRoute: String?
+        get() = navController.currentDestination?.route
+
+    val shouldShowBottomBar: Boolean
+        @Composable get() =
+            navController.currentBackStackEntryAsState().value?.destination?.route in
+                    tabs.map { it.route }
 }
