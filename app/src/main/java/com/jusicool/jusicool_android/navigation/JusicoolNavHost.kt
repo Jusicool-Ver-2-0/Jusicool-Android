@@ -19,6 +19,7 @@ import com.jusicool.trade.navigation.navigateToTradeCompletedRoute
 import com.jusicool.trade.navigation.sellReserveRoute
 import com.jusicool.trade.navigation.sellRoute
 import com.jusicool.trade.navigation.tradeCompletedRoute
+import com.meister.investmentsearch.navigation.chartListRoute
 
 @Composable
 fun JusicoolNavHost(
@@ -46,6 +47,10 @@ fun JusicoolNavHost(
             navigateToSell = navController::navigateToSellRoute,
             navigateToReserveBuy = navController::navigateToBuyReserveRoute,
             navigateToReserveSell = navController::navigateToSellReserveRoute,
+        )
+
+        chartListRoute(
+            navigateToSearchInvestmentRoute = { /*TODO()*/ }
         )
 
         buyRoute(
