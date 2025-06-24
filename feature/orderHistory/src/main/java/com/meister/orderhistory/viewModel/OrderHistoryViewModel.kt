@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.jusicool.entity.orderHistory.OrderHistory
 import com.jusicool.entity.orderHistory.OrderHistoryType
 import com.jusicool.usecase.order.GetOrderHistoryUseCase
+import com.jusicool.utils.Logger
 import com.meister.orderhistory.viewModel.uiState.CompletedOrderHistoryUiState
 import com.meister.orderhistory.viewModel.uiState.ReservedOrderHistoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,7 +55,8 @@ internal class OrderHistoryViewModel @Inject constructor(
             )
 
     internal fun refreshReservedOrders() {
-        reservedRefreshTrigger.value = Unit
+        reservedRefreshTrigger.value += 1
+        Logger.d("refreshReservedOrders", "Count : ${reservedRefreshTrigger.value}")
     }
 
     private val completedRefreshTrigger = MutableStateFlow(0)
@@ -87,6 +89,7 @@ internal class OrderHistoryViewModel @Inject constructor(
             )
 
     internal fun refreshCompletedOrders() {
-        completedRefreshTrigger.value = Unit
+        completedRefreshTrigger.value += 1
+        Logger.d("refreshCompletedOrders", "Count : ${completedRefreshTrigger.value}")
     }
 }
