@@ -16,30 +16,34 @@ fun NavController.navigateToSellRoute(
     name: String,
     type: String,
     quantity: Int,
+    marketCode: String,
     navOptions: NavOptions? = null
 ) {
-    this.navigate(("$sellRoute/$name/$type/$quantity"), navOptions)
+    this.navigate(("$sellRoute/$name/$type/$quantity/$marketCode"), navOptions)
 }
 
 fun NavGraphBuilder.sellRoute(
-    navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
+    navigateToTradeCompleted: (String, Int, TradeType, String, Int) -> Unit,
     popUpBackStack: () -> Unit
 ) {
     composable(
-        route = "$sellRoute/{name}/{type}/{quantity}",
+        route = "$sellRoute/{name}/{type}/{quantity}/{marketCode}",
         arguments = listOf(
             navArgument("name") { type = NavType.StringType },
             navArgument("type") { type = NavType.StringType },
             navArgument("quantity") { type = NavType.IntType },
+            navArgument("marketCode") { type = NavType.StringType },
         )
     ) { backStackEntry ->
         val name = backStackEntry.arguments?.getString("name") ?: ""
         val type = backStackEntry.arguments?.getString("type") ?: ""
         val quantity = backStackEntry.arguments?.getInt("quantity") ?: 0
+        val marketCode = backStackEntry.arguments?.getString("marketCode") ?: ""
         SellRoute (
             name = name,
             type = type,
             quantity = quantity,
+            marketCode = marketCode,
             navigateToTradeCompleted = navigateToTradeCompleted,
             popUpBackStack = popUpBackStack
         )

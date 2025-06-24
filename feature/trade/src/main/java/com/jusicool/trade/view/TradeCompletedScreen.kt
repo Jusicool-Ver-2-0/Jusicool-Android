@@ -10,15 +10,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.trade.view.enum.TradeType
+import com.jusicool.trade.viewModel.TradeViewModel
 import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
 import com.school_of_company.design_system.icon.RightClarityArrowLineIcon
 import com.school_of_company.design_system.icon.TradeSuccessImage
@@ -30,13 +34,15 @@ fun TradeCompletedRoute(
     quantity: Int,
     tradeType: TradeType,
     investmentType: String,
+    price: Int,
     navigateToAccount: () -> Unit,
-    navigateToOrderHistory: () -> Unit
+    navigateToOrderHistory: () -> Unit,
+    viewModel: TradeViewModel = hiltViewModel()
 ) {
     TradeCompletedScreen(
         name = name,
         quantity = quantity,
-        price = 1000,
+        price = price,
         tradeType = tradeType,
         investmentType = investmentType,
         navigateToAccount = navigateToAccount,
@@ -49,7 +55,7 @@ fun TradeCompletedScreen(
     modifier: Modifier = Modifier,
     name: String,
     quantity: Int,
-    price: Long,
+    price: Int,
     tradeType: TradeType,
     investmentType: String,
     navigateToAccount: () -> Unit,
@@ -71,7 +77,7 @@ fun TradeCompletedScreen(
     }
 
     val investmentTypeText = if (investmentType == "CRYPTO") "코인" else "주식"
-    val investmentUnitText = if (investmentType == "CRYPTO") "코인" else "주식"
+    val investmentUnitText = if (investmentType == "CRYPTO") "개" else "주"
 
     JusicoolTheme { colors, typography ->
         Column(
