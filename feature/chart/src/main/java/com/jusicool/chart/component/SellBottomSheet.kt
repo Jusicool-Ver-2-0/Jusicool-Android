@@ -22,8 +22,9 @@ fun SellBottomSheet(
     name: String,
     quantity: Int,
     type: String,
-    navigateToSell: (String, String, Int) -> Unit,
-    navigateToReserveSell: (String, String, Int) -> Unit,
+    marketCode: String,
+    navigateToSell: (String, String, Int,String) -> Unit,
+    navigateToReserveSell: (String, String, Int,String) -> Unit,
 ) {
     JusicoolTheme { colors, typography ->
         Column(
@@ -48,7 +49,7 @@ fun SellBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                     text = "현재가 판매하기",
                     outlineColor = colors.main,
-                    onClick = {navigateToSell(name,type,quantity)}
+                    onClick = {navigateToSell(name,type,quantity,marketCode)}
                 )
 
 
@@ -56,7 +57,7 @@ fun SellBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                     text = "예약 판매하기",
                     outlineColor = colors.main,
-                    onClick = {navigateToReserveSell(name,type,quantity)}
+                    onClick = {navigateToReserveSell(name,type,quantity,marketCode)}
                 )
             }
         }
@@ -70,7 +71,8 @@ fun SellBottomSheetPreview() {
         name = "마이크로소프트",
         quantity = 1,
         type = "",
-        navigateToSell = { _,_,_ -> },
-        navigateToReserveSell = { _,_,_ -> }
+        marketCode = "",
+        navigateToSell = { _,_,_,_ -> },
+        navigateToReserveSell = { _,_,_,_ -> }
     )
 }
