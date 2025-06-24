@@ -3,6 +3,7 @@ package com.jusicool.network.datasource.order
 import com.jusicool.model.order.BuyRequest
 import com.jusicool.model.order.BuyReserveRequest
 import com.jusicool.model.order.BuyResponse
+import com.jusicool.model.order.OrderHistoryResponse
 import com.jusicool.model.order.OrderResponse
 import com.jusicool.model.order.SellRequest
 import com.jusicool.model.order.SellReserveRequest
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 class OrderDataSourceImpl @Inject constructor(
     private val orderApi: OrderApi
-):OrderDataSource {
+) : OrderDataSource {
     override fun getMonthOrder(): Flow<OrderResponse> =
         performApiRequest { orderApi.getMonthOrder() }
 
@@ -29,4 +30,7 @@ class OrderDataSourceImpl @Inject constructor(
 
     override fun postReserveSell(marketCode: String, body: SellReserveRequest): Flow<Unit> =
         performApiRequest { orderApi.postReserveSell(marketCode = marketCode, body = body) }
+
+    override fun getOrderHistory(type: String): Flow<List<OrderHistoryResponse>> =
+        performApiRequest { orderApi.getOrderHistory(type = type) }
 }
