@@ -37,6 +37,7 @@ dependencies {
     implementation(project(":feature:account"))
     implementation(project(":feature:signin"))
     implementation(project(":feature:trade"))
+    implementation(project(":feature:investmentSearch"))
 
     implementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext)
