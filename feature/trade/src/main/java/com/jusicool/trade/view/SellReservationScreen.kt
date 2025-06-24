@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.design_system.component.button.JusicoolFilledButton
 import com.jusicool.design_system.component.button.state.ButtonState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
@@ -19,7 +21,11 @@ import com.jusicool.design_system.component.textField.JusicoolTextField
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.trade.view.enum.TradeType
+import com.jusicool.trade.viewModel.TradeViewModel
+import com.jusicool.trade.viewModel.uiState.BuyReserveUiState
+import com.jusicool.trade.viewModel.uiState.SellReserveUiState
 import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -28,27 +34,40 @@ fun SellReserveRoute(
     name: String,
     type: String,
     quantity: Int,
-    navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
-    popUpBackStack: () -> Unit
+    marketCode: String,
+    navigateToTradeCompleted: (String, Int, TradeType, String, Int) -> Unit,
+    popUpBackStack: () -> Unit,
+    viewModel: TradeViewModel = hiltViewModel()
 ) {
-    var inputQuantity by remember { mutableStateOf("") }
-    var reservePrice by remember { mutableStateOf("") }
+    val inputQuantity by viewModel.quantity.collectAsStateWithLifecycle()
+    val reservePrice by viewModel.price.collectAsStateWithLifecycle()
+    val sellReserveUiState by viewModel.sellReserveUiState.collectAsStateWithLifecycle()
+
     var isError by remember { mutableStateOf(false) }
 
+    LaunchedEffect(sellReserveUiState) {
+        if (sellReserveUiState is SellReserveUiState.Success) {
+            navigateToTradeCompleted(
+                name,
+                inputQuantity.toIntOrNull() ?: 0,
+                TradeType.SELLRESERVE,
+                type,
+                (inputQuantity.toInt() * reservePrice.toInt())
+            )
+        }
+    }
+
     SellReserveScreen (
-        name = name,
         type = type,
         quantity =quantity,
+        marketCode = marketCode,
         inputQuantity = inputQuantity,
-        onQuantityChange = {
-            inputQuantity = it
-            isError = false
-        },
+        onQuantityChange = viewModel::onQuantityChange,
         reservePrice = reservePrice,
-        onReservePriceChange = { reservePrice = it },
+        onReservePriceChange = viewModel::onPriceChange,
         isError = isError,
         setError = { isError = it },
-        navigateToTradeCompleted = navigateToTradeCompleted,
+        onSellReserveClick = viewModel::onSellReserveClick,
         popUpBackStack = popUpBackStack
     )
 }
@@ -57,16 +76,16 @@ fun SellReserveRoute(
 @Composable
 fun SellReserveScreen(
     modifier: Modifier = Modifier,
-    name: String,
     type: String,
     quantity: Int,
     inputQuantity: String,
     reservePrice:String,
+    marketCode: String,
     isError: Boolean,
     onQuantityChange: (String) -> Unit,
     onReservePriceChange: (String) -> Unit,
     setError: (Boolean) -> Unit,
-    navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
+    onSellReserveClick: (String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
     val pagerState = rememberPagerState { 2 }
@@ -170,7 +189,7 @@ fun SellReserveScreen(
                                     val hasError = quantity < count
                                     setError(hasError)
                                     if (!hasError) {
-                                        navigateToTradeCompleted(name, inputQuantity.toInt(), TradeType.SELLRESERVE, type )
+                                        onSellReserveClick(marketCode)
                                     }
                                 }
                             )
@@ -187,16 +206,16 @@ fun SellReserveScreen(
 @Composable
 fun SellReserveScreenPreview() {
     SellReserveScreen(
-        name = "",
         type = "CRYPTO",
         quantity = 10,
         inputQuantity = "",
         reservePrice = "",
+        marketCode = "",
         onReservePriceChange = { },
         onQuantityChange = {},
         isError = false,
         setError = {},
-        navigateToTradeCompleted = { _,_,_,_, ->},
+        onSellReserveClick = {},
         popUpBackStack = {}
     )
 }

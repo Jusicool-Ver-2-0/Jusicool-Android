@@ -65,10 +65,10 @@ fun ChartRoute(
     money: Long,
     krwBalance: Long,
     type: String,
-    navigateToBuy: (String, String, Long, Long) -> Unit,
-    navigateToSell: (String, String, Int) -> Unit,
-    navigateToReserveBuy: (String, String, Long, Long) -> Unit,
-    navigateToReserveSell: (String, String, Int) -> Unit,
+    navigateToBuy: (String, String, Long, Long, String) -> Unit,
+    navigateToSell: (String, String, Int, String) -> Unit,
+    navigateToReserveBuy: (String, String, Long, Long, String) -> Unit,
+    navigateToReserveSell: (String, String, Int, String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
     val minuteCandleUiState by viewModel.minuteCandleUiState.collectAsStateWithLifecycle()
@@ -210,10 +210,10 @@ fun ChartScreen(
     price: ChartPriceModel,
     news: List<NewsModel>,
     community: List<CommunityModel>,
-    navigateToBuy: (String, String, Long, Long) -> Unit,
-    navigateToSell: (String, String, Int) -> Unit,
-    navigateToReserveBuy: (String, String, Long, Long) -> Unit,
-    navigateToReserveSell: (String, String, Int) -> Unit,
+    navigateToBuy: (String, String, Long, Long, String) -> Unit,
+    navigateToSell: (String, String, Int, String) -> Unit,
+    navigateToReserveBuy: (String, String, Long, Long, String) -> Unit,
+    navigateToReserveSell: (String, String, Int, String) -> Unit,
     onRefresh: (String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
@@ -239,6 +239,7 @@ fun ChartScreen(
                     krwBalance = krwBalance,
                     type = type,
                     navigateToBuy = navigateToBuy,
+                    marketCode = marketCode,
                     navigateToReserveBuy = navigateToReserveBuy
                 )
             }
@@ -255,6 +256,7 @@ fun ChartScreen(
                     name = koreanName,
                     quantity = quantity,
                     type = type,
+                    marketCode = marketCode,
                     navigateToSell = navigateToSell,
                     navigateToReserveSell = navigateToReserveSell
                 )
@@ -573,10 +575,10 @@ fun ChartScreenPreview() {
         type = "",
         krwBalance = 1,
         onRefresh = {},
-        navigateToBuy = { _,_,_,_ -> },
-        navigateToSell = { _,_,_ -> },
-        navigateToReserveBuy = { _,_,_,_ ->},
-        navigateToReserveSell = { _,_,_ -> }
+        navigateToBuy = { _,_,_,_,_ -> },
+        navigateToSell = { _,_,_,_ -> },
+        navigateToReserveBuy = { _,_,_,_,_ ->},
+        navigateToReserveSell = { _,_,_,_ -> }
     )
 }
 
