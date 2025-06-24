@@ -8,15 +8,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.design_system.component.button.JusicoolFilledButton
 import com.jusicool.design_system.component.button.state.ButtonState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.JusicoolTextField
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
+import com.jusicool.entity.order.BuyResponseModel
 import com.jusicool.trade.view.enum.TradeType
+import com.jusicool.trade.viewModel.TradeViewModel
+import com.jusicool.trade.viewModel.uiState.BuyUiState
 import com.jusicool.utils.formatMoney
 import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 @Composable
 fun BuyRoute(
@@ -24,43 +30,56 @@ fun BuyRoute(
     type: String,
     price: Long,
     krwBalance: Long,
-    navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
-    popUpBackStack: () -> Unit
+    marketCode: String,
+    navigateToTradeCompleted: (String, Int, TradeType, String, Int) -> Unit,
+    popUpBackStack: () -> Unit,
+    viewModel: TradeViewModel = hiltViewModel()
 ) {
-    var quantity by remember { mutableStateOf("") }
+    val quantity by viewModel.quantity.collectAsStateWithLifecycle()
+    val buyUiState by viewModel.buyUiState.collectAsStateWithLifecycle()
+
     var isError by remember { mutableStateOf(false) }
 
+    LaunchedEffect(buyUiState) {
+        if (buyUiState is BuyUiState.Success) {
+            val priceValue = (buyUiState as BuyUiState.Success).price.price
+            navigateToTradeCompleted(
+                name,
+                quantity.toIntOrNull() ?: 0,
+                TradeType.BUY,
+                type,
+                priceValue
+            )
+        }
+    }
+
     BuyScreen(
-        name = name,
         type = type,
         price = price,
         krwBalance = krwBalance,
         quantity = quantity,
-        onQuantityChange = {
-            quantity = it
-            isError = false
-        },
+        marketCode = marketCode,
+        onQuantityChange = viewModel::onQuantityChange,
         isError = isError,
         setError = { isError = it },
-        navigateToTradeCompleted = navigateToTradeCompleted,
-        popUpBackStack = popUpBackStack
+        popUpBackStack = popUpBackStack,
+        onBuyClick = viewModel::onBuyClick
     )
 }
-
 
 @Composable
 fun BuyScreen(
     modifier: Modifier = Modifier,
-    name: String,
     type: String,
     price: Long,
     krwBalance: Long,
     quantity: String,
-    onQuantityChange: (String) -> Unit,
+    marketCode: String,
     isError: Boolean,
+    onQuantityChange: (String) -> Unit,
     setError: (Boolean) -> Unit,
-    navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
-    popUpBackStack: () -> Unit
+    popUpBackStack: () -> Unit,
+    onBuyClick: (String) -> Unit
 ) {
     JusicoolTheme { colors, typography ->
         Column(
@@ -119,7 +138,7 @@ fun BuyScreen(
                         val hasError = totalCost > krwBalance
                         setError(hasError)
                         if (!hasError) {
-                            navigateToTradeCompleted(name, quantity.toInt(), TradeType.BUY, type )
+                            onBuyClick(marketCode)
                         }
                     }
                 )
@@ -128,20 +147,19 @@ fun BuyScreen(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun BuyScreenPreview() {
     BuyScreen(
-        name = "",
         type = "CRYPTO",
         price = 10000L,
         quantity = "",
         krwBalance = 1,
+        marketCode = "",
         onQuantityChange = {},
         isError = false,
         setError = {},
-        navigateToTradeCompleted = { _,_,_,_, ->},
-        popUpBackStack = {}
+        popUpBackStack = {},
+        onBuyClick = {}
     )
 }

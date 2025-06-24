@@ -8,6 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.design_system.component.button.JusicoolFilledButton
 import com.jusicool.design_system.component.button.state.ButtonState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
@@ -15,6 +17,9 @@ import com.jusicool.design_system.component.textField.JusicoolTextField
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.trade.view.enum.TradeType
+import com.jusicool.trade.viewModel.TradeViewModel
+import com.jusicool.trade.viewModel.uiState.BuyUiState
+import com.jusicool.trade.viewModel.uiState.SellUiState
 import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
 
 @Composable
@@ -22,40 +27,54 @@ fun SellRoute(
     name: String,
     type: String,
     quantity: Int,
-    navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
-    popUpBackStack: () -> Unit
+    marketCode: String,
+    navigateToTradeCompleted: (String, Int, TradeType, String, Int) -> Unit,
+    popUpBackStack: () -> Unit,
+    viewModel: TradeViewModel = hiltViewModel()
 ) {
-    var inputQuantity  by remember { mutableStateOf("") }
+    val inputQuantity by viewModel.quantity.collectAsStateWithLifecycle()
+    val sellUiState by viewModel.sellUiState.collectAsStateWithLifecycle()
+
     var isError by remember { mutableStateOf(false) }
 
+    LaunchedEffect(sellUiState) {
+        if (sellUiState is SellUiState.Success) {
+            val priceValue = (sellUiState as SellUiState.Success).price.price
+            navigateToTradeCompleted(
+                name,
+                inputQuantity.toIntOrNull() ?: 0,
+                TradeType.BUY,
+                type,
+                priceValue
+            )
+        }
+    }
+
     SellScreen(
-        name = name,
         type = type,
         quantity = quantity,
+        marketCode = marketCode,
         inputQuantity  = inputQuantity ,
-        onQuantityChange = {
-            inputQuantity  = it
-            isError = false
-        },
+        onQuantityChange = viewModel::onQuantityChange,
         isError = isError,
         setError = { isError = it },
-        navigateToTradeCompleted = navigateToTradeCompleted,
-        popUpBackStack = popUpBackStack
+        popUpBackStack = popUpBackStack,
+        onSellClick = viewModel::onSellClick
     )
 }
 
 @Composable
 fun SellScreen(
     modifier: Modifier = Modifier,
-    name: String,
     type: String,
     quantity: Int,
+    marketCode: String,
     inputQuantity : String,
     onQuantityChange: (String) -> Unit,
     isError: Boolean,
     setError: (Boolean) -> Unit,
-    navigateToTradeCompleted: (String, Int, TradeType, String) -> Unit,
-    popUpBackStack: () -> Unit
+    popUpBackStack: () -> Unit,
+    onSellClick: (String) -> Unit
 ) {
     JusicoolTheme { colors, typography ->
         Column(
@@ -110,7 +129,7 @@ fun SellScreen(
                         val hasError = quantity < count
                         setError(hasError)
                         if (!hasError) {
-                            navigateToTradeCompleted(name, inputQuantity.toInt(), TradeType.SELL, type )
+                            onSellClick(marketCode)
                         }
                     }
                 )
@@ -124,14 +143,14 @@ fun SellScreen(
 @Composable
 fun SellScreenPreview() {
     SellScreen(
-        name = "",
         type = "CRYPTO",
         quantity = 10,
         inputQuantity  = "",
+        marketCode = "",
         onQuantityChange = {},
         isError = false,
         setError = {},
-        navigateToTradeCompleted = { _,_,_,_, ->},
-        popUpBackStack = {}
+        popUpBackStack = {},
+        onSellClick = {}
     )
 }
