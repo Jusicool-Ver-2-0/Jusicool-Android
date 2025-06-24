@@ -40,6 +40,7 @@ dependencies {
     implementation(project(":feature:investmentSearch"))
 
     implementation(libs.junit)
+    implementation(project(":feature:orderHistory"))
     androidTestImplementation(libs.androidx.test.ext)
     implementation(libs.app.update.ktx)
 }
