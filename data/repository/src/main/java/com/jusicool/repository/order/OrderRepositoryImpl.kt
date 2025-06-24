@@ -37,6 +37,7 @@ class OrderRepositoryImpl @Inject constructor(
 
     override fun postReserveSell(marketCode: String, body: SellReserveModel): Flow<Unit> {
         return orderDataSource.postReserveSell(marketCode = marketCode, body = body.toDto())
+    }
 
     override fun getOrderHistory(type: String): Flow<List<OrderHistory>> {
         return orderDataSource.getOrderHistory(type).map { list -> list.map { it.toEntity() } }
