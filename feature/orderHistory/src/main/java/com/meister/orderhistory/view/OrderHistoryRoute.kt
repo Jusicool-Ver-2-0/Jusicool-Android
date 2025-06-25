@@ -332,6 +332,7 @@ private fun OrderHistoryItem(data: OrderHistory) {
             Text(
                 text = data.market,
                 style = typography.bodySmall,
+                color = colors.black
             )
 
             Text(
