@@ -10,5 +10,5 @@ class GetOrderHistoryUseCase @Inject constructor(
     private val orderRepository: OrderRepository
 ) {
     operator fun invoke(type: OrderHistoryType): Flow<List<OrderHistory>> =
-        orderRepository.getOrderHistory(type = type.value)
+        orderRepository.getOrderHistory(type = type.name)
 }

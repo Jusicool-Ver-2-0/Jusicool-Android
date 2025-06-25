@@ -39,6 +39,9 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.jusicool.entity.orderHistory.OrderStatus.*
+import com.jusicool.entity.orderHistory.OrderType.*
+import com.jusicool.entity.orderHistory.ReserveType.*
 
 
 @Composable
@@ -102,38 +105,38 @@ private fun OrderHistoryScreenPreview() {
         OrderHistory(
             id = 1,
             market = "KRW-BTC",
-            orderType = com.jusicool.entity.orderHistory.OrderType.BUY,
-            reserveType = com.jusicool.entity.orderHistory.ReserveType.NOW,
+            orderType = BUY,
+            reserveType = IMMEDIATE,
             quantity = 3,
             price = 50000,
-            status = com.jusicool.entity.orderHistory.OrderStatus.COMPLETED
+            status = COMPLETED
         ),
         OrderHistory(
             id = 2,
             market = "KRW-ETH",
-            orderType = com.jusicool.entity.orderHistory.OrderType.SELL,
-            reserveType = com.jusicool.entity.orderHistory.ReserveType.NOW,
+            orderType = SELL,
+            reserveType = IMMEDIATE,
             quantity = 1,
             price = 35000,
-            status = com.jusicool.entity.orderHistory.OrderStatus.COMPLETED
+            status = COMPLETED
         ),
         OrderHistory(
             id = 3,
             market = "KRW-XRP",
-            orderType = com.jusicool.entity.orderHistory.OrderType.BUY,
-            reserveType = com.jusicool.entity.orderHistory.ReserveType.NOW,
+            orderType = BUY,
+            reserveType = IMMEDIATE,
             quantity = 10,
             price = 600,
-            status = com.jusicool.entity.orderHistory.OrderStatus.COMPLETED
+            status = COMPLETED
         ),
         OrderHistory(
             id = 4,
             market = "KRW-SOL",
-            orderType = com.jusicool.entity.orderHistory.OrderType.SELL,
-            reserveType = com.jusicool.entity.orderHistory.ReserveType.NOW,
+            orderType = SELL,
+            reserveType = IMMEDIATE,
             quantity = 2,
             price = 120000,
-            status = com.jusicool.entity.orderHistory.OrderStatus.COMPLETED
+            status = COMPLETED
         )
     )
 
@@ -141,38 +144,38 @@ private fun OrderHistoryScreenPreview() {
         OrderHistory(
             id = 5,
             market = "KRW-ADA",
-            orderType = com.jusicool.entity.orderHistory.OrderType.SELL,
-            reserveType = com.jusicool.entity.orderHistory.ReserveType.RESERVE,
+            orderType = SELL,
+            reserveType = RESERVE,
             quantity = 5,
             price = 1500,
-            status = com.jusicool.entity.orderHistory.OrderStatus.PENDING
+            status = PENDING
         ),
         OrderHistory(
             id = 6,
             market = "KRW-DOGE",
-            orderType = com.jusicool.entity.orderHistory.OrderType.BUY,
-            reserveType = com.jusicool.entity.orderHistory.ReserveType.RESERVE,
+            orderType = BUY,
+            reserveType = RESERVE,
             quantity = 20,
             price = 100,
-            status = com.jusicool.entity.orderHistory.OrderStatus.PENDING
+            status = PENDING
         ),
         OrderHistory(
             id = 7,
             market = "KRW-DOT",
-            orderType = com.jusicool.entity.orderHistory.OrderType.SELL,
-            reserveType = com.jusicool.entity.orderHistory.ReserveType.RESERVE,
+            orderType = SELL,
+            reserveType = RESERVE,
             quantity = 4,
             price = 8000,
-            status = com.jusicool.entity.orderHistory.OrderStatus.PENDING
+            status = PENDING
         ),
         OrderHistory(
             id = 8,
             market = "KRW-LINK",
-            orderType = com.jusicool.entity.orderHistory.OrderType.BUY,
-            reserveType = com.jusicool.entity.orderHistory.ReserveType.RESERVE,
+            orderType = BUY,
+            reserveType = RESERVE,
             quantity = 3,
             price = 9000,
-            status = com.jusicool.entity.orderHistory.OrderStatus.PENDING
+            status = PENDING
         )
     )
 
@@ -328,15 +331,20 @@ private fun ReservedOrderList(
 private fun OrderHistoryItem(data: OrderHistory) {
     JusicoolTheme { colors, typography ->
 
+        val orderTypeText = if (data.isBuyOrder()) "구매" else "판매"
+        val orderStatusText = if (data.isCompleted()) "완료" else "예약"
+        val orderPriceText = "${data.calculateTotalPrice().formatMoney()}원"
+
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+
             Text(
                 text = data.market,
                 style = typography.bodySmall,
+                color = colors.black
             )
 
             Text(
-                text = "${data.calculateTotalPrice().formatMoney()}" +
-                        "원 구매${if (data.isBuyOrder()) "완료" else "예약"}",
+                text = "$orderPriceText $orderTypeText$orderStatusText",
                 style = typography.label,
                 color = if (data.isBuyOrder()) colors.error else colors.main,
             )
