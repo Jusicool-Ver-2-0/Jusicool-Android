@@ -30,12 +30,12 @@ enum class OrderType {
 }
 
 enum class ReserveType {
-    RESERVE, // 예약 주문
-    NOW,      // 즉시 주문
+    RESERVE,    // 예약 주문
+    IMMEDIATE,  // 즉시 주문
 }
 
 enum class OrderStatus {
     COMPLETED,   // 주문 완료
     PENDING,     // 대기 중
-    CANCELED,   // 취소됨
+    CANCELED,    // 취소됨
 }
