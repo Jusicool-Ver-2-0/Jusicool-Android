@@ -19,6 +19,9 @@ import com.jusicool.trade.navigation.navigateToTradeCompletedRoute
 import com.jusicool.trade.navigation.sellReserveRoute
 import com.jusicool.trade.navigation.sellRoute
 import com.jusicool.trade.navigation.tradeCompletedRoute
+import com.meister.investmentsearch.navigation.chartListRoute
+import com.meister.orderhistory.navigation.navigateToOrderHistoryRoute
+import com.meister.orderhistory.navigation.orderHistoryRoute
 
 @Composable
 fun JusicoolNavHost(
@@ -37,6 +40,7 @@ fun JusicoolNavHost(
         )
 
         accountRoute(
+            navigateToOrderHistory = navController::navigateToOrderHistoryRoute,
             navigateToChart = navController::navigateToChartRoute
         )
 
@@ -46,6 +50,10 @@ fun JusicoolNavHost(
             navigateToSell = navController::navigateToSellRoute,
             navigateToReserveBuy = navController::navigateToBuyReserveRoute,
             navigateToReserveSell = navController::navigateToSellReserveRoute,
+        )
+
+        chartListRoute(
+            navigateToSearchInvestmentRoute = { /*TODO()*/ }
         )
 
         buyRoute(
@@ -71,6 +79,10 @@ fun JusicoolNavHost(
         tradeCompletedRoute(
             navigateToAccount = navController::navigateToAccountRoute,
             navigateToOrderHistory = {}
+        )
+
+        orderHistoryRoute(
+            popBackStack = navController::popBackStack
         )
     }
 }

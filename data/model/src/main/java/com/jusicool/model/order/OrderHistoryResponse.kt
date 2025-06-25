@@ -1,7 +1,9 @@
 package com.jusicool.model.order
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class OrderHistoryResponse(
     val id: Int,
     val market: String,
