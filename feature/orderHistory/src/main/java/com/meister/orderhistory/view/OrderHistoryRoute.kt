@@ -331,7 +331,12 @@ private fun ReservedOrderList(
 private fun OrderHistoryItem(data: OrderHistory) {
     JusicoolTheme { colors, typography ->
 
+        val orderTypeText = if (data.isBuyOrder()) "구매" else "판매"
+        val orderStatusText = if (data.isCompleted()) "완료" else "예약"
+        val orderPriceText = "${data.calculateTotalPrice().formatMoney()}원"
+
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+
             Text(
                 text = data.market,
                 style = typography.bodySmall,
@@ -339,8 +344,7 @@ private fun OrderHistoryItem(data: OrderHistory) {
             )
 
             Text(
-                text = "${data.calculateTotalPrice().formatMoney()}" +
-                        "원 구매${if (data.isBuyOrder()) "완료" else "예약"}",
+                text = "$orderPriceText $orderTypeText$orderStatusText",
                 style = typography.label,
                 color = if (data.isBuyOrder()) colors.error else colors.main,
             )
