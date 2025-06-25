@@ -38,12 +38,16 @@ internal class OrderHistoryViewModel @Inject constructor(
                             errorMessage = null
                         )
                     }
-                    .onStart { emit(ReservedOrderHistoryUiState(isLoading = true)) }
-                    .catch {
+                    .onStart {
+                        Logger.d("reservedOrderHistoryUiState", "데이터 로딩 시작")
+                        emit(ReservedOrderHistoryUiState(isLoading = true))
+                    }
+                    .catch { e ->
+                        Logger.e("reservedOrderHistoryUiState", "에러 발생: ${e.message}", e)
                         emit(
                             ReservedOrderHistoryUiState(
                                 isLoading = false,
-                                errorMessage = it.message
+                                errorMessage = e.message
                             )
                         )
                     }
@@ -53,6 +57,7 @@ internal class OrderHistoryViewModel @Inject constructor(
                 SharingStarted.WhileSubscribed(5_000),
                 ReservedOrderHistoryUiState(isLoading = true)
             )
+
 
     internal fun refreshReservedOrders() {
         reservedRefreshTrigger.value += 1
@@ -72,12 +77,16 @@ internal class OrderHistoryViewModel @Inject constructor(
                             errorMessage = null
                         )
                     }
-                    .onStart { emit(CompletedOrderHistoryUiState(isLoading = true)) }
-                    .catch {
+                    .onStart {
+                        Logger.d("completedOrderHistoryUiState", "데이터 로딩 시작")
+                        emit(CompletedOrderHistoryUiState(isLoading = true))
+                    }
+                    .catch { e ->
+                        Logger.e("completedOrderHistoryUiState", "에러 발생: ${e.message}", e)
                         emit(
                             CompletedOrderHistoryUiState(
                                 isLoading = false,
-                                errorMessage = it.message
+                                errorMessage = e.message
                             )
                         )
                     }
