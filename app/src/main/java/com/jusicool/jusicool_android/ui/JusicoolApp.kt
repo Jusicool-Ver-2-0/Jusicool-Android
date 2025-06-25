@@ -19,9 +19,10 @@ fun JusicoolApp(
         contentColor = Color.White,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            /*TODO()*/
+            if (appState.shouldShowBottomBar){
+                JusicoolNavigationBar(appState = appState)
+            }
         }
-
     ) { paddingValues ->
         JusicoolNavHost(
             modifier = Modifier.padding(paddingValues = paddingValues),
