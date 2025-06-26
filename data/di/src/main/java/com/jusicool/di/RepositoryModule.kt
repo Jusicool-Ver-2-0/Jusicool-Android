@@ -1,5 +1,7 @@
 package com.jusicool.di
 
+import com.jusicool.repository.MarketRepository
+import com.jusicool.repository.MarketRepositoryImpl
 import com.jusicool.repository.account.AccountRepository
 import com.jusicool.repository.account.AccountRepositoryImpl
 import com.jusicool.repository.auth.AuthRepository
@@ -44,4 +46,9 @@ abstract class RepositoryModule {
     abstract fun binOrderRepository(
         orderRepositoryImpl: OrderRepositoryImpl
     ): OrderRepository
+
+    @Binds
+    abstract fun bindMarketRepository(
+        marketRepositoryImpl: MarketRepositoryImpl
+    ): MarketRepository
 }
