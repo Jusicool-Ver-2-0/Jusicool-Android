@@ -4,5 +4,5 @@ import com.jusicool.model.market.MarketListResponse
 import kotlinx.coroutines.flow.Flow
 
 interface MarketDataSource {
-    fun getMarketList(): Flow<List<MarketListResponse>>
+    fun getMarketList(requestParam: String): Flow<List<MarketListResponse>>
 }

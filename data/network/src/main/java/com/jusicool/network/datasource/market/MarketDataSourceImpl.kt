@@ -9,6 +9,6 @@ import javax.inject.Inject
 class MarketDataSourceImpl @Inject constructor(
     private val marketApi: MarketApi,
 ) : MarketDataSource {
-    override fun getMarketList(): Flow<List<MarketListResponse>> =
-        performApiRequest { marketApi.getMarketList() }
+    override fun getMarketList(requestParam: String): Flow<List<MarketListResponse>> =
+        performApiRequest { marketApi.getMarketList(requestParam = requestParam) }
 }

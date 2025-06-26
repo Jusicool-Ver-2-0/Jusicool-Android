@@ -16,8 +16,16 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface OrderApi {
+    @GET("/order/my")
+    suspend fun getOrderHistory(
+        @Query("type") type: String,
+    ): List<OrderHistoryResponse>
+
     @GET("/order/month")
     suspend fun getMonthOrder(): OrderResponse
+
+    @GET("/order/my")
+    suspend fun getMonthlyRate(): List<OrderHistoryResponse>
 
   @POST("/order/buy/{market_code}")
     suspend fun postBuy(
@@ -42,9 +50,4 @@ interface OrderApi {
         @Path("market_code") marketCode: String,
         @Body body: SellReserveRequest
     ): Response<Unit>
-  
-    @GET("/order/my")
-    suspend fun getOrderHistory(
-        @Query("type") type: String,
-    ): List<OrderHistoryResponse>
 }
