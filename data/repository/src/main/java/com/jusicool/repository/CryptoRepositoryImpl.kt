@@ -1,9 +1,8 @@
-package com.jusicool.repository.crypto
+package com.jusicool.repository
 
 import com.jusicool.entity.crypto.CurrentCryptoPriceModel
 import com.jusicool.entity.crypto.CurrentMinuteCandleModel
 import com.jusicool.entity.crypto.MinuteCandleModel
-import com.jusicool.model.crypto.CurrentMinuteCandleResponse
 import com.jusicool.model.mapper.crypto.toModel
 import com.jusicool.network.datasource.crypto.CryptoDataSource
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +11,7 @@ import javax.inject.Inject
 
 class CryptoRepositoryImpl @Inject constructor(
     private val cryptoDataSource: CryptoDataSource
-):CryptoRepository {
+): CryptoRepository {
     override fun getCurrentCryptoPrice(markets: String): Flow<List<CurrentCryptoPriceModel>> {
         return cryptoDataSource.getCurrentCryptoPrice(markets = markets).map { list -> list.map{ it.toModel() } }
     }

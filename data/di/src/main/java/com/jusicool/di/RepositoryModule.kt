@@ -2,16 +2,16 @@ package com.jusicool.di
 
 import com.jusicool.repository.MarketRepository
 import com.jusicool.repository.MarketRepositoryImpl
-import com.jusicool.repository.account.AccountRepository
-import com.jusicool.repository.account.AccountRepositoryImpl
-import com.jusicool.repository.auth.AuthRepository
-import com.jusicool.repository.auth.AuthRepositoryImpl
-import com.jusicool.repository.crypto.CryptoRepository
-import com.jusicool.repository.crypto.CryptoRepositoryImpl
-import com.jusicool.repository.holding.HoldingRepository
-import com.jusicool.repository.holding.HoldingRepositoryImpl
-import com.jusicool.repository.order.OrderRepository
-import com.jusicool.repository.order.OrderRepositoryImpl
+import com.jusicool.repository.AccountRepository
+import com.jusicool.repository.AccountRepositoryImpl
+import com.jusicool.repository.AuthRepository
+import com.jusicool.repository.AuthRepositoryImpl
+import com.jusicool.repository.CryptoRepository
+import com.jusicool.repository.CryptoRepositoryImpl
+import com.jusicool.repository.HoldingRepository
+import com.jusicool.repository.HoldingRepositoryImpl
+import com.jusicool.repository.OrderRepository
+import com.jusicool.repository.OrderRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

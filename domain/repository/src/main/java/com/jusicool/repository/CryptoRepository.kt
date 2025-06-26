@@ -1,10 +1,8 @@
-package com.jusicool.repository.crypto
+package com.jusicool.repository
 
 import com.jusicool.entity.crypto.CurrentCryptoPriceModel
 import com.jusicool.entity.crypto.CurrentMinuteCandleModel
 import com.jusicool.entity.crypto.MinuteCandleModel
-import com.jusicool.model.crypto.CurrentCryptoPriceResponse
-import com.jusicool.model.crypto.CurrentMinuteCandleResponse
 import kotlinx.coroutines.flow.Flow
 
 interface CryptoRepository {

@@ -1,4 +1,4 @@
-package com.jusicool.repository.account
+package com.jusicool.repository
 
 import kotlinx.coroutines.flow.map
 import com.jusicool.entity.account.AccountModel

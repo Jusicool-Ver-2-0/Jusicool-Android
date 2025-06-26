@@ -1,4 +1,4 @@
-package com.jusicool.repository.order
+package com.jusicool.repository
 
 import com.jusicool.entity.order.BuyRequestModel
 import com.jusicool.entity.order.BuyReserveModel
@@ -7,8 +7,6 @@ import com.jusicool.entity.order.OrderModel
 import com.jusicool.entity.order.SellRequestModel
 import com.jusicool.entity.order.SellReserveModel
 import com.jusicool.entity.order.SellResponseModel
-import com.jusicool.model.order.BuyReserveRequest
-import com.jusicool.model.order.SellReserveRequest
 import com.jusicool.entity.orderHistory.OrderHistory
 import kotlinx.coroutines.flow.Flow
 
