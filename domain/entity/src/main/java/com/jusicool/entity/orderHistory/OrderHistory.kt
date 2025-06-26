@@ -5,9 +5,10 @@ data class OrderHistory(
     val market: String,
     val orderType: OrderType,
     val reserveType: ReserveType,
+    val status: OrderStatus,
     val quantity: Int,
-    val price: Int,
-    val status: OrderStatus
+    val executePrice: Int?,
+    val reservePrice: Int?,
 ) {
     init {
         require(quantity > 0) { "주문 수량은 0보다 커야 합니다." }
