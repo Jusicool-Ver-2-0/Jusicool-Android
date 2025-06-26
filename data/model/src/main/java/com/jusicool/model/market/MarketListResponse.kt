@@ -1,4 +1,4 @@
-package com.jusicool.model
+package com.jusicool.model.market
 
 import com.squareup.moshi.Json
 

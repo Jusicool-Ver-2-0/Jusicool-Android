@@ -1,6 +1,6 @@
 package com.jusicool.network.datasource.market
 
-import com.jusicool.model.MarketListResponse
+import com.jusicool.model.market.MarketListResponse
 import com.jusicool.network.api.MarketApi
 import com.jusicool.utils.performApiRequest
 import kotlinx.coroutines.flow.Flow
