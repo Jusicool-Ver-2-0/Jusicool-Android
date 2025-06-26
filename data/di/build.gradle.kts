@@ -8,8 +8,9 @@ android {
 }
 
 dependencies {
-    // todo : Add Other Project Implementation -> ex) implementation(project(":core:___")) / (project(":feature:____"))
+    implementation(libs.room.runtime)
 
     implementation(project(":data:repository"))
     implementation(project(":domain:repository"))
+    implementation(project(":data:local"))
 }

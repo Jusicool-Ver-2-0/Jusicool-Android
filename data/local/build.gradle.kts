@@ -8,7 +8,10 @@ android {
 }
 
 dependencies {
-    // todo : Add Other Project Implementation -> ex) implementation(project(":core:___")) / (project(":feature:____"))
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+    implementation(libs.room.ktx)
+
     implementation(project(":data:model"))
     implementation(project(":data:utils"))
 }
