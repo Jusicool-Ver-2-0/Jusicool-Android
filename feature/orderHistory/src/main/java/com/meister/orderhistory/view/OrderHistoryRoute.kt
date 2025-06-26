@@ -108,7 +108,8 @@ private fun OrderHistoryScreenPreview() {
             orderType = BUY,
             reserveType = IMMEDIATE,
             quantity = 3,
-            price = 50000,
+            executePrice = 50000,
+            reservePrice = null,
             status = COMPLETED
         ),
         OrderHistory(
@@ -117,7 +118,8 @@ private fun OrderHistoryScreenPreview() {
             orderType = SELL,
             reserveType = IMMEDIATE,
             quantity = 1,
-            price = 35000,
+            executePrice = 200000,
+            reservePrice = null,
             status = COMPLETED
         ),
         OrderHistory(
@@ -126,7 +128,8 @@ private fun OrderHistoryScreenPreview() {
             orderType = BUY,
             reserveType = IMMEDIATE,
             quantity = 10,
-            price = 600,
+            executePrice = 5000,
+            reservePrice = null,
             status = COMPLETED
         ),
         OrderHistory(
@@ -135,7 +138,8 @@ private fun OrderHistoryScreenPreview() {
             orderType = SELL,
             reserveType = IMMEDIATE,
             quantity = 2,
-            price = 120000,
+            executePrice = 50000,
+            reservePrice = null,
             status = COMPLETED
         )
     )
@@ -147,7 +151,8 @@ private fun OrderHistoryScreenPreview() {
             orderType = SELL,
             reserveType = RESERVE,
             quantity = 5,
-            price = 1500,
+            executePrice = null,
+            reservePrice = 2000,
             status = PENDING
         ),
         OrderHistory(
@@ -156,7 +161,8 @@ private fun OrderHistoryScreenPreview() {
             orderType = BUY,
             reserveType = RESERVE,
             quantity = 20,
-            price = 100,
+            executePrice = null,
+            reservePrice = 3000,
             status = PENDING
         ),
         OrderHistory(
@@ -165,7 +171,8 @@ private fun OrderHistoryScreenPreview() {
             orderType = SELL,
             reserveType = RESERVE,
             quantity = 4,
-            price = 8000,
+            executePrice = null,
+            reservePrice = 4000,
             status = PENDING
         ),
         OrderHistory(
@@ -174,7 +181,8 @@ private fun OrderHistoryScreenPreview() {
             orderType = BUY,
             reserveType = RESERVE,
             quantity = 3,
-            price = 9000,
+            executePrice = null,
+            reservePrice = 5000,
             status = PENDING
         )
     )
@@ -333,7 +341,11 @@ private fun OrderHistoryItem(data: OrderHistory) {
 
         val orderTypeText = if (data.isBuyOrder()) "구매" else "판매"
         val orderStatusText = if (data.isCompleted()) "완료" else "예약"
-        val orderPriceText = "${data.calculateTotalPrice().formatMoney()}원"
+
+        val orderPrice = if (data.isCompleted()) data.calculateTotalExecutePrice()
+        else data.calculateTotalReservePrice()
+
+        val orderPriceText = "${orderPrice.formatMoney()}원"
 
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
 

@@ -8,8 +8,9 @@ data class OrderHistoryResponse(
     val id: Int,
     val market: String,
     @Json(name = "order_type") val orderType: String,
-    val price: Int,
-    val quantity: Int,
     @Json(name = "reserve_type") val reserveType: String,
-    val status: String
+    val status: String,
+    val quantity: Int,
+    @Json(name = "execute_price") val executePrice: Int?,
+    @Json(name = "reserve_price") val reservePrice: Int?,
 )
