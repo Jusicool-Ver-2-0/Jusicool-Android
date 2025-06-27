@@ -27,6 +27,19 @@ interface HoldingDao {
     fun observeAllHoldingsWithMarket(): Flow<List<HoldingWithMarket>>
 
     @Transaction
-    @Query("SELECT * FROM holdings WHERE id = :holdingId")
-    fun observeHoldingWithMarketById(holdingId: Int): Flow<HoldingWithMarket>?
+    suspend fun updateHoldings(
+        newHoldings: List<HoldingEntity>,
+        deleteIds: List<Int>,
+        newMarkets: List<MarketEntity>,
+        marketDao: MarketDao
+    ) {
+        if (deleteIds.isNotEmpty()) {
+            deleteHoldingsByIds(deleteIds)
+        }
+        if (newMarkets.isNotEmpty()) {
+            marketDao.insertMarkets(newMarkets)
+        }
+        insertHoldings(newHoldings)
+    }
 }
+
