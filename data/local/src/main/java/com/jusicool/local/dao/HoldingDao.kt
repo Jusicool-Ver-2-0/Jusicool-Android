@@ -1,12 +1,12 @@
 package com.jusicool.local.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.jusicool.local.entity.HoldingEntity
+import com.jusicool.local.entity.MarketEntity
 import com.jusicool.local.relation.HoldingWithMarket
 import kotlinx.coroutines.flow.Flow
 
@@ -14,19 +14,16 @@ import kotlinx.coroutines.flow.Flow
 interface HoldingDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertHolding(holding: HoldingEntity)
+    suspend fun insertHoldings(holdings: List<HoldingEntity>)
 
-    @Query("SELECT * FROM holdings")
-    fun observeAllHoldings(): Flow<List<HoldingEntity>>
+    @Query("SELECT * FROM holdings ORDER BY id ASC")
+    suspend fun getAllHoldings(): List<HoldingEntity>
 
-    @Query("SELECT * FROM holdings WHERE id = :holdingId")
-    fun observeHoldingById(holdingId: Int): Flow<HoldingEntity?>
-
-    @Delete
-    suspend fun deleteHolding(holding: HoldingEntity)
+    @Query("DELETE FROM holdings WHERE id IN (:ids)")
+    suspend fun deleteHoldingsByIds(ids: List<Int>)
 
     @Transaction
-    @Query("SELECT * FROM holdings")
+    @Query("SELECT * FROM holdings ORDER BY id ASC")
     fun observeAllHoldingsWithMarket(): Flow<List<HoldingWithMarket>>
 
     @Transaction
