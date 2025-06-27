@@ -6,6 +6,7 @@
     import dagger.Module
     import dagger.Provides
     import dagger.hilt.InstallIn
+    import dagger.hilt.android.qualifiers.ApplicationContext
     import dagger.hilt.components.SingletonComponent
     import javax.inject.Singleton
 
@@ -14,7 +15,7 @@
     object DatabaseModule {
         @Provides
         @Singleton
-        fun provideJusicoolDatabase(appContext: Context): JusicoolDataBase {
+        fun provideJusicoolDatabase(@ApplicationContext appContext: Context): JusicoolDataBase {
             return Room.databaseBuilder(
                 appContext,
                 JusicoolDataBase::class.java,
