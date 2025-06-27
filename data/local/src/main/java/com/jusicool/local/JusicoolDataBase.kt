@@ -11,7 +11,7 @@ import com.jusicool.local.entity.MarketEntity
     entities = [
         HoldingEntity::class,
         MarketEntity::class,
-    ], version = 0
+    ], version = 1
 )
 abstract class JusicoolDataBase : RoomDatabase() {
 
