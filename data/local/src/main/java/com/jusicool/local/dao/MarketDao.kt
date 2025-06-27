@@ -11,7 +11,7 @@ import com.jusicool.local.entity.MarketEntity
 interface MarketDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertMarket(market: MarketEntity)
+    suspend fun insertMarkets(markets: List<MarketEntity>)
 
     @Query("SELECT * FROM markets")
     suspend fun getAllMarkets(): List<MarketEntity>
