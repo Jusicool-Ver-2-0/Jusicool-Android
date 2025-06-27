@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.jusicool.local.entity.HoldingEntity
 import com.jusicool.local.relation.HoldingWithMarket
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HoldingDao {
@@ -16,19 +17,19 @@ interface HoldingDao {
     suspend fun insertHolding(holding: HoldingEntity)
 
     @Query("SELECT * FROM holdings")
-    suspend fun getAllHoldings(): List<HoldingEntity>
+    fun observeAllHoldings(): Flow<List<HoldingEntity>>
 
     @Query("SELECT * FROM holdings WHERE id = :holdingId")
-    suspend fun getHoldingById(holdingId: Int): HoldingEntity?
+    fun observeHoldingById(holdingId: Int): Flow<HoldingEntity?>
 
     @Delete
     suspend fun deleteHolding(holding: HoldingEntity)
 
     @Transaction
     @Query("SELECT * FROM holdings")
-    suspend fun getAllHoldingsWithMarket(): List<HoldingWithMarket>
+    suspend fun observeAllHoldingsWithMarket(): Flow<List<HoldingWithMarket>>
 
     @Transaction
     @Query("SELECT * FROM holdings WHERE id = :holdingId")
-    suspend fun getHoldingWithMarketById(holdingId: Int): HoldingWithMarket?
+    suspend fun observeHoldingWithMarketById(holdingId: Int): Flow<HoldingWithMarket>?
 }
