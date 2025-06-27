@@ -6,7 +6,7 @@ import com.jusicool.local.entity.MarketEntity
 import com.jusicool.local.entity.HoldingEntity
 
 data class HoldingWithMarket(
-    @Embedded val order: HoldingEntity,
+    @Embedded val holding: HoldingEntity,
     @Relation(
         parentColumn = "marketId",
         entityColumn = "id"
