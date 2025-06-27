@@ -4,5 +4,7 @@ import com.jusicool.entity.holding.HoldingModel
 import kotlinx.coroutines.flow.Flow
 
 interface HoldingRepository {
-    fun getHolding(): Flow<List<HoldingModel>>
+    fun observeHoldings(): Flow<List<HoldingModel>>
+
+    suspend fun refreshHoldings()
 }
