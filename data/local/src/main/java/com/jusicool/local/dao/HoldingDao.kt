@@ -27,9 +27,9 @@ interface HoldingDao {
 
     @Transaction
     @Query("SELECT * FROM holdings")
-    suspend fun observeAllHoldingsWithMarket(): Flow<List<HoldingWithMarket>>
+    fun observeAllHoldingsWithMarket(): Flow<List<HoldingWithMarket>>
 
     @Transaction
     @Query("SELECT * FROM holdings WHERE id = :holdingId")
-    suspend fun observeHoldingWithMarketById(holdingId: Int): Flow<HoldingWithMarket>?
+    fun observeHoldingWithMarketById(holdingId: Int): Flow<HoldingWithMarket>?
 }
