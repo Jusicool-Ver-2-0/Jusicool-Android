@@ -13,5 +13,13 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object DaoModule {
 
+    @Provides
+    fun provideMarketDao(database: JusicoolDataBase): MarketDao {
+        return database.marketDao()
+    }
 
+    @Provides
+    fun provideHoldingDao(database: JusicoolDataBase): HoldingDao {
+        return database.holdingDao()
+    }
 }
