@@ -61,7 +61,7 @@ internal fun AccountRoute(
 
     LaunchedEffect(Unit) {
         viewModel.getAccount()
-        viewModel.getHolding()
+        viewModel.refreshHoldingList()
         viewModel.getMonthOrder()
     }
 
