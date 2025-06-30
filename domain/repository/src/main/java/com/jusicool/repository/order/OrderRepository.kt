@@ -3,17 +3,18 @@ package com.jusicool.repository.order
 import com.jusicool.entity.order.BuyRequestModel
 import com.jusicool.entity.order.BuyReserveModel
 import com.jusicool.entity.order.BuyResponseModel
+import com.jusicool.entity.order.MonthlyRate
 import com.jusicool.entity.order.OrderModel
 import com.jusicool.entity.order.SellRequestModel
 import com.jusicool.entity.order.SellReserveModel
 import com.jusicool.entity.order.SellResponseModel
-import com.jusicool.model.order.BuyReserveRequest
-import com.jusicool.model.order.SellReserveRequest
 import com.jusicool.entity.orderHistory.OrderHistory
 import kotlinx.coroutines.flow.Flow
 
 interface OrderRepository {
     fun getMonthOrder(): Flow<OrderModel>
+
+    fun getMonthlyRate(): Flow<MonthlyRate>
 
     fun postBuy(marketCode: String, quantity: BuyRequestModel): Flow<BuyResponseModel>
 
