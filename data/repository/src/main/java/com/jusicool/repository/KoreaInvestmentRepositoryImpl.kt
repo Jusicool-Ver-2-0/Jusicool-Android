@@ -12,7 +12,7 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
     private val dataSource: KoreaInvestmentDataSource
 ) : KoreaInvestmentRepository {
 
-    override suspend fun getStockOrder(
+    override fun getStockOrder(
         inputIsCd: String,
         inputHour1: String,
         inputDate1: String,
@@ -26,20 +26,25 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMinutePrice(
+    override fun getMinutePrice(
         inputIsCd: String,
         inputHour1: String,
-    ): Flow<List<CandleChartEntity>> {
+        trCont: String
+    ): Flow<Pair<String, List<CandleChartEntity>>> {
         return dataSource.getMinutePrice(
             inputIsCd,
-            inputHour1
-        ).map { stockCandleResponse ->
-            stockCandleResponse.details.mapNotNull { it.toCandleEntity() }
+            inputHour1,
+            trCont
+        ).map { response ->
+            val nextTrCont = response.first
+            val candleList = response.second.details.mapNotNull { it.toCandleEntity() }
+            nextTrCont to candleList
         }
     }
 
 
-    override suspend fun getStockCurrentPrice(
+
+    override fun getStockCurrentPrice(
         marketDivCode: String,
         stockCode: String
     ): Flow<StockPriceResponse> {

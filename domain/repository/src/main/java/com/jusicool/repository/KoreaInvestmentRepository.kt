@@ -6,18 +6,19 @@ import kotlinx.coroutines.flow.Flow
 
 interface KoreaInvestmentRepository {
 
-    suspend fun getStockOrder(
+    fun getStockOrder(
         inputIsCd: String,
         inputHour1: String,
         inputDate1: String,
     ): Flow<List<CandleChartEntity>>
 
-    suspend fun getMinutePrice(
+    fun getMinutePrice(
         inputIsCd: String,
         inputHour1: String,
-    ): Flow<List<CandleChartEntity>>
+        trCont: String
+    ): Flow<Pair<String, List<CandleChartEntity>>>
 
-    suspend fun getStockCurrentPrice(
+    fun getStockCurrentPrice(
         marketDivCode: String,
         stockCode: String
     ): Flow<StockPriceResponse>

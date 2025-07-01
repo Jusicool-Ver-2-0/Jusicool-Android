@@ -35,12 +35,14 @@ class KoreaInvestmentDataSourceImpl @Inject constructor(
     override fun getMinutePrice(
         inputIsCd: String,
         inputHour1: String,
-    ): Flow<StockMinutePriceResponse> = performApiRequest {
-        api.getMinutePrice(
+        trCont: String,
+    ): Flow<Pair<String, StockMinutePriceResponse>> = performApiRequest {
+        val response = api.getMinutePrice(
             appKey = BuildConfig.KOREAINVESTMENT_API_KEY,
             appSecret = BuildConfig.KOREAINVESTMENT_APP_SECRET,
             trId = "FHKST03010200",
             custType = "P",
+            trCont = trCont,
 
             condMrktDivCode = "J",
             pwDataIncuYn = "N",
@@ -48,6 +50,7 @@ class KoreaInvestmentDataSourceImpl @Inject constructor(
             inputHour1 = inputHour1,
             etcClsCode = "00"
         )
+        Pair(response.headers()["tr_cont"] ?: "", response.body()!!) // 이렇게 만들 수 있어
     }
 
     override fun getStockCurrentPrice(
