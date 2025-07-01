@@ -11,6 +11,7 @@ import com.jusicool.network.api.CryptoApi
 import com.jusicool.network.api.HoldingApi
 import com.jusicool.network.api.OrderApi
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -64,7 +65,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideMoshiInstance(): Moshi =
-        Moshi.Builder().build()
+        Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
 
     @Provides
     @Singleton
