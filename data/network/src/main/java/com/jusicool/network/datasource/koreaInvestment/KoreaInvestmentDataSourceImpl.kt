@@ -5,18 +5,20 @@ import StockPriceResponse
 import com.jusicool.model.koreaInvestment.StockMinutePriceResponse
 import com.jusicool.network.BuildConfig
 import com.jusicool.network.api.KoreaInvestmentApi
+import com.jusicool.utils.performApiRequest
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class KoreaInvestmentDataSourceImpl @Inject constructor(
     private val api: KoreaInvestmentApi
 ) : KoreaInvestmentDataSource {
 
-    override suspend fun getStockOrder(
+    override fun getStockOrder(
         inputIsCd: String,
         inputHour1: String,
         inputDate1: String,
-    ): StockCandleResponse {
-        return api.getStockOrder(
+    ): Flow<StockCandleResponse> = performApiRequest {
+        api.getStockOrder(
             appKey = BuildConfig.KOREAINVESTMENT_API_KEY,
             appSecret = BuildConfig.KOREAINVESTMENT_APP_SECRET,
             trId = "FHKST01010100",
@@ -30,11 +32,11 @@ class KoreaInvestmentDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun getMinutePrice(
+    override fun getMinutePrice(
         inputIsCd: String,
         inputHour1: String,
-    ): StockMinutePriceResponse {
-        return api.getMinutePrice(
+    ): Flow<StockMinutePriceResponse> = performApiRequest {
+        api.getMinutePrice(
             appKey = BuildConfig.KOREAINVESTMENT_API_KEY,
             appSecret = BuildConfig.KOREAINVESTMENT_APP_SECRET,
             trId = "FHKST03010200",
@@ -48,11 +50,11 @@ class KoreaInvestmentDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun getStockCurrentPrice(
+    override fun getStockCurrentPrice(
         marketDivCode: String,
         stockCode: String
-    ): StockPriceResponse {
-        return api.getStockCurrentPrice(
+    ): Flow<StockPriceResponse> = performApiRequest {
+        api.getStockCurrentPrice(
             appKey = BuildConfig.KOREAINVESTMENT_API_KEY,
             appSecret = BuildConfig.KOREAINVESTMENT_APP_SECRET,
             trId = "FHKST01010100",

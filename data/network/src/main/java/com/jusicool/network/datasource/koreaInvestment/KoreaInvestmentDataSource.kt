@@ -6,22 +6,23 @@ import com.jusicool.model.koreaInvestment.AccessKeyRequest
 import com.jusicool.model.koreaInvestment.AccessTokenResponse
 import com.jusicool.model.koreaInvestment.StockMinutePriceResponse
 import com.jusicool.model.koreaInvestment.WebSocketAccessKeyResponse
+import kotlinx.coroutines.flow.Flow
 
 interface KoreaInvestmentDataSource {
 
-    suspend fun getStockOrder(
+    fun getStockOrder(
         inputIsCd: String,
         inputHour1: String,
         inputDate1: String,
-    ): StockCandleResponse
+    ): Flow<StockCandleResponse>
 
-    suspend fun getMinutePrice(
+    fun getMinutePrice(
         inputIsCd: String,
         inputHour1: String,
-    ): StockMinutePriceResponse
+    ): Flow<StockMinutePriceResponse>
 
-    suspend fun getStockCurrentPrice(
+    fun getStockCurrentPrice(
         marketDivCode: String,
         stockCode: String,
-    ): StockPriceResponse
+    ): Flow<StockPriceResponse>
 }
