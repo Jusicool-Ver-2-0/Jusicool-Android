@@ -31,7 +31,7 @@ import com.jusicool.utils.formatPercent
 import com.meister.investmentsearch.component.RecentSearchTag
 import com.meister.investmentsearch.viewModel.InvestmentSearchUiState
 import com.meister.investmentsearch.viewModel.InvestmentSearchViewModel
-import com.school_of_company.design_system.icon.ClarityArrowLineIcon
+import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -210,7 +210,7 @@ private fun SearchBox(
         horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.Start),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        ClarityArrowLineIcon(
+        LeftClarityArrowLineIcon(
             modifier = Modifier
                 .size(24.dp)
                 .JusicoolClickable(onClick = onArrowClick),

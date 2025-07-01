@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -29,8 +30,8 @@ fun JusicoolTextField(
     errorText:String = "",
     isError: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onTextChange: (String) -> Unit,
-    icon: @Composable () -> Unit = {}
 ) {
     JusicoolTheme { colors, typography ->
         Column(
@@ -55,6 +56,7 @@ fun JusicoolTextField(
                 value = textState,
                 onValueChange = { newText -> onTextChange(newText) },
                 visualTransformation =visualTransformation,
+                keyboardOptions = keyboardOptions,
                 maxLines = 1,
                 textStyle = typography.bodySmall,
                 decorationBox = { innerTextField ->
@@ -72,8 +74,6 @@ fun JusicoolTextField(
                             }
                             innerTextField()
                         }
-
-                        icon()
                     }
                 }
             )

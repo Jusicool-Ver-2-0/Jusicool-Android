@@ -39,7 +39,7 @@ import kotlin.math.abs
 @Composable
 internal fun ChartListRoute(
     modifier: Modifier = Modifier,
-    onSearchCLick: () -> Unit,
+    onSearchClick: () -> Unit,
     viewModel: ChartListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -52,11 +52,10 @@ internal fun ChartListRoute(
             ChartListScreen(
                 modifier = modifier,
                 uiState = uiState,
-                onSearchCLick = onSearchCLick
+                onSearchCLick = onSearchClick
             )
         }
     }
-
 }
 
 
