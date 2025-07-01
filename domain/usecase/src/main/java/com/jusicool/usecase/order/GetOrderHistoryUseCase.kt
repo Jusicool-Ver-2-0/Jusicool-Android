@@ -2,7 +2,7 @@ package com.jusicool.usecase.order
 
 import com.jusicool.entity.orderHistory.OrderHistory
 import com.jusicool.entity.orderHistory.OrderHistoryType
-import com.jusicool.repository.order.OrderRepository
+import com.jusicool.repository.OrderRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
