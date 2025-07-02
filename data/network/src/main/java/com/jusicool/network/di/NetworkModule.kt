@@ -15,6 +15,7 @@ import com.jusicool.network.util.KoreaInvestmentInterceptor
 import com.jusicool.network.util.KoreaInvestmentRetrofit
 import com.jusicool.network.util.UpbitRetrofit
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -91,7 +92,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideMoshiInstance(): Moshi =
-        Moshi.Builder().build()
+        Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
 
     @Provides
     @Singleton

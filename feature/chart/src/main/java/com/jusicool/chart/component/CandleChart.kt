@@ -105,7 +105,7 @@ fun CandleChart(
         } ?: 0.0
 
         // 가격 라벨 간격 계산
-        val priceStep = (maxHigh - minLow) / (numberOfLabels - 1)
+        val priceStep = if (numberOfLabels > 1) (maxHigh - minLow) / (numberOfLabels - 1) else 0.0
 
         // Y축에 표시될 가격 라벨 리스트 생성 (높은 가격이 위로 오도록 뒤집음)
         val priceLabels = List(numberOfLabels) { index ->
@@ -139,13 +139,18 @@ fun CandleChart(
         }
 
         LaunchedEffect(candles.size) {
-            if (isFirstLoad && candles.isNotEmpty()) {
-                listState.scrollToItem(candles.size - 1)
+            if (candles.isEmpty()) return@LaunchedEffect
+
+            if (isFirstLoad) {
+                val lastIndex = candles.lastIndex.coerceAtLeast(0)
+                Log.d("CandleChart", "First load: scroll to last index $lastIndex")
+                listState.scrollToItem(lastIndex)
                 isFirstLoad = false
             } else if (candles.size > previousSize) {
                 val addedCount = candles.size - previousSize
-                val newIndex = listState.firstVisibleItemIndex + addedCount
-                listState.scrollToItem(newIndex.coerceAtMost(candles.size - 1))
+                val newIndex = (listState.firstVisibleItemIndex + addedCount).coerceAtMost(candles.lastIndex.coerceAtLeast(0))
+                Log.d("CandleChart", "Added candles: scroll to index $newIndex, candles size: ${candles.size}")
+                listState.scrollToItem(newIndex)
             }
             previousSize = candles.size
         }
@@ -177,8 +182,8 @@ fun CandleChart(
                     state = listState
                 ) {
                     items(candles) { candle ->
-                        val candleTop = ((maxHigh - candle.highPrice) / (maxHigh - minLow)) * totalHeight
-                        val candleHeight = ((candle.highPrice - candle.lowPrice) / (maxHigh - minLow)) * totalHeight
+                        val candleTop = if (maxHigh != minLow) ((maxHigh - candle.highPrice) / (maxHigh - minLow)) * totalHeight else 0.0
+                        val candleHeight = if (maxHigh != minLow) ((candle.highPrice - candle.lowPrice) / (maxHigh - minLow)) * totalHeight else totalHeight.toDouble()
                         val adjustedCandleHeight = candleHeight.coerceAtLeast(1.0)
 
                         Column(
@@ -201,8 +206,8 @@ fun CandleChart(
                     }
 
                     if (currentCandle != null) {
-                        val currentCandleTop = ((maxHigh - currentCandle.highPrice) / (maxHigh - minLow)) * totalHeight
-                        val currentCandleHeight = ((currentCandle.highPrice - currentCandle.lowPrice) / (maxHigh - minLow)) * totalHeight
+                        val currentCandleTop = if (maxHigh != minLow) ((maxHigh - currentCandle.highPrice) / (maxHigh - minLow)) * totalHeight else 0.0
+                        val currentCandleHeight = if (maxHigh != minLow) ((currentCandle.highPrice - currentCandle.lowPrice) / (maxHigh - minLow)) * totalHeight else totalHeight.toDouble()
                         val adjustedCandleHeight = currentCandleHeight.coerceAtLeast(1.0)
 
                         item {
@@ -227,7 +232,7 @@ fun CandleChart(
                 Canvas(modifier = Modifier.matchParentSize()) {
                     referenceCandle?.let { candle ->
                         val price = getTradePrice(candle)
-                        val y = (((maxHigh - price) / (maxHigh - minLow)) * size.height).toFloat()
+                        val y = if (maxHigh != minLow) (((maxHigh - price) / (maxHigh - minLow)) * size.height).toFloat() else 0f
 
                         drawLine(
                             color = chartLineColor,
