@@ -1,6 +1,6 @@
 package com.jusicool.usecase.account
 
-import com.jusicool.repository.account.AccountRepository
+import com.jusicool.repository.AccountRepository
 import javax.inject.Inject
 
 class GetAccountResponseUseCase @Inject constructor(

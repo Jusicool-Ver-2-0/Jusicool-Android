@@ -1,4 +1,4 @@
-package com.jusicool.repository.holding
+package com.jusicool.repository
 
 import com.jusicool.entity.holding.HoldingModel
 import kotlinx.coroutines.flow.Flow

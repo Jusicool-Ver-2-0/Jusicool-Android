@@ -1,7 +1,7 @@
 package com.jusicool.usecase.order
 
 import com.jusicool.entity.order.SellReserveModel
-import com.jusicool.repository.order.OrderRepository
+import com.jusicool.repository.OrderRepository
 import javax.inject.Inject
 
 class PostSellReserveUseCase @Inject constructor(

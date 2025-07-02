@@ -1,7 +1,7 @@
 package com.jusicool.usecase.auth
 
 import com.jusicool.entity.auth.SignInModel
-import com.jusicool.repository.auth.AuthRepository
+import com.jusicool.repository.AuthRepository
 import javax.inject.Inject
 
 class SignInRequestUseCase @Inject constructor(

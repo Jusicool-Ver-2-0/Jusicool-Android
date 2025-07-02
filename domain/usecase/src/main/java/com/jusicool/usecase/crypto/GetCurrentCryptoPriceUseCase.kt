@@ -1,7 +1,7 @@
 package com.jusicool.usecase.crypto
 
 import com.jusicool.entity.holding.HoldingModel
-import com.jusicool.repository.crypto.CryptoRepository
+import com.jusicool.repository.CryptoRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 

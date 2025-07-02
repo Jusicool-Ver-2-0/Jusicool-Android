@@ -1,4 +1,4 @@
-package com.jusicool.repository.order
+package com.jusicool.repository
 
 import com.jusicool.entity.order.BuyRequestModel
 import com.jusicool.entity.order.BuyReserveModel
