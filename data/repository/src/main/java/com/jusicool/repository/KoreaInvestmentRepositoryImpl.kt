@@ -30,18 +30,15 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
         inputIsCd: String,
         inputHour1: String,
         trCont: String
-    ): Flow<Pair<String, List<CandleChartEntity>>> {
+    ): Flow<List<CandleChartEntity>> {
         return dataSource.getMinutePrice(
             inputIsCd,
             inputHour1,
             trCont
         ).map { response ->
-            val nextTrCont = response.first
-            val candleList = response.second.details.mapNotNull { it.toCandleEntity() }
-            nextTrCont to candleList
+            response.details.mapNotNull { it.toCandleEntity() }
         }
     }
-
 
 
     override fun getStockCurrentPrice(

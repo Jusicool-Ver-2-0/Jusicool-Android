@@ -17,7 +17,7 @@ interface KoreaInvestmentDataSource {
         inputIsCd: String,
         inputHour1: String,
         trCont: String,
-    ): Flow<Pair<String, StockMinutePriceResponse>>
+    ): Flow<StockMinutePriceResponse>
 
     fun getStockCurrentPrice(
         marketDivCode: String,

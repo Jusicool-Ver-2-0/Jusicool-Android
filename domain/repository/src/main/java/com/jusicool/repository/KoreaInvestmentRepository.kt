@@ -16,7 +16,7 @@ interface KoreaInvestmentRepository {
         inputIsCd: String,
         inputHour1: String,
         trCont: String
-    ): Flow<Pair<String, List<CandleChartEntity>>>
+    ): Flow<List<CandleChartEntity>>
 
     fun getStockCurrentPrice(
         marketDivCode: String,

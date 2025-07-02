@@ -7,7 +7,6 @@ import com.jusicool.model.koreaInvestment.AccessTokenRequest
 import com.jusicool.model.koreaInvestment.AccessTokenResponse
 import com.jusicool.model.koreaInvestment.StockMinutePriceResponse
 import com.jusicool.model.koreaInvestment.WebSocketAccessKeyResponse
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -54,7 +53,7 @@ interface KoreaInvestmentApi {
         @Query("FID_INPUT_HOUR_1") inputHour1: String,
         @Query("FID_PW_DATA_INCU_YN") pwDataIncuYn: String,
         @Query("FID_ETC_CLS_CODE") etcClsCode: String
-    ): Response<StockMinutePriceResponse>
+    ): StockMinutePriceResponse
 
     @GET("/uapi/domestic-stock/v1/quotations/inquire-price")
     suspend fun getStockCurrentPrice(
