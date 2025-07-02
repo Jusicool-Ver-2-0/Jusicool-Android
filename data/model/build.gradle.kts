@@ -10,6 +10,7 @@ android {
 dependencies {
     // todo : Add Other Project Implementation -> ex) implementation(project(":core:___")) / (project(":feature:____"))
     implementation(project(":domain:entity"))
+    implementation(project(":data:utils"))
     debugImplementation(libs.chucker)
     releaseImplementation(libs.chucker.no.op)
 

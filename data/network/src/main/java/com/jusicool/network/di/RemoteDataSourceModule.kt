@@ -8,6 +8,10 @@ import com.jusicool.network.datasource.crypto.CryptoDataSource
 import com.jusicool.network.datasource.crypto.CryptoDataSourceImpl
 import com.jusicool.network.datasource.holding.HoldingDataSource
 import com.jusicool.network.datasource.holding.HoldingDataSourceImpl
+import com.jusicool.network.datasource.koreaInvestment.KoreaInvestmentDataSource
+import com.jusicool.network.datasource.koreaInvestment.KoreaInvestmentDataSourceImpl
+import com.jusicool.network.datasource.koreaInvestment.ws.KoreaInvestmentWebSocketManager
+import com.jusicool.network.datasource.koreaInvestment.ws.KoreaInvestmentWebSocketManagerInterface
 import com.jusicool.network.datasource.market.MarketDataSource
 import com.jusicool.network.datasource.market.MarketDataSourceImpl
 import com.jusicool.network.datasource.order.OrderDataSource
@@ -53,7 +57,17 @@ abstract class RemoteDataSourceModule {
     ): OrderDataSource
 
     @Binds
+    abstract fun bindKoreaInvestmentDataSource(
+        koreaInvestmentDataSourceImpl: KoreaInvestmentDataSourceImpl
+    ): KoreaInvestmentDataSource
+
+    @Binds
+    abstract fun bindKoreaInvestmentWebSocketManager(
+        koreaInvestmentWebSocketManager: KoreaInvestmentWebSocketManager
+    ): KoreaInvestmentWebSocketManagerInterface
+
+    @Binds
     abstract fun bindMarketDataSource(
         marketDataSourceImpl: MarketDataSourceImpl
     ): MarketDataSource
-}   
+}
