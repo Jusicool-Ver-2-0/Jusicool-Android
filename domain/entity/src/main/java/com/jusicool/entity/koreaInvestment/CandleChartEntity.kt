@@ -16,7 +16,7 @@ data class CandleChartEntity(
     init {
         require(openPrice > 0) { "시가(openPrice)는 0보다 커야 합니다." }
         require(closePrice > 0) { "종가(closePrice)는 0보다 커야 합니다." }
-        require(volume > 0) { "거래량(volumn)는 0보다 커야 합니다." }
+        require(volume >= 0) { "거래량(volumn)는 0보다 커야 합니다." }
         require(highPrice >= maxOf(openPrice, closePrice, lowPrice)) {
             "고가(highPrice)는 open/close/low 중 가장 높아야 합니다."
         }
