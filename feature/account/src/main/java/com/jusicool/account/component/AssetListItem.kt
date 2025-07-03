@@ -20,29 +20,38 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.jusicool.account.viewModel.uiState.GetCurrentCryptoPriceUiState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.entity.holding.HoldingModel
-import com.jusicool.usecase.crypto.CurrentCryptoHoldingPrice
+import com.jusicool.entity.market.Market
+import com.jusicool.entity.market.MarketType
+import com.jusicool.entity.price.HoldingWithCurrentPrice
 import com.jusicool.utils.formatMoney
 import com.jusicool.utils.formatPercent
 import com.jusicool.utils.toSignedFormattedText
 
 @Composable
-fun CryptoAssetListItem(
+fun AssetListItem(
     modifier: Modifier = Modifier,
     krwBalance: Long,
-    holding: HoldingModel,
-    getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState,
+    currentCryptoPriceData: HoldingWithCurrentPrice,
     navigateToChart: (marketCode: String, name: String, type: String, quantity: Int, money: Long, krwBalance: Long) -> Unit
 ) {
     JusicoolTheme { colors, typography ->
+
         Row(
             modifier = modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min)
-                .JusicoolClickable { navigateToChart(holding.marketCode, holding.koreanName,"CRYPTO", holding.quantity, holding.price.toLong(), krwBalance) },
+                .JusicoolClickable {
+                    navigateToChart(
+                        currentCryptoPriceData.market.market,
+                        currentCryptoPriceData.market.koreanName,
+                        currentCryptoPriceData.market.marketType.name,
+                        currentCryptoPriceData.quantity,
+                        currentCryptoPriceData.currentPrice.toLong(),
+                        krwBalance
+                    )
+                },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -54,7 +63,11 @@ fun CryptoAssetListItem(
                 Box(
                     modifier = Modifier
                         .size(40.dp)
-                        .border(width = 1.dp, color = colors.gray100, shape = RoundedCornerShape(size = 20.dp)),
+                        .border(
+                            width = 1.dp,
+                            color = colors.gray100,
+                            shape = RoundedCornerShape(size = 20.dp)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
@@ -71,13 +84,13 @@ fun CryptoAssetListItem(
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = holding.koreanName,
+                        text = currentCryptoPriceData.market.koreanName,
                         color = colors.black,
                         style = typography.bodySmall
                     )
 
                     Text(
-                        text = "${holding.quantity.formatMoney()}주",
+                        text = "${currentCryptoPriceData.quantity.formatMoney()}주",
                         color = colors.gray400,
                         style = typography.label
                     )
@@ -89,47 +102,30 @@ fun CryptoAssetListItem(
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                when(getCurrentCryptoPriceData) {
-                    is GetCurrentCryptoPriceUiState.Success -> {
-                        val priceInfo = getCurrentCryptoPriceData.markets.find {
-                            it.marketCode == holding.marketCode
-                        }
+                val textColor =
+                    if (currentCryptoPriceData.totalVariation() >= 0) colors.chartPriceIncreased
+                    else colors.chartPriceDecreased
 
-                        if (priceInfo != null) {
-                            val textColor =
-                                if (priceInfo.totalVariation >= 0) colors.chartPriceIncreased else colors.chartPriceDecreased
+                Text(
+                    text = "${currentCryptoPriceData.totalValue().formatMoney()}원",
+                    color = colors.black,
+                    style = typography.bodySmall
+                )
 
-                            Text(
-                                text = "${priceInfo.totalValue.formatMoney()}원",
-                                color = colors.black,
-                                style = typography.bodySmall
-                            )
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = currentCryptoPriceData.totalVariation().toSignedFormattedText(),
+                        color = textColor,
+                        style = typography.label
+                    )
 
-                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Text(
-                                    text = priceInfo.totalVariation.toSignedFormattedText(),
-                                    color = textColor,
-                                    style = typography.label
-                                )
-
-                                Text(
-                                    text = "(${priceInfo.priceVariationPercent.formatPercent()})",
-                                    color = textColor,
-                                    style = typography.label
-                                )
-                            }
-                        }
-                    }
-
-                    is GetCurrentCryptoPriceUiState.Error -> {
-
-                    }
-                    is GetCurrentCryptoPriceUiState.Loading -> {
-
-                    }
-                    is GetCurrentCryptoPriceUiState.Blank -> {
-
-                    }
+                    Text(
+                        text = "(${
+                            currentCryptoPriceData.priceVariationPercent().formatPercent()
+                        })",
+                        color = textColor,
+                        style = typography.label
+                    )
                 }
             }
         }
@@ -139,30 +135,22 @@ fun CryptoAssetListItem(
 @Preview(showBackground = true)
 @Composable
 fun CryptoAssetListItemPreview() {
-    CryptoAssetListItem(
-        holding = HoldingModel(
-            id = 1,
-            marketId = 101,
-            koreanName = "삼성전자",
-            englishName = "Samsung Electronics",
-            marketCode = "005930.KQ",
-            marketType = "STOCK",
-            quantity = 15,
-            price = 75000
-        ),
-        getCurrentCryptoPriceData = GetCurrentCryptoPriceUiState.Success(
-            markets = listOf(
-                CurrentCryptoHoldingPrice(
-                    marketCode = "weqwe",
-                    currentPrice = 12.00,
-                    priceVariation= 12,
-                    priceVariationPercent= 12.00,
-                    totalVariation = 1,
-                    totalValue = 1
-                )
-            )
+    AssetListItem(
+        currentCryptoPriceData =
+        HoldingWithCurrentPrice(
+            id = 2,
+            market = Market(
+                market = "102",
+                koreanName = "비트코인",
+                englishName = "Bitcoin",
+                marketType = MarketType.CRYPTO,
+                id = 2
+            ),
+            quantity = 5,
+            purchasePrice = 25000,
+            currentPrice = 30000.0
         ),
         krwBalance = 1,
-        navigateToChart = { marketCode, name, type, quantity, money, krwBalance -> }
+        navigateToChart = { marketCode, name, type, quantity, money, krwBalance -> },
     )
 }
