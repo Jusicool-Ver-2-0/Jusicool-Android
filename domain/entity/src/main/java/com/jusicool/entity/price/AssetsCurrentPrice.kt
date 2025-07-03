@@ -1,6 +1,7 @@
 package com.jusicool.entity.price
 
 data class AssetsCurrentPrice(
+    val market: String,          // 주식 코드
     val currentPrice: Int,       // 현재가
     val priceDifference: Int,    // 전일 대비 가격 차이
     val priceDifferenceRate: Double // 전일 대비 등락률 (%)
