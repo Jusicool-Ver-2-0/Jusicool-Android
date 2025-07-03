@@ -50,7 +50,7 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
             marketDivCode,
             stockCode
         ).map { response ->
-            response.toEntity()
+            response.toEntity(stockCode)
         }
     }
 }
