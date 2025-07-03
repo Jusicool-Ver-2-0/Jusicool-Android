@@ -2,6 +2,8 @@ package com.jusicool.entity.holding
 
 import com.jusicool.entity.market.Market
 import com.jusicool.entity.market.MarketType
+import com.jusicool.utils.isValidCryptoMarketCode
+import com.jusicool.utils.isValidStockMarketCode
 
 data class HoldingModel(
     val id: Int,
@@ -12,14 +14,14 @@ data class HoldingModel(
     init {
         when (market.marketType) {
             MarketType.CRYPTO -> {
-                require(market.market.matches(Regex("^[A-Z]{3,4}-[A-Z0-9]{2,10}$"))) {
+                require(market.market.isValidCryptoMarketCode()) {
                     "잘못된 CRYPTO 마켓 코드 형식: ${market.market}"
                 }
             }
 
             MarketType.STOCK -> {
                 // 주식: 6자리 숫자만 허용
-                require(market.market.matches(Regex("^\\d{6}$"))) {
+                require(market.market.isValidStockMarketCode()) {
                     "잘못된 STOCK 마켓 코드 형식: ${market.market}"
                 }
             }
