@@ -1,33 +1,37 @@
 package com.jusicool.usecase.holding
 
 import com.jusicool.entity.holding.HoldingModel
+import com.jusicool.entity.market.MarketType
 import com.jusicool.repository.HoldingRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GetHoldingResponseUseCase @Inject constructor(
     private val holdingRepository: HoldingRepository
 ) {
-    operator fun invoke():Result<HoldingType> = runCatching {
+    operator fun invoke(): Flow<HoldingType> = flow {
         val holding = holdingRepository.getHolding()
 
         val stockHoldings = holding.map { list ->
-            list.filter { it.marketType == "STOCK" }
+            list.filter { it.market.marketType == MarketType.STOCK }
         }
 
         val cryptoHoldings = holding.map { list ->
-            list.filter { it.marketType == "CRYPTO" }
+            list.filter { it.market.marketType == MarketType.CRYPTO }
         }
-
-        HoldingType(
-            stockHoldings = stockHoldings,
-            cryptoHoldings = cryptoHoldings
-        )
+        combine(stockHoldings, cryptoHoldings) { stockHoldings, cryptoHoldings ->
+            HoldingType(
+                stockHoldings = stockHoldings,
+                cryptoHoldings = cryptoHoldings
+            )
+        }
     }
 }
 
 data class HoldingType(
-    val stockHoldings: Flow<List<HoldingModel>>,
-    val cryptoHoldings: Flow<List<HoldingModel>>
+    val stockHoldings: List<HoldingModel>,
+    val cryptoHoldings: List<HoldingModel>
 )
