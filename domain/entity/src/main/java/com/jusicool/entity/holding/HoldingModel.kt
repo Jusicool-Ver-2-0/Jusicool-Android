@@ -1,12 +1,10 @@
 package com.jusicool.entity.holding
 
+import com.jusicool.entity.market.Market
+
 data class HoldingModel(
     val id: Int,
-    val marketId: Int,
-    val koreanName: String,
-    val englishName: String?,
-    val marketCode: String,
-    val marketType: String,
+    val market: Market,
     val quantity: Int,
     val price: Int
 )
