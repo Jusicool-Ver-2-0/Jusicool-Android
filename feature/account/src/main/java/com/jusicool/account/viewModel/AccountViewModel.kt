@@ -7,17 +7,17 @@ import com.jusicool.account.viewModel.uiState.GetCurrentCryptoPriceUiState
 import com.jusicool.account.viewModel.uiState.GetHoldingUiState
 import com.jusicool.account.viewModel.uiState.GetMonthOrderUiState
 import com.jusicool.entity.holding.HoldingModel
+import com.jusicool.entity.market.MarketType
 import com.jusicool.usecase.account.GetAccountResponseUseCase
 import com.jusicool.usecase.crypto.GetCurrentCryptoPriceUseCase
 import com.jusicool.usecase.holding.GetHoldingResponseUseCase
-import com.jusicool.usecase.holding.HoldingType
 import com.jusicool.usecase.order.GetMonthOrderUseCase
-import com.jusicool.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
 internal class AccountViewModel @Inject constructor(
     private val getAccountResponseUseCase: GetAccountResponseUseCase,
@@ -115,8 +115,8 @@ internal class AccountViewModel @Inject constructor(
 
     private fun extractMarketValueFromHolding(holding: List<HoldingModel>): String {
         val cryptoMarketIds = holding
-            .filter { it.marketType == "CRYPTO" }
-            .mapNotNull { it.marketCode.takeIf { code -> code.matches(Regex("^[A-Z]{3,4}-[A-Z0-9]{2,10}$")) } }
+            .filter { it.market.marketType == MarketType.CRYPTO }
+            .mapNotNull { it.market.market.takeIf { code -> code.matches(Regex("^[A-Z]{3,4}-[A-Z0-9]{2,10}$")) } }
 
         return cryptoMarketIds.joinToString(separator = ",")
     }
