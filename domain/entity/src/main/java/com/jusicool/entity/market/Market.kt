@@ -9,7 +9,6 @@ data class Market(
 ) {
     init {
         require(koreanName.isNotBlank()) { "한글 이름은 비어 있을 수 없습니다." }
-        require(englishName.isNotBlank()) { "영문 이름은 비어 있을 수 없습니다." }
         require(market.isNotBlank()) { "마켓 정보는 비어 있을 수 없습니다." }
     }
 
