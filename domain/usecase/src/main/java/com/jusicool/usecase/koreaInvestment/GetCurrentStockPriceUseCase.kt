@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetStockCurrentPriceUseCase @Inject constructor(
+class GetCurrentStockPriceUseCase @Inject constructor(
     private val koreaInvestmentRepository: KoreaInvestmentRepository,
 ) {
     operator fun invoke(
