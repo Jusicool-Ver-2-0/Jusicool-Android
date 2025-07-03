@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class HoldingResponse(
     val id: Int,
-    val marketDto: MarketDto,
+    val market: MarketDto,
     val quantity: Int,
     val price: Int
 )

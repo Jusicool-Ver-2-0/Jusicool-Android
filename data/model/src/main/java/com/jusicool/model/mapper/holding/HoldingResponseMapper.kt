@@ -9,7 +9,7 @@ import com.jusicool.model.holding.MarketDto
 fun HoldingResponse.toModel(): HoldingModel =
     HoldingModel(
         id = this.id,
-        market = this.marketDto.toEntity(),
+        market = this.market.toEntity(),
         quantity = this.quantity,
         price = this.price
     )
