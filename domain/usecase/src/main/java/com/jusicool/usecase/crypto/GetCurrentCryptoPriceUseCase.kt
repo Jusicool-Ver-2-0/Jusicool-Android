@@ -16,7 +16,7 @@ class GetCurrentCryptoPriceUseCase @Inject constructor(
         val data = cryptoRepository.getCurrentCryptoPrice(markets).first()
 
         holdings.map { holding ->
-            val price = data.find { it.market == holding.marketCode }?.tradePrice ?: 0.0
+            val price = data.find { it.market == holding.market.market }?.tradePrice ?: 0.0
             val priceVariation = (price - holding.price).toInt()
             val priceVariationPercent = if (holding.price.toDouble() != 0.0) {
                 (priceVariation.toDouble() / holding.price) * 100
@@ -26,7 +26,7 @@ class GetCurrentCryptoPriceUseCase @Inject constructor(
             val totalVariation = priceVariation * holding.quantity
 
             CurrentCryptoHoldingPrice(
-                marketCode = holding.marketCode,
+                marketCode = holding.market.market,
                 currentPrice = price,
                 priceVariation = priceVariation,
                 priceVariationPercent = priceVariationPercent,
