@@ -5,14 +5,13 @@ import com.jusicool.entity.market.MarketType
 import com.jusicool.repository.HoldingRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GetHoldingResponseUseCase @Inject constructor(
     private val holdingRepository: HoldingRepository
 ) {
-    operator fun invoke(): Flow<HoldingType> = flow {
+    operator fun invoke(): Flow<HoldingType> {
         val holding = holdingRepository.getHolding()
 
         val stockHoldings = holding.map { list ->
@@ -22,7 +21,7 @@ class GetHoldingResponseUseCase @Inject constructor(
         val cryptoHoldings = holding.map { list ->
             list.filter { it.market.marketType == MarketType.CRYPTO }
         }
-        combine(stockHoldings, cryptoHoldings) { stockHoldings, cryptoHoldings ->
+        return combine(stockHoldings, cryptoHoldings) { stockHoldings, cryptoHoldings ->
             HoldingType(
                 stockHoldings = stockHoldings,
                 cryptoHoldings = cryptoHoldings
