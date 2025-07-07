@@ -145,13 +145,14 @@ private fun WriteDetailScreen(
                 onCommentChange = onCommentStateChange,
                 onPostComment = postComment
             )
-
-            CommunityDetailBottomSheet(
-                bottomSheetState = bottomSheetState,
-                onDismissRequest = { coroutineScope.launch { bottomSheetState.hide() } },
-                onModifyClick = navigateToWriteModify,
-                onDeleteClick = { deleteDialog = true }
-            )
+            if (bottomSheetState.isVisible) {
+                CommunityDetailBottomSheet(
+                    bottomSheetState = bottomSheetState,
+                    onDismissRequest = { coroutineScope.launch { bottomSheetState.hide() } },
+                    onModifyClick = navigateToWriteModify,
+                    onDeleteClick = { deleteDialog = true }
+                )
+            }
 
             if (deleteDialog) {
                 CommonAlertDialog(
