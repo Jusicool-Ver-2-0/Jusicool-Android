@@ -29,9 +29,9 @@ import com.jusicool.utils.toSignedFormattedText
 import com.meister.investmentsearch.component.RecentSearchTag
 import com.meister.investmentsearch.viewModel.ChartListUiState
 import com.meister.investmentsearch.viewModel.ChartListViewModel
-import com.school_of_company.design_system.icon.RightArrowIcon
-import com.school_of_company.design_system.icon.SearchIcon
-import com.school_of_company.design_system.icon.UnionIcon
+import com.jusicool.design_system.icon.RightArrowIcon
+import com.jusicool.design_system.icon.SearchIcon
+import com.jusicool.design_system.icon.UnionIcon
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.math.abs

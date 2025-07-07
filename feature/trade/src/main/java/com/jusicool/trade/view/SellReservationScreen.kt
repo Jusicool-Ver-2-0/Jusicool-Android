@@ -4,7 +4,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
@@ -22,11 +21,8 @@ import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.trade.view.enum.TradeType
 import com.jusicool.trade.viewModel.TradeViewModel
-import com.jusicool.trade.viewModel.uiState.BuyReserveUiState
 import com.jusicool.trade.viewModel.uiState.SellReserveUiState
-import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.coroutines.launch
 
 @Composable

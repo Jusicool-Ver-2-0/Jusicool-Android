@@ -1,4 +1,4 @@
-package com.school_of_company.design_system.icon
+package com.jusicool.design_system.icon
 
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
