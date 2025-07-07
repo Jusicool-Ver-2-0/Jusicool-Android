@@ -202,3 +202,16 @@ fun XIcon(
         tint = tint
     )
 }
+
+@Composable
+fun SendIcon(
+    modifier: Modifier = Modifier,
+    tint: Color = Color.Unspecified
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.send_icon),
+        contentDescription = "send_icon",
+        modifier = modifier,
+        tint = tint
+    )
+}
