@@ -162,31 +162,58 @@ private fun WriteDetailScreen(
 
                 commentList(comments = uiState.comments)
             }
+        }
+        if (bottomSheetState.isVisible) {
+            CommunityDetailBottomSheet(
+                bottomSheetState = bottomSheetState,
+                onDismissRequest = { coroutineScope.launch { bottomSheetState.hide() } },
+                onModifyClick = navigateToWriteModify,
+                onDeleteClick = { deleteDialog = true }
+            )
+        }
 
-            if (bottomSheetState.isVisible) {
-                CommunityDetailBottomSheet(
-                    bottomSheetState = bottomSheetState,
-                    onDismissRequest = { coroutineScope.launch { bottomSheetState.hide() } },
-                    onModifyClick = navigateToWriteModify,
-                    onDeleteClick = { deleteDialog = true }
-                )
-            }
-
-            if (deleteDialog) {
-                CommonAlertDialog(
-                    contentText = "글을 삭제할까요?",
-                    onDismissRequest = { deleteDialog = false },
-                    onConfirm = {
-                        deletePost()
-                        deleteDialog = false
-                    }
-                )
-            }
+        if (deleteDialog) {
+            CommonAlertDialog(
+                contentText = "글을 삭제할까요?",
+                onDismissRequest = { deleteDialog = false },
+                onConfirm = {
+                    deletePost()
+                    deleteDialog = false
+                }
+            )
         }
     }
 }
 
 @Composable
+private fun CommunityDetailTopBar(
+    communityName: String,
+    isMyWrite: Boolean,
+    onBackClick: () -> Unit,
+    onSettingClick: () -> Unit
+) {
+    JusicoolTopBar(
+        modifier = Modifier.fillMaxWidth(),
+        betweenText = "$communityName 커뮤니티",
+        startIcon = {
+            LeftClarityArrowLineIcon(
+                modifier = Modifier
+                    .size(24.dp)
+                    .JusicoolClickable(onClick = onBackClick),
+            )
+        },
+        endIcon = {
+            if (isMyWrite) {
+                LetsIconsSettingFillIcon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .JusicoolClickable(onClick = onSettingClick),
+                )
+            } else {
+                Spacer(modifier = Modifier.size(24.dp))
+            }
+        }
+    )
 }
 
 @Composable
@@ -219,36 +246,6 @@ private fun LikeButton(
         }
     }
 }
-
-private fun LazyListScope.commentList(comments: PersistentList<String>) {
-    items(
-        items = comments,
-        key = { it },
-    ) { comment ->
-        CommentItem(comment)
-    }
-}
-
-@Composable
-private fun CommentItem(comment: String) {
-    JusicoolTheme { _, typography ->
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                text = comment,
-                style = typography.bodyMedium
-            )
-
-            Text(
-                text = "커뮤니티는공통의관심사목표가치혹은지리적위치를공유하는사람들로이루어진집단입니다...",
-                style = typography.bodyMedium
-            )
-        }
-    }
-}
-
 
 @Composable
 private fun CommentInput(
@@ -287,36 +284,33 @@ private fun CommentInput(
     }
 }
 
+private fun LazyListScope.commentList(comments: PersistentList<String>) {
+    items(
+        items = comments,
+        key = { it },
+    ) { comment ->
+        CommentItem(comment)
+    }
+}
 
 @Composable
-private fun CommunityDetailTopBar(
-    communityName: String,
-    isMyWrite: Boolean,
-    onBackClick: () -> Unit,
-    onSettingClick: () -> Unit
-) {
-    JusicoolTopBar(
-        modifier = Modifier.fillMaxWidth(),
-        betweenText = "$communityName 커뮤니티",
-        startIcon = {
-            LeftClarityArrowLineIcon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .JusicoolClickable(onClick = onBackClick),
+private fun CommentItem(comment: String) {
+    JusicoolTheme { _, typography ->
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(
+                text = comment,
+                style = typography.bodyMedium
             )
-        },
-        endIcon = {
-            if (isMyWrite) {
-                LetsIconsSettingFillIcon(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .JusicoolClickable(onClick = onSettingClick),
-                )
-            } else {
-                Spacer(modifier = Modifier.size(24.dp))
-            }
+
+            Text(
+                text = "커뮤니티는공통의관심사목표가치혹은지리적위치를공유하는사람들로이루어진집단입니다...",
+                style = typography.bodyMedium
+            )
         }
-    )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
