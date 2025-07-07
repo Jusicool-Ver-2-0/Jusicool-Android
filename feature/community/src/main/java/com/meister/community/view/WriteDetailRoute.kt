@@ -137,7 +137,7 @@ private fun WriteDetailScreen(
 
                 Spacer(modifier = Modifier.size(24.dp))
 
-                CommentList(comments = uiState.comments)
+                commentList(comments = uiState.comments)
             }
 
             CommentInput(
@@ -219,29 +219,35 @@ private fun ColumnScope.LikeButton(
     }
 }
 
-@Composable
-private fun CommentList(comments: PersistentList<String>) {
-    JusicoolTheme { _, typography ->
-        Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-            comments.forEach {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Text(
-                        text = it,
-                        style = typography.bodyMedium
-                    )
+private fun LazyListScope.commentList(comments: PersistentList<String>) {
+    items(
+        items = comments,
+        key = { it },
+    ) { comment ->
+        CommentItem(comment)
+    }
+}
 
-                    Text(
-                        text = "커뮤니티는공통의관심사목표가치혹은지리적위치를공유하는사람들로이루어진집단입니다...",
-                        style = typography.bodyMedium
-                    )
-                }
-            }
+@Composable
+private fun CommentItem(comment: String) {
+    JusicoolTheme { _, typography ->
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(
+                text = comment,
+                style = typography.bodyMedium
+            )
+
+            Text(
+                text = "커뮤니티는공통의관심사목표가치혹은지리적위치를공유하는사람들로이루어진집단입니다...",
+                style = typography.bodyMedium
+            )
         }
     }
 }
+
 
 @Composable
 private fun CommentInput(
