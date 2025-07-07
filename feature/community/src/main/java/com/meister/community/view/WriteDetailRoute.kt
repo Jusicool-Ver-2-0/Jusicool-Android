@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
@@ -43,7 +42,6 @@ import com.jusicool.design_system.theme.JusicoolTheme
 import com.meister.community.component.CommonAlertDialog
 import com.meister.community.viewModel.DetailPostViewModel
 import com.meister.community.viewModel.uiState.CommunityDetailUiState
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
@@ -160,7 +158,12 @@ private fun WriteDetailScreen(
                     )
                 }
 
-                commentList(comments = uiState.comments)
+                items(
+                    items = uiState.comments,
+                    key = { it },
+                ) { comment ->
+                    CommentItem(comment)
+                }
             }
         }
         if (bottomSheetState.isVisible) {
@@ -281,15 +284,6 @@ private fun CommentInput(
                     .JusicoolClickable(onClick = onPostComment),
             )
         }
-    }
-}
-
-private fun LazyListScope.commentList(comments: PersistentList<String>) {
-    items(
-        items = comments,
-        key = { it },
-    ) { comment ->
-        CommentItem(comment)
     }
 }
 
