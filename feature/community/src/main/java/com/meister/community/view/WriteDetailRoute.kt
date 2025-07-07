@@ -119,7 +119,21 @@ private fun WriteDetailScreen(
                     .padding(horizontal = 24.dp)
             ) {
                 item {
-                    PostContent(title = uiState.title, content = uiState.content)
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = uiState.title,
+                        style = typography.titleSmall,
+                        color = colors.black
+                    )
+                }
+
+                item {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = uiState.content,
+                        style = typography.bodySmall,
+                        color = colors.black
+                    )
                 }
 
                 item {
@@ -173,24 +187,6 @@ private fun WriteDetailScreen(
 }
 
 @Composable
-private fun PostContent(title: String, content: String) {
-    JusicoolTheme { colors, typography ->
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = title,
-            style = typography.titleSmall,
-            color = colors.black
-        )
-
-        Spacer(modifier = Modifier.size(24.dp))
-
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = content,
-            style = typography.bodySmall,
-            color = colors.black
-        )
-    }
 }
 
 @Composable
