@@ -4,16 +4,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -111,40 +111,44 @@ private fun WriteDetailScreen(
                 onSettingClick = { coroutineScope.launch { bottomSheetState.show() } },
             )
 
-            Column(
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .weight(1f)
-                    .verticalScroll(rememberScrollState())
                     .padding(horizontal = 24.dp)
             ) {
-                PostContent(title = uiState.title, content = uiState.content)
+                item {
+                    PostContent(title = uiState.title, content = uiState.content)
+                }
 
-                Spacer(modifier = Modifier.size(24.dp))
+                item {
+                    LikeButton(
+                        isLiked = uiState.isLiked,
+                        likeCount = uiState.likeCount,
+                        toggleLike = toggleLike
+                    )
+                }
 
-                LikeButton(
-                    isLiked = uiState.isLiked,
-                    likeCount = uiState.likeCount,
-                    toggleLike = toggleLike
-                )
+                item {
+                    Divider(
+                        thickness = 1.dp,
+                        color = colors.gray100,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
 
-                Spacer(modifier = Modifier.size(24.dp))
-
-                Divider(
-                    thickness = 1.dp,
-                    color = colors.gray100,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.size(24.dp))
+                item {
+                    CommentInput(
+                        commentState = commentState,
+                        onCommentChange = onCommentStateChange,
+                        onPostComment = postComment
+                    )
+                }
 
                 commentList(comments = uiState.comments)
             }
 
-            CommentInput(
-                commentState = commentState,
-                onCommentChange = onCommentStateChange,
-                onPostComment = postComment
-            )
             if (bottomSheetState.isVisible) {
                 CommunityDetailBottomSheet(
                     bottomSheetState = bottomSheetState,
@@ -172,6 +176,7 @@ private fun WriteDetailScreen(
 private fun PostContent(title: String, content: String) {
     JusicoolTheme { colors, typography ->
         Text(
+            modifier = Modifier.fillMaxWidth(),
             text = title,
             style = typography.titleSmall,
             color = colors.black
@@ -180,6 +185,7 @@ private fun PostContent(title: String, content: String) {
         Spacer(modifier = Modifier.size(24.dp))
 
         Text(
+            modifier = Modifier.fillMaxWidth(),
             text = content,
             style = typography.bodySmall,
             color = colors.black
@@ -188,7 +194,7 @@ private fun PostContent(title: String, content: String) {
 }
 
 @Composable
-private fun ColumnScope.LikeButton(
+private fun LikeButton(
     isLiked: Boolean,
     likeCount: Int,
     toggleLike: () -> Unit
@@ -200,7 +206,6 @@ private fun ColumnScope.LikeButton(
 
         Row(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
                 .JusicoolClickable(onClick = toggleLike)
                 .background(backGroundColor, RoundedCornerShape(12.dp))
                 .border(1.dp, outlineColor, RoundedCornerShape(12.dp))
