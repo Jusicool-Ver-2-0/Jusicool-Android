@@ -26,6 +26,8 @@ import com.jusicool.design_system.theme.JusicoolTheme
 import com.meister.community.viewModel.WritePostViewModel
 import com.meister.community.viewModel.uiState.WritePostUiState
 import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @Composable
 internal fun WritePostRoute(
