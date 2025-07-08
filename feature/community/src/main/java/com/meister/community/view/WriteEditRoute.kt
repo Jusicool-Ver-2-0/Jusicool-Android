@@ -31,7 +31,7 @@ import com.meister.community.viewModel.uiState.WriteEditUiState
 internal fun WriteEditRoute(
     modifier: Modifier = Modifier,
     viewModel: WriteEditViewModel = hiltViewModel(),
-    onBackPressed: () -> Unit,
+    popBackStack: () -> Unit,
 ) {
     val title by viewModel.title.collectAsStateWithLifecycle()
     val content by viewModel.content.collectAsStateWithLifecycle()
@@ -39,7 +39,7 @@ internal fun WriteEditRoute(
 
     LaunchedEffect(uiState) {
         when (uiState) {
-            is WriteEditUiState.Success -> onBackPressed()
+            is WriteEditUiState.Success -> popBackStack()
             is WriteEditUiState.Error -> {
                 // Handle error state
             }
@@ -57,7 +57,7 @@ internal fun WriteEditRoute(
         onTitleChange = viewModel::onTitleChange,
         onContentChange = viewModel::onContentChange,
         onPostSubmit = viewModel::editPost,
-        onBackPressed = onBackPressed
+        popBackStack = popBackStack
     )
 }
 
@@ -69,7 +69,7 @@ private fun WriteEditScreen(
     onTitleChange: (String) -> Unit,
     onContentChange: (String) -> Unit,
     onPostSubmit: () -> Unit,
-    onBackPressed: () -> Unit,
+    popBackStack: () -> Unit,
 ) {
     val submitButtonState =
         if (title.isNotBlank() && content.isNotBlank()) ButtonState.Enable
@@ -128,6 +128,6 @@ private fun WriteEditScreenPreview() {
         onTitleChange = {},
         onContentChange = {},
         onPostSubmit = {},
-        onBackPressed = {}
+        popBackStack = {}
     )
 }
