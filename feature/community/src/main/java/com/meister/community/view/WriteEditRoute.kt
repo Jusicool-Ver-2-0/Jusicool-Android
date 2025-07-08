@@ -123,7 +123,7 @@ private fun WriteEditScreen(
 
 @Composable
 @Preview(showBackground = true)
-private fun WritePostScreenPreview() {
+private fun WriteEditScreenPreview() {
     WriteEditScreen(
         title = "제목 예시",
         content = "내용 예시",
