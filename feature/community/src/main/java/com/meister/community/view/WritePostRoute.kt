@@ -20,14 +20,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.design_system.component.button.JusicoolFilledButton
 import com.jusicool.design_system.component.button.state.ButtonState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
-import com.jusicool.design_system.component.textField.TransparentTextField
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.meister.community.viewModel.WritePostViewModel
 import com.meister.community.viewModel.uiState.WritePostUiState
 import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import com.meister.community.component.WriteForm
 
 @Composable
 internal fun WritePostRoute(
@@ -100,7 +98,7 @@ private fun WritePostScreen(
                     .padding(horizontal = 24.dp)
                     .padding(top = 12.dp, bottom = 20.dp),
             ) {
-                WritePostForm(
+                WriteForm(
                     title = title,
                     content = content,
                     onTitleChange = onTitleChange,
@@ -123,42 +121,6 @@ private fun WritePostScreen(
 }
 
 @Composable
-private fun WritePostForm(
-    modifier: Modifier = Modifier,
-    title: String,
-    content: String,
-    onTitleChange: (String) -> Unit,
-    onContentChange: (String) -> Unit,
-) {
-    val scrollState = rememberScrollState()
-
-    JusicoolTheme { colors, typography ->
-        Column(
-            modifier = modifier
-                .verticalScroll(scrollState)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            TransparentTextField(
-                textState = title,
-                placeHolder = "제목을 입력하세요",
-                onTextChange = onTitleChange,
-                textStyle = typography.titleSmall.copy(color = colors.black),
-                placeholderStyle = typography.titleSmall.copy(color = colors.gray200),
-            )
-
-            TransparentTextField(
-                textState = content,
-                placeHolder = "내용을 입력하세요",
-                onTextChange = onContentChange,
-                textStyle = typography.bodySmall.copy(color = colors.black),
-                placeholderStyle = typography.bodySmall.copy(color = colors.gray200),
-            )
-        }
-    }
-}
-
-@Composable
 @Preview(showBackground = true)
 private fun WritePostScreenPreview() {
     WritePostScreen(
@@ -168,16 +130,5 @@ private fun WritePostScreenPreview() {
         onContentChange = {},
         onPostSubmit = {},
         onBackPressed = {}
-    )
-}
-
-@Composable
-@Preview(showBackground = true)
-private fun WritePostFormPreview() {
-    WritePostForm(
-        title = "",
-        content = "",
-        onTitleChange = {},
-        onContentChange = {}
     )
 }
