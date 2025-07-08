@@ -4,17 +4,23 @@ import java.time.LocalDate
 
 data class MonthlyRate(
     val monthlyRate: Double,
+    val dailyRates: List<DailyRate>
+) {
+    fun monthlyProfit(): Int = dailyRates.sumOf { it.dailyProfit() }
+}
+
+data class DailyRate(
+    val date: LocalDate,
     val marketRates: List<MarketRate>
 ) {
-    fun monthlyProfit(): Int = marketRates.sumOf { it.proceed }
+    fun dailyProfit(): Int = marketRates.sumOf { it.proceed }
 }
 
 data class MarketRate(
     val market: String,
     val koreanName: String,
     val rate: Double,
-    val proceed: Int,
-    val date: LocalDate,
+    val proceed: Int
 ) {
     init {
         require(market.isNotBlank()) { "market는 비어 있을 수 없습니다." }
