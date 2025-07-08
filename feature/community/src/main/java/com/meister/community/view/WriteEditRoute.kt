@@ -24,13 +24,13 @@ import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.meister.community.component.WriteForm
-import com.meister.community.viewModel.WritePostViewModel
+import com.meister.community.viewModel.WriteEditViewModel
 import com.meister.community.viewModel.uiState.WritePostUiState
 
 @Composable
 internal fun WriteEditRoute(
     modifier: Modifier = Modifier,
-    viewModel: WritePostViewModel = hiltViewModel(),
+    viewModel: WriteEditViewModel = hiltViewModel(),
     onBackPressed: () -> Unit,
 ) {
     val title by viewModel.title.collectAsStateWithLifecycle()
@@ -56,7 +56,7 @@ internal fun WriteEditRoute(
         content = content,
         onTitleChange = viewModel::onTitleChange,
         onContentChange = viewModel::onContentChange,
-        onPostSubmit = viewModel::submitPost,
+        onPostSubmit = viewModel::editPost,
         onBackPressed = onBackPressed
     )
 }
