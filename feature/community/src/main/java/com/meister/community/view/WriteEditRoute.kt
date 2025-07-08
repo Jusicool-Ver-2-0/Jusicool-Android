@@ -74,7 +74,6 @@ private fun WriteEditScreen(
     val submitButtonState =
         if (title.isNotBlank() && content.isNotBlank()) ButtonState.Enable
         else ButtonState.Disable
-    val scrollState = rememberScrollState()
 
     JusicoolTheme { colors, _ ->
         Column(modifier = modifier.fillMaxSize()) {
@@ -94,7 +93,6 @@ private fun WriteEditScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(scrollState)
                     .padding(horizontal = 24.dp)
                     .padding(top = 12.dp, bottom = 20.dp),
             ) {
