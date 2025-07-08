@@ -25,7 +25,7 @@ import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.meister.community.component.WriteForm
 import com.meister.community.viewModel.WriteEditViewModel
-import com.meister.community.viewModel.uiState.WritePostUiState
+import com.meister.community.viewModel.uiState.WriteEditUiState
 
 @Composable
 internal fun WriteEditRoute(
@@ -39,12 +39,12 @@ internal fun WriteEditRoute(
 
     LaunchedEffect(uiState) {
         when (uiState) {
-            is WritePostUiState.Success -> onBackPressed()
-            is WritePostUiState.Error -> {
+            is WriteEditUiState.Success -> onBackPressed()
+            is WriteEditUiState.Error -> {
                 // Handle error state
             }
 
-            is WritePostUiState.Loading -> {
+            is WriteEditUiState.Loading -> {
                 // Handle loading state
             }
         }
