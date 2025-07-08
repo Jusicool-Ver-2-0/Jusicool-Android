@@ -1,25 +1,32 @@
 package com.jusicool.model.mapper.order
 
+import com.jusicool.entity.order.DailyRate
 import com.jusicool.entity.order.MarketRate
 import com.jusicool.entity.order.MonthlyRate
 import com.jusicool.model.order.MonthlyRateResponse
 import com.jusicool.model.order.RateByMarket
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
-private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+fun MonthlyRateResponse.toEntity(): MonthlyRate {
 
-fun MonthlyRateResponse.toEntity(): MonthlyRate =
-    MonthlyRate(
+    val dailyRatesMap: Map<String, List<RateByMarket>> = markets.groupBy { it.date }
+
+    val dailyRates = dailyRatesMap.map { (dateStr, marketList) ->
+        DailyRate(
+            date = LocalDate.parse(dateStr),
+            marketRates = marketList.map { it.toDomain() }
+        )
+    }
+
+    return MonthlyRate(
         monthlyRate = this.monthlyRate,
-        marketRates = this.markets.map { it.toEntity() }
+        dailyRates = dailyRates
     )
+}
 
-fun RateByMarket.toEntity(): MarketRate =
-    MarketRate(
-        market = this.market,
-        koreanName = this.koreanName,
-        rate = this.rate,
-        proceed = this.proceed,
-        date = LocalDate.parse(this.date, dateFormatter)
-    )
+fun RateByMarket.toDomain(): MarketRate = MarketRate(
+    market = this.market,
+    koreanName = this.koreanName,
+    rate = this.rate,
+    proceed = this.proceed
+)
