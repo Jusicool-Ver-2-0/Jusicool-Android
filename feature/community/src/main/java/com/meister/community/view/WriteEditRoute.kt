@@ -7,11 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,7 @@ import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import com.jusicool.design_system.theme.JusicoolTheme
+import com.meister.community.component.CommonAlertDialog
 import com.meister.community.component.WriteForm
 import com.meister.community.viewModel.WriteEditViewModel
 import com.meister.community.viewModel.uiState.WriteEditUiState
@@ -74,6 +76,7 @@ private fun WriteEditScreen(
     val submitButtonState =
         if (title.isNotBlank() && content.isNotBlank()) ButtonState.Enable
         else ButtonState.Disable
+    var editCancelDialog by remember { mutableStateOf(false) }
 
     JusicoolTheme { colors, _ ->
         Column(modifier = modifier.fillMaxSize()) {
@@ -84,7 +87,7 @@ private fun WriteEditScreen(
                     LeftClarityArrowLineIcon(
                         modifier = Modifier
                             .size(24.dp)
-                            .JusicoolClickable(onClick = onBackPressed),
+                            .JusicoolClickable(onClick = { editCancelDialog = true }),
                     )
                 },
             )
@@ -114,6 +117,17 @@ private fun WriteEditScreen(
                     onClick = onPostSubmit
                 )
             }
+        }
+
+        if (editCancelDialog) {
+            CommonAlertDialog(
+                contentText = "수정을 그만둘까요?",
+                onDismissRequest = { editCancelDialog = false },
+                onConfirm = {
+                    editCancelDialog = false
+                    popBackStack()
+                }
+            )
         }
     }
 }
