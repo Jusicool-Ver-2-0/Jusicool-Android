@@ -262,7 +262,7 @@ private fun CommentInput(
                 .fillMaxWidth()
                 .border(1.dp, colors.gray200, RoundedCornerShape(12.dp))
                 .padding(end = 16.dp)
-                .padding(vertical = 8.dp, horizontal = 8.dp),
+                .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
