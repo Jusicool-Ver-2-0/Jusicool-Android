@@ -16,7 +16,7 @@ class WriteEditViewModel @Inject constructor(
     val title: StateFlow<String> = saveStateHandle.getStateFlow("title", "")
     val content: StateFlow<String> = saveStateHandle.getStateFlow("content", "")
 
-    val uiState: StateFlow<WriteEditUiState> = MutableStateFlow(WriteEditUiState.Loading).asStateFlow()
+    val uiState: StateFlow<WriteEditUiState.Loading> = MutableStateFlow(WriteEditUiState.Loading).asStateFlow()
 
     fun editPost() {
         // TODO: 게시글 제출 로직 구현

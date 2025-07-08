@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,7 +24,6 @@ import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.meister.community.component.WriteForm
 import com.meister.community.viewModel.WriteEditViewModel
-import com.meister.community.viewModel.uiState.WritePostUiState
 
 @Composable
 internal fun WriteEditRoute(
@@ -35,20 +33,6 @@ internal fun WriteEditRoute(
 ) {
     val title by viewModel.title.collectAsStateWithLifecycle()
     val content by viewModel.content.collectAsStateWithLifecycle()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(uiState) {
-        when (uiState) {
-            is WritePostUiState.Success -> onBackPressed()
-            is WritePostUiState.Error -> {
-                // Handle error state
-            }
-
-            is WritePostUiState.Loading -> {
-                // Handle loading state
-            }
-        }
-    }
 
     WriteEditScreen(
         modifier = modifier,
