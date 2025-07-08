@@ -11,16 +11,33 @@ import javax.inject.Inject
 
 class CryptoRepositoryImpl @Inject constructor(
     private val cryptoDataSource: CryptoDataSource
-): CryptoRepository {
-    override fun getCurrentCryptoPrice(markets: String): Flow<List<CurrentCryptoPriceModel>> {
-        return cryptoDataSource.getCurrentCryptoPrice(markets = markets).map { list -> list.map{ it.toModel() } }
+) : CryptoRepository {
+    override fun getCurrentCryptoPrice(markets: List<String>): Flow<List<CurrentCryptoPriceModel>> {
+        return cryptoDataSource.getCurrentCryptoPrice(
+            markets = markets.joinToString(separator = ",")
+        ).map { list ->
+            list.map { it.toModel() }
+        }
     }
 
-    override fun getMinuteCandle(market: String, to: String, count: Int): Flow<List<MinuteCandleModel>> {
-        return cryptoDataSource.getMinuteCandle(market = market, to = to, count = count).map { list -> list.map { it.toModel() } }
+    override fun getMinuteCandle(
+        market: String,
+        to: String,
+        count: Int
+    ): Flow<List<MinuteCandleModel>> {
+        return cryptoDataSource.getMinuteCandle(market = market, to = to, count = count)
+            .map { list ->
+                list.map { it.toModel() }
+            }
     }
 
-    override fun getCurrentMinuteCandle(market: String, to: String): Flow<List<CurrentMinuteCandleModel>> {
-        return cryptoDataSource.getCurrentMinuteCandle(market = market, to = to).map { list -> list.map { it.toModel() } }
+    override fun getCurrentMinuteCandle(
+        market: String,
+        to: String
+    ): Flow<List<CurrentMinuteCandleModel>> {
+        return cryptoDataSource.getCurrentMinuteCandle(market = market, to = to)
+            .map { list ->
+                list.map { it.toModel() }
+            }
     }
 }

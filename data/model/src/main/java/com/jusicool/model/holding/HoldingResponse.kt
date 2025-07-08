@@ -6,13 +6,13 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class HoldingResponse(
     val id: Int,
-    val market: Market,
+    val market: MarketDto,
     val quantity: Int,
     val price: Int
 )
 
 @JsonClass(generateAdapter = true)
-data class Market(
+data class MarketDto(
     val id: Int,
     @Json(name = "korean_name") val koreanName: String,
     @Json(name = "english_name") val englishName: String?,
