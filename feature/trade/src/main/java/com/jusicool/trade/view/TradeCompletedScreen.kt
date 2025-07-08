@@ -10,23 +10,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.trade.view.enum.TradeType
 import com.jusicool.trade.viewModel.TradeViewModel
-import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
-import com.school_of_company.design_system.icon.RightClarityArrowLineIcon
-import com.school_of_company.design_system.icon.TradeSuccessImage
-import kotlinx.coroutines.launch
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
+import com.jusicool.design_system.icon.RightClarityArrowLineIcon
+import com.jusicool.design_system.icon.TradeSuccessImage
 
 @Composable
 fun TradeCompletedRoute(

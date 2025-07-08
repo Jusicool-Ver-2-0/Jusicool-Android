@@ -9,3 +9,7 @@ annotation class UpbitRetrofit
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class BaseApiRetrofit
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class KoreaInvestmentRetrofit

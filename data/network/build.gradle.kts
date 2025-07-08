@@ -17,6 +17,21 @@ android {
             name = "BASE_URL",
             value = "\"${getApiKey("BASE_URL")}\""
         )
+        buildConfigField(
+            type = "String",
+            name = "KOREAINVESTMENT_APP_SECRET",
+            value = "\"${getApiKey("KOREAINVESTMENT_APP_SECRET")}\""
+        )
+        buildConfigField(
+            type = "String",
+            name = "KOREAINVESTMENT_API_KEY",
+            value = "\"${getApiKey("KOREAINVESTMENT_API_KEY")}\""
+        )
+        buildConfigField(
+            type = "String",
+            name = "KOREAINVESTMENT_BASE_URL",
+            value = "\"${getApiKey("KOREAINVESTMENT_BASE_URL")}\""
+        )
     }
 
     namespace = "com.jusicool.network"

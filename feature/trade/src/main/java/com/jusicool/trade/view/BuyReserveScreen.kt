@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -35,10 +34,8 @@ import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.trade.view.enum.TradeType
 import com.jusicool.trade.viewModel.TradeViewModel
 import com.jusicool.trade.viewModel.uiState.BuyReserveUiState
-import com.jusicool.trade.viewModel.uiState.BuyUiState
 import com.jusicool.utils.formatMoney
-import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
-import kotlinx.coroutines.CoroutineScope
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.coroutines.launch
 
 @Composable

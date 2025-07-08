@@ -12,7 +12,8 @@ fun OrderHistoryResponse.toEntity(): OrderHistory =
         market = this.market,
         orderType = OrderType.valueOf(this.orderType),
         reserveType = ReserveType.valueOf(this.reserveType),
+        status = OrderStatus.valueOf(this.status),
         quantity = this.quantity,
-        price = this.price,
-        status = OrderStatus.valueOf(this.status)
+        executePrice = this.executePrice,
+        reservePrice = this.reservePrice
     )

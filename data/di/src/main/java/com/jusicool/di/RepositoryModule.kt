@@ -1,15 +1,19 @@
 package com.jusicool.di
 
-import com.jusicool.repository.account.AccountRepository
-import com.jusicool.repository.account.AccountRepositoryImpl
-import com.jusicool.repository.auth.AuthRepository
-import com.jusicool.repository.auth.AuthRepositoryImpl
-import com.jusicool.repository.crypto.CryptoRepository
-import com.jusicool.repository.crypto.CryptoRepositoryImpl
-import com.jusicool.repository.holding.HoldingRepository
-import com.jusicool.repository.holding.HoldingRepositoryImpl
-import com.jusicool.repository.order.OrderRepository
-import com.jusicool.repository.order.OrderRepositoryImpl
+import com.jusicool.repository.AccountRepository
+import com.jusicool.repository.AccountRepositoryImpl
+import com.jusicool.repository.AuthRepository
+import com.jusicool.repository.AuthRepositoryImpl
+import com.jusicool.repository.CryptoRepository
+import com.jusicool.repository.CryptoRepositoryImpl
+import com.jusicool.repository.HoldingRepository
+import com.jusicool.repository.HoldingRepositoryImpl
+import com.jusicool.repository.KoreaInvestmentRepository
+import com.jusicool.repository.KoreaInvestmentRepositoryImpl
+import com.jusicool.repository.OrderRepository
+import com.jusicool.repository.OrderRepositoryImpl
+import com.jusicool.repository.WsKoreaInvestmentRepository
+import com.jusicool.repository.WsKoreaInvestmentRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -39,6 +43,16 @@ abstract class RepositoryModule {
     abstract fun bindCryptoRepository(
         cryptoRepositoryImpl: CryptoRepositoryImpl
     ): CryptoRepository
+
+    @Binds
+    abstract fun bindKoreaInvestmentRepository(
+        koreaInvestmentRepositoryImpl: KoreaInvestmentRepositoryImpl
+    ): KoreaInvestmentRepository
+
+    @Binds
+    abstract fun bindWsKoreaInvestmentRepository(
+        wsKoreaInvestmentRepositoryImpl: WsKoreaInvestmentRepositoryImpl
+    ): WsKoreaInvestmentRepository
 
     @Binds
     abstract fun binOrderRepository(
