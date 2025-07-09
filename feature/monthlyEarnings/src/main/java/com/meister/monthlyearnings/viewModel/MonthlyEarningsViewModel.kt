@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -21,6 +21,16 @@ internal class MonthlyEarningsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val uiState: StateFlow<MonthlyEarningsUiState> = getMonthlyRateUseCase()
+        .retryWhen { cause, attempt ->
+            Logger.e("MonthlyEarningsViewModel", "Retry attempt $attempt due to $cause")
+
+            if (attempt < 3) {
+                kotlinx.coroutines.delay(3000)
+                true
+            } else {
+                false
+            }
+        }
         .map { result ->
             MonthlyEarningsUiState(
                 isLoading = false,
@@ -32,11 +42,10 @@ internal class MonthlyEarningsViewModel @Inject constructor(
                 errorMessage = null
             )
         }
-        .onEach { Logger.d("AccountViewModel", it.toString()) }
         .catch { e ->
             Logger.e(
-                "AccountViewModel",
-                "Error fetching holdings price at AccountViewModel.kt:53",
+                "MonthlyEarningsViewModel",
+                "Error fetching holdings price at AccountViewModel.kt:24",
                 e
             )
             emit(MonthlyEarningsUiState(errorMessage = e.message))
