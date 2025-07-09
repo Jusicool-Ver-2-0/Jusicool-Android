@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,22 +29,27 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.account.component.AssetList
 import com.jusicool.account.component.HoldingNewsCard
-import com.jusicool.account.viewModel.uiState.GetAccountUiState
 import com.jusicool.account.viewModel.AccountViewModel
-import com.jusicool.account.viewModel.uiState.GetCurrentCryptoPriceUiState
+import com.jusicool.account.viewModel.uiState.GetAccountUiState
 import com.jusicool.account.viewModel.uiState.GetHoldingUiState
+import com.jusicool.account.viewModel.uiState.GetHoldingsPriceUiState
 import com.jusicool.account.viewModel.uiState.GetMonthOrderUiState
 import com.jusicool.design_system.R
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.entity.holding.HoldingModel
+import com.jusicool.entity.market.Market
+import com.jusicool.entity.market.MarketType
 import com.jusicool.entity.order.OrderModel
+import com.jusicool.entity.price.HoldingWithCurrentPrice
 import com.jusicool.model.news.HoldingNewsModel
-import com.jusicool.usecase.crypto.CurrentCryptoHoldingPrice
+import com.jusicool.usecase.holding.totalCurrentValue
+import com.jusicool.usecase.holding.totalInvestment
 import com.jusicool.utils.formatMoney
 import com.jusicool.utils.formatPercent
 import com.jusicool.utils.toSignedFormattedText
+import kotlinx.collections.immutable.persistentListOf
 import com.jusicool.design_system.icon.RightArrowIcon
 import kotlinx.collections.immutable.toPersistentList
 
@@ -55,13 +61,11 @@ internal fun AccountRoute(
     navigateToChart: (marketCode: String, name: String, type: String, quantity: Int, money: Long, krwBalance: Long) -> Unit
 ) {
     val accountUiState by viewModel.accountUiState.collectAsStateWithLifecycle()
-    val holdingUiState by viewModel.holdingUiState.collectAsStateWithLifecycle()
-    val currentCryptoPriceUiState by viewModel.currentCryptoPriceUiState.collectAsStateWithLifecycle()
+    val currentAssetsPriceUiState by viewModel.currentAssetsPriceUiState.collectAsStateWithLifecycle()
     val monthOrderUiState by viewModel.monthOrderUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.getAccount()
-        viewModel.getHolding()
         viewModel.getMonthOrder()
     }
 
@@ -80,8 +84,7 @@ internal fun AccountRoute(
 
     AccountScreen(
         krwBalance = krwBalance,
-        getHoldingListData = holdingUiState,
-        getCurrentCryptoPriceData = currentCryptoPriceUiState,
+        currentAssetsPriceUiState = currentAssetsPriceUiState,
         getMonthOrderData = monthOrderUiState,
         holdingNewsModel = mockHoldingNewsModel,
         navigateToOrderHistory = navigateToOrderHistory,
@@ -93,8 +96,7 @@ internal fun AccountRoute(
 private fun AccountScreen(
     modifier: Modifier = Modifier,
     krwBalance: Long,
-    getHoldingListData: GetHoldingUiState,
-    getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState,
+    currentAssetsPriceUiState: GetHoldingsPriceUiState,
     getMonthOrderData: GetMonthOrderUiState,
     holdingNewsModel: HoldingNewsModel,
     navigateToOrderHistory: () -> Unit,
@@ -159,24 +161,18 @@ private fun AccountScreen(
                         )
 
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            val totalAssetValue = remember(
-                                getHoldingListData,
-                                getCurrentCryptoPriceData,
-                                krwBalance
+                            val totalAssetValue = rememberSaveable(
+                                currentAssetsPriceUiState,
+                                krwBalance,
                             ) {
-                                val holdingValue = when {
-                                    getHoldingListData is GetHoldingUiState.Success && getCurrentCryptoPriceData is GetCurrentCryptoPriceUiState.Success -> {
-                                        getHoldingListData.account.sumOf { holding ->
-                                            val currentPrice =
-                                                getCurrentCryptoPriceData.markets.find { it.marketCode == holding.marketCode }?.currentPrice
-                                                    ?: 0.0
-                                            (holding.quantity * currentPrice).toLong()
-                                        }
+                                val totalValue = if (currentAssetsPriceUiState is GetHoldingsPriceUiState.Success) {
+                                        currentAssetsPriceUiState.stockHoldings.sumOf { it.totalValue() } +
+                                                currentAssetsPriceUiState.cryptoHoldings.sumOf { it.totalValue() }
+                                    } else {
+                                        0
                                     }
 
-                                    else -> 0L
-                                }
-                                (krwBalance + holdingValue).formatMoney()
+                                (totalValue + krwBalance).formatMoney()
                             }
 
                             Text(
@@ -185,32 +181,22 @@ private fun AccountScreen(
                                 style = typography.titleMedium
                             )
 
-                            val profitAndRate =
-                                remember(getHoldingListData, getCurrentCryptoPriceData) {
-                                    if (getHoldingListData is GetHoldingUiState.Success && getCurrentCryptoPriceData is GetCurrentCryptoPriceUiState.Success) {
-                                        var totalInvestment = 0.0
-                                        var totalCurrentValue = 0.0
+                            val profitAndRate = remember(currentAssetsPriceUiState) {
+                                if (currentAssetsPriceUiState is GetHoldingsPriceUiState.Success) {
+                                    val stockHoldings = currentAssetsPriceUiState.stockHoldings
+                                    val cryptoHoldings = currentAssetsPriceUiState.cryptoHoldings
 
-                                        getHoldingListData.account.forEach { holding ->
-                                            val currentPrice =
-                                                getCurrentCryptoPriceData.markets.find { it.marketCode == holding.marketCode }?.currentPrice
-                                                    ?: 0.0
-                                            val invested = holding.price * holding.quantity
-                                            val current = currentPrice * holding.quantity
-                                            totalInvestment += invested
-                                            totalCurrentValue += current
-                                        }
+                                    val totalInvestment = stockHoldings.totalInvestment() + cryptoHoldings.totalInvestment()
+                                    val totalCurrentValue = stockHoldings.totalCurrentValue() + cryptoHoldings.totalCurrentValue()
 
-                                        val profit = totalCurrentValue - totalInvestment
-                                        val rate =
-                                            if (totalInvestment != 0.0) (profit / totalInvestment * 100).toFloat() else 0f
+                                    val profit = totalCurrentValue - totalInvestment
+                                    val rate = if (totalInvestment != 0) (profit.toFloat() / totalInvestment) * 100 else 0f
 
-                                        Pair(profit.toLong(), rate)
-                                    } else {
-                                        Pair(0L, 0f)
-                                    }
+                                    Pair(profit, rate)
+                                } else {
+                                    Pair(0, 0f)
                                 }
-
+                            }
 
                             val (profit, rate) = profitAndRate
                             val profitText = "${profit.toSignedFormattedText()}원"
@@ -232,22 +218,26 @@ private fun AccountScreen(
                                 style = typography.subTitle
                             )
 
-                            when (getHoldingListData) {
-                                is GetHoldingUiState.Success -> {
+                            when (currentAssetsPriceUiState) {
+                                is GetHoldingsPriceUiState.Success -> {
                                     AssetList(
                                         krwBalance = krwBalance,
-                                        holdings = getHoldingListData.account.toPersistentList(),
-                                        getCurrentCryptoPriceData = getCurrentCryptoPriceData,
+                                        getCurrentCryptoPriceData = currentAssetsPriceUiState.cryptoHoldings,
+                                        getCurrentStockPriceData = currentAssetsPriceUiState.stockHoldings,
                                         navigateToChart = navigateToChart
                                     )
                                 }
 
-                                is GetHoldingUiState.Loading -> {
+                                is GetHoldingsPriceUiState.Loading -> {
                                     // 보유 자산 로딩 중 UI
                                 }
 
-                                is GetHoldingUiState.Error -> {
+                                is GetHoldingsPriceUiState.Error -> {
                                     // 보유 자산 실패 UI
+                                }
+
+                                is GetHoldingsPriceUiState.Blank -> {
+
                                 }
                             }
 
@@ -354,49 +344,36 @@ private fun AccountScreenPreview() {
         img = "https://i.pinimg.com/474x/3d/c9/64/3dc9647bffee1578c683db59d9cbaa24.jpg"
     )
 
-    val mockHoldings = listOf(
-        HoldingModel(
-            id = 1,
-            marketId = 101,
-            koreanName = "삼성전자",
-            englishName = "Samsung Electronics",
-            marketCode = "005930.KQ",
-            marketType = "stock",
-            quantity = 10,
-            price = 70000
-        ),
-        HoldingModel(
-            id = 2,
-            marketId = 202,
-            koreanName = "비트코인",
-            englishName = "Bitcoin",
-            marketCode = "BTC",
-            marketType = "crypto",
-            quantity = 2,
-            price = 55000000
-        )
-    )
-
-    val mockUiState = GetHoldingUiState.Success(mockHoldings)
-
-    val mockCryptoPriceUiState = GetCurrentCryptoPriceUiState.Success(
-        markets = listOf(
-            CurrentCryptoHoldingPrice(
-                marketCode = "weqwe",
-                currentPrice = 12.00,
-                priceVariation = 12,
-                priceVariationPercent = 12.00,
-                totalVariation = 1,
-                totalValue = 1
+    val mockCryptoPriceUiState = GetHoldingsPriceUiState.Success(
+        cryptoHoldings = persistentListOf(
+            HoldingWithCurrentPrice(
+                id = 2,
+                market = Market(
+                    market = "102",
+                    koreanName = "비트코인",
+                    englishName = "Bitcoin",
+                    marketType = MarketType.CRYPTO,
+                    id = 2
+                ),
+                quantity = 5,
+                purchasePrice = 25000,
+                currentPrice = 30000.0
             ),
-            CurrentCryptoHoldingPrice(
-                marketCode = "weqwe",
-                currentPrice = 12.00,
-                priceVariation = 12,
-                priceVariationPercent = 12.00,
-                totalVariation = 1,
-                totalValue = 1
-            )
+        ),
+        stockHoldings = persistentListOf(
+            HoldingWithCurrentPrice(
+                id = 2,
+                market = Market(
+                    market = "102",
+                    koreanName = "비트코인",
+                    englishName = "Bitcoin",
+                    marketType = MarketType.STOCK,
+                    id = 2
+                ),
+                quantity = 5,
+                purchasePrice = 25000,
+                currentPrice = 30000.0
+            ),
         )
     )
 
@@ -409,8 +386,7 @@ private fun AccountScreenPreview() {
 
     AccountScreen(
         krwBalance = 100000,
-        getHoldingListData = mockUiState,
-        getCurrentCryptoPriceData = mockCryptoPriceUiState,
+        currentAssetsPriceUiState = mockCryptoPriceUiState,
         getMonthOrderData = mockMonthOrderUiState,
         holdingNewsModel = mockHoldingNewsModel,
         navigateToOrderHistory = { },

@@ -1,7 +1,7 @@
 package com.jusicool.repository
 
 import com.jusicool.entity.koreaInvestment.CandleChartEntity
-import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
+import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.model.koreaInvestment.toCandleEntity
 import com.jusicool.model.mapper.koreaInvestment.toEntity
 import com.jusicool.network.datasource.koreaInvestment.KoreaInvestmentDataSource
@@ -49,8 +49,8 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
         return dataSource.getStockCurrentPrice(
             marketDivCode,
             stockCode
-        ).map {
-            it.toEntity()
+        ).map { response ->
+            response.toEntity(stockCode)
         }
     }
 }
