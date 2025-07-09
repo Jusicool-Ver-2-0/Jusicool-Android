@@ -50,8 +50,8 @@ import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.model.community.CommunityModel
 import com.jusicool.model.news.NewsModel
-import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
-import com.school_of_company.design_system.icon.LetsIconsSettingFillIcon
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
+import com.jusicool.design_system.icon.LetsIconsSettingFillIcon
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

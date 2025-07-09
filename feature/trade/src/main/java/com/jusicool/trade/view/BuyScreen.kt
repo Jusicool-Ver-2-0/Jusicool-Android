@@ -16,13 +16,11 @@ import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.JusicoolTextField
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.entity.order.BuyResponseModel
 import com.jusicool.trade.view.enum.TradeType
 import com.jusicool.trade.viewModel.TradeViewModel
 import com.jusicool.trade.viewModel.uiState.BuyUiState
 import com.jusicool.utils.formatMoney
-import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 
 @Composable
 fun BuyRoute(

@@ -38,8 +38,8 @@ import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.utils.toSignedFormattedText
 import com.meister.monthlyearnings.viewModel.MonthlyEarningsViewModel
 import com.meister.monthlyearnings.viewModel.uiState.MonthlyEarningsUiState
-import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
-import com.school_of_company.design_system.icon.RightArrowIcon
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
+import com.jusicool.design_system.icon.RightArrowIcon
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList

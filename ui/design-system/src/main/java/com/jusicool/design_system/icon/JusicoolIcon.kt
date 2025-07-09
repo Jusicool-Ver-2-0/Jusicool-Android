@@ -1,4 +1,4 @@
-package com.school_of_company.design_system.icon
+package com.jusicool.design_system.icon
 
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -198,6 +198,19 @@ fun XIcon(
     Icon(
         painter = painterResource(id = R.drawable.x),
         contentDescription = "X",
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun SendIcon(
+    modifier: Modifier = Modifier,
+    tint: Color = Color.Unspecified
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.send_icon),
+        contentDescription = "send_icon",
         modifier = modifier,
         tint = tint
     )
