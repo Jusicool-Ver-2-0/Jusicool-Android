@@ -1,6 +1,6 @@
 package com.jusicool.entity.market
 
-data class RecommendMarket(
+data class RecommendMarketWithPrice(
     val id: Int,                    // 예: 1
     val market: String,             // 예: "NASDAQ"
     val marketType: MarketType,     // 예: MarketType.CRYPTO
