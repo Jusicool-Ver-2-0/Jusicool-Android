@@ -31,14 +31,13 @@ import com.jusicool.account.component.AssetList
 import com.jusicool.account.component.HoldingNewsCard
 import com.jusicool.account.viewModel.AccountViewModel
 import com.jusicool.account.viewModel.uiState.GetAccountUiState
-import com.jusicool.account.viewModel.uiState.GetHoldingUiState
 import com.jusicool.account.viewModel.uiState.GetHoldingsPriceUiState
 import com.jusicool.account.viewModel.uiState.GetMonthOrderUiState
 import com.jusicool.design_system.R
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
+import com.jusicool.design_system.icon.RightArrowIcon
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.entity.holding.HoldingModel
 import com.jusicool.entity.market.Market
 import com.jusicool.entity.market.MarketType
 import com.jusicool.entity.order.OrderModel
@@ -49,9 +48,6 @@ import com.jusicool.usecase.holding.totalInvestment
 import com.jusicool.utils.formatMoney
 import com.jusicool.utils.formatPercent
 import com.jusicool.utils.toSignedFormattedText
-import com.jusicool.design_system.icon.RightArrowIcon
-import kotlinx.collections.immutable.toPersistentList
-import com.school_of_company.design_system.icon.RightArrowIcon
 import kotlinx.collections.immutable.persistentListOf
 
 
