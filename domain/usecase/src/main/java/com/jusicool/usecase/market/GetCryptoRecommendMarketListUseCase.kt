@@ -6,9 +6,9 @@ import com.jusicool.repository.MarketRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetStockMarketListUseCase @Inject constructor(
+class GetCryptoRecommendMarketListUseCase @Inject constructor(
     private val marketRepository: MarketRepository,
 ) {
     operator fun invoke(): Flow<List<Market>> =
-        marketRepository.getMarketList(MarketType.STOCK)
+        marketRepository.getMarketList(MarketType.CRYPTO)
 }
