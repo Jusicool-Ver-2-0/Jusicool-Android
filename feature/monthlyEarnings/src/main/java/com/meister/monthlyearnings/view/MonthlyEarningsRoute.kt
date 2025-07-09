@@ -46,16 +46,6 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import kotlin.math.abs
-
-data class ChartItemData(
-    val date: LocalDate,          // 날짜
-    val name: String,             // 이름 (예: "애플", "비트코인")
-    val logoUrl: String?,         // 로고 URL 또는 리소스 ID (옵션)
-    val priceChange: Double,         // 가격 변화 (예: +1111816)
-    val percentageChange: Double  // 변화율 (예: 7.9)
-)
-
 
 @Composable
 internal fun MonthlyEarningsRoute(
