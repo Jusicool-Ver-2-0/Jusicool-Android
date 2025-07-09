@@ -1,6 +1,7 @@
 package com.jusicool.entity.koreaInvestment
 
 data class AssetsCurrentPrice(
+    val market: String,
     val currentPrice: Int,       // 현재가
     val priceDifference: Int,    // 전일 대비 가격 차이
     val priceDifferenceRate: Double // 전일 대비 등락률 (%)
@@ -18,10 +19,4 @@ data class AssetsCurrentPrice(
 
     // 보합 여부
     fun isSteady(): Boolean = priceDifference == 0
-
-    // 등락률 포맷 (소수점 2자리)
-    fun formattedRate(): String = String.format("%.2f%%", priceDifferenceRate)
-
-    // 현재가 포맷 (쉼표)
-    fun formattedPrice(): String = "%,d".format(currentPrice)
 }

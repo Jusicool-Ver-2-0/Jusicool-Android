@@ -1,7 +1,6 @@
 package com.jusicool.usecase.holding
 
 import com.jusicool.entity.crypto.CurrentCryptoPriceModel
-import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.entity.price.HoldingWithCurrentPrice
 import com.jusicool.usecase.crypto.GetCurrentCryptoPriceUseCase
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase

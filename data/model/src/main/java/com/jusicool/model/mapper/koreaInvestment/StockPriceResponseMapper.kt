@@ -1,7 +1,7 @@
 package com.jusicool.model.mapper.koreaInvestment
 
 import StockPriceResponse
-import com.jusicool.entity.price.AssetsCurrentPrice
+import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
 
 fun StockPriceResponse.toEntity(market: String): AssetsCurrentPrice =
     AssetsCurrentPrice(
