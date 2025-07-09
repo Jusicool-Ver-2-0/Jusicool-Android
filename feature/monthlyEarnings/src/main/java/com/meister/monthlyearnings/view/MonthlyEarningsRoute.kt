@@ -34,14 +34,15 @@ import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
+import com.jusicool.design_system.icon.RightArrowIcon
 import com.jusicool.design_system.theme.JusicoolTheme
+import com.jusicool.entity.order.DailyRate
+import com.jusicool.entity.order.MarketRate
 import com.jusicool.utils.toSignedFormattedText
 import com.meister.monthlyearnings.viewModel.MonthlyEarningsViewModel
 import com.meister.monthlyearnings.viewModel.uiState.MonthlyEarningsUiState
-import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
-import com.jusicool.design_system.icon.RightArrowIcon
 import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -99,7 +100,7 @@ private fun MonthlyEarningsScreen(
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 MonthlyEarningsTabLayout(
                     isLoading = uiState.isLoading,
                     totalAssetsHoldingData = uiState.totalHoldingAssetsData,
@@ -113,50 +114,49 @@ private fun MonthlyEarningsScreen(
     }
 }
 
-@Composable
 @Preview(showBackground = true)
+@Composable
 private fun MonthlyEarningsScreenPreview() {
-    val sampleData = persistentListOf(
-        ChartItemData(
-            date = LocalDate.now(),
-            name = "애플",
-            logoUrl = null,
-            priceChange = 1111816.0,
-            percentageChange = 7.9
+    val today = LocalDate.now()
+    val yesterday = today.minusDays(1)
+
+    val sampleDailyRates = listOf(
+        DailyRate(
+            date = today,
+            marketRates = listOf(
+                MarketRate("STOCK-AAPL", "애플", rate = 5.3, proceed = 120000),
+                MarketRate("KRW-BTC", "비트코인", rate = -3.2, proceed = -52000),
+            )
         ),
-        ChartItemData(
-            date = LocalDate.now().minusDays(1),
-            name = "비트코인",
-            logoUrl = null,
-            priceChange = -523000.0,
-            percentageChange = -3.2
-        ),
-        ChartItemData(
-            date = LocalDate.now(),
-            name = "삼성전자",
-            logoUrl = null,
-            priceChange = 0.0,
-            percentageChange = 0.0
-        ),
-        ChartItemData(
-            date = LocalDate.now().minusDays(1),
-            name = "테슬라",
-            logoUrl = null,
-            priceChange = 234000.0,
-            percentageChange = 1.5
-        ),
-    )
+        DailyRate(
+            date = yesterday,
+            marketRates = listOf(
+                MarketRate("STOCK-005930", "삼성전자", rate = 0.0, proceed = 0),
+                MarketRate("KRW-ETH", "이더리움", rate = 1.5, proceed = 230000),
+            )
+        )
+    ).toPersistentList()
+
+    val sampleCrypto = sampleDailyRates.map { day ->
+        day.copy(
+            marketRates = day.marketRates.filter { it.market.startsWith("KRW-") }
+        )
+    }.filter { it.marketRates.isNotEmpty() }.toPersistentList()
+
+    val sampleStock = sampleDailyRates.map { day ->
+        day.copy(
+            marketRates = day.marketRates.filter { it.market.startsWith("STOCK-") }
+        )
+    }.filter { it.marketRates.isNotEmpty() }.toPersistentList()
 
     MonthlyEarningsScreen(
         uiState = MonthlyEarningsUiState(
             monthlyEarnings = 1234567,
             monthlyReturnRate = 5.3,
             isLoading = false,
-            totalHoldingAssetsData = sampleData,
-            cryptoHoldingsData = sampleData.filter { it.name == "비트코인" || it.name == "테슬라" }
-                .toPersistentList(),
-            stockHoldingsData = sampleData.filter { it.name == "애플" || it.name == "삼성전자" }
-                .toPersistentList(),
+            totalHoldingAssetsData = sampleDailyRates,
+            cryptoHoldingsData = sampleCrypto,
+            stockHoldingsData = sampleStock,
         ),
         popBackStack = {},
         refreshCryptoHoldings = {},
@@ -188,9 +188,9 @@ private fun MiddleText(earning: Int, profitRate: Double) {
 @Composable
 private fun MonthlyEarningsTabLayout(
     isLoading: Boolean,
-    totalAssetsHoldingData: PersistentList<ChartItemData>,
-    cryptoHoldingData: PersistentList<ChartItemData>,
-    stockHoldingData: PersistentList<ChartItemData>,
+    totalAssetsHoldingData: PersistentList<DailyRate>,
+    cryptoHoldingData: PersistentList<DailyRate>,
+    stockHoldingData: PersistentList<DailyRate>,
     refreshCryptoHoldings: () -> Unit,
     refreshStockHoldings: () -> Unit,
 ) {
@@ -263,14 +263,11 @@ private fun MonthlyEarningsTabLayout(
 
 @Composable
 private fun AssetsHoldingList(
-    data: PersistentList<ChartItemData>,
+    data: PersistentList<DailyRate>,
     refreshAssetsHoldingData: () -> Unit,
     swipeRefreshState: SwipeRefreshState
 ) {
     JusicoolTheme { _, typography ->
-        val groupedItems = data.groupBy { it.date }
-
-
         SwipeRefresh(
             state = swipeRefreshState,
             onRefresh = refreshAssetsHoldingData,
@@ -279,18 +276,18 @@ private fun AssetsHoldingList(
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                groupedItems.forEach { (date, items) ->
+                data.forEach { items ->
                     item {
                         Text(
-                            text = date.format(DateTimeFormatter.ofPattern("M월 d일")),
+                            text = items.date.format(DateTimeFormatter.ofPattern("M월 d일")),
                             style = typography.bodySmall,
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                     }
 
                     items(
-                        items = items,
-                        key = { "${it.logoUrl}_${it.name}" },
+                        items = items.marketRates,
+                        key = { "${it.market}_${it.rate}_${it.proceed}" },
                     ) { item ->
                         MonthlyAssetsItem(data = item)
 
@@ -303,15 +300,11 @@ private fun AssetsHoldingList(
 }
 
 @Composable
-private fun MonthlyAssetsItem(modifier: Modifier = Modifier, data: ChartItemData) {
+private fun MonthlyAssetsItem(modifier: Modifier = Modifier, data: MarketRate) {
     JusicoolTheme { colors, typography ->
-        val textColor = if (data.priceChange > 0.0) {
-            colors.error
-        } else if (data.priceChange == 0.0) {
-            colors.gray400
-        } else {
-            colors.main
-        }
+        val textColor = if (data.isPositive()) colors.error
+        else if (data.isNegative()) colors.main
+        else colors.gray400
 
         Row(
             modifier = modifier.fillMaxWidth(),
@@ -336,7 +329,7 @@ private fun MonthlyAssetsItem(modifier: Modifier = Modifier, data: ChartItemData
                 // TODO: 임시 코드
 
                 Text(
-                    text = data.name,
+                    text = data.koreanName,
                     style = typography.subTitle
                 )
             }
@@ -345,13 +338,13 @@ private fun MonthlyAssetsItem(modifier: Modifier = Modifier, data: ChartItemData
                 horizontalAlignment = Alignment.End,
             ) {
                 Text(
-                    text = data.priceChange.toSignedFormattedText(),
+                    text = data.proceed.toSignedFormattedText(),
                     style = typography.bodySmall,
                     color = textColor
                 )
 
                 Text(
-                    text = "(${abs(data.percentageChange)}%)",
+                    text = "(${data.rate}%)",
                     style = typography.label,
                     color = textColor,
                 )
