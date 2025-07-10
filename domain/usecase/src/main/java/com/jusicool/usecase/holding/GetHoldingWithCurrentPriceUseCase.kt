@@ -5,6 +5,7 @@ import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.entity.price.HoldingWithCurrentPrice
 import com.jusicool.usecase.crypto.GetCurrentCryptoPriceUseCase
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase
+import com.jusicool.utils.tickerFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -22,9 +23,16 @@ class GetHoldingWithCurrentPriceUseCase @Inject constructor(
                 val stockMarkets = holdingType.stockHoldings.map { it.market.market }
                 val cryptoMarkets = holdingType.cryptoHoldings.map { it.market.market }
 
+                val stockPriceFlow = getCurrentStockPriceUseCase(stockMarkets)
+
+                val cryptoPriceFlow = tickerFlow(100)
+                    .flatMapLatest {
+                        getCurrentCryptoPriceUseCase(cryptoMarkets)
+                    }
+
                 combine(
-                    getCurrentStockPriceUseCase(stockMarkets),
-                    getCurrentCryptoPriceUseCase(cryptoMarkets),
+                    stockPriceFlow,
+                    cryptoPriceFlow,
                 ) { stockPrices, cryptoPrices ->
 
                     val stockWithPrice = holdingType.stockHoldings.map { holding ->
@@ -47,7 +55,7 @@ class GetHoldingWithCurrentPriceUseCase @Inject constructor(
                         )
                     }
 
-                    return@combine HoldingWithCurrentPriceResult(
+                    HoldingWithCurrentPriceResult(
                         stockHoldings = stockWithPrice,
                         cryptoHoldings = cryptoWithPrice
                     )
