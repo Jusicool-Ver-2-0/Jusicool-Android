@@ -42,7 +42,7 @@ internal fun InvestmentSearchRoute(
     viewModel: InvestmentSearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
+    val searchTextState by viewModel.searchQuery.collectAsStateWithLifecycle()
 
     when {
         uiState.isLoading -> {}
@@ -50,9 +50,9 @@ internal fun InvestmentSearchRoute(
         else -> {
             InvestmentSearchScreen(
                 modifier = modifier,
+                searchTextState = searchTextState,
                 uiState = uiState,
                 popUpBackStack = popUpBackStack,
-                searchInvestment = viewModel::searchInvestment,
                 onSearchTextChange = viewModel::onSearchTextChange,
             )
         }
@@ -62,21 +62,20 @@ internal fun InvestmentSearchRoute(
 @Composable
 private fun InvestmentSearchScreen(
     modifier: Modifier = Modifier,
+    searchTextState: String,
     uiState: InvestmentSearchUiState,
     popUpBackStack: () -> Unit,
-    searchInvestment: (String) -> Unit,
-    onSearchTextChange: (String) -> Unit
+    onSearchTextChange: (String) -> Unit,
 ) {
     JusicoolTheme { colors, _ ->
         Column(
             modifier = modifier.fillMaxSize()
         ) {
             SearchBox(
-                searchTextState = uiState.searchTextState,
                 popularKeyword = uiState.popularKeyword,
+                searchTextState = searchTextState,
                 onSearchTextChange = onSearchTextChange,
                 onArrowClick = popUpBackStack,
-                onSearchClick = { searchInvestment(it) }
             )
 
             Divider(
@@ -96,10 +95,11 @@ private fun InvestmentSearchScreen(
     }
 }
 
-@Preview(showBackground = true,backgroundColor = 0xFFFFFF)
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 private fun InvestmentSearchScreenPreview() {
     InvestmentSearchScreen(
+        searchTextState = "",
         onSearchTextChange = {},
         popUpBackStack = {},
         uiState = InvestmentSearchUiState(
@@ -110,7 +110,6 @@ private fun InvestmentSearchScreenPreview() {
                 "카카오" to 10.3,
             ),
             isLoading = false,
-            searchTextState = "",
             popularKeyword = "삼성전자",
             resentSearchTagData = persistentListOf(
                 InvestmentSearchTagData(
@@ -136,7 +135,6 @@ private fun InvestmentSearchScreenPreview() {
             ),
             errorMessage = null,
         ),
-        searchInvestment = {},
     )
 }
 
@@ -203,7 +201,6 @@ private fun SearchBox(
     popularKeyword: String,
     onSearchTextChange: (String) -> Unit,
     onArrowClick: () -> Unit,
-    onSearchClick: (String) -> Unit
 ) {
     Row(
         modifier = modifier.padding(horizontal = 24.dp, vertical = 16.dp),
