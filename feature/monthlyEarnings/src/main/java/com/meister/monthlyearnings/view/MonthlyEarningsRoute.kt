@@ -267,7 +267,7 @@ private fun AssetsHoldingList(
     refreshAssetsHoldingData: () -> Unit,
     swipeRefreshState: SwipeRefreshState
 ) {
-    JusicoolTheme { _, typography ->
+    JusicoolTheme { colors, typography ->
         SwipeRefresh(
             state = swipeRefreshState,
             onRefresh = refreshAssetsHoldingData,
@@ -281,6 +281,7 @@ private fun AssetsHoldingList(
                         Text(
                             text = items.date.format(DateTimeFormatter.ofPattern("M월 d일")),
                             style = typography.bodySmall,
+                            color = colors.black,
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                     }
@@ -330,7 +331,8 @@ private fun MonthlyAssetsItem(modifier: Modifier = Modifier, data: MarketRate) {
 
                 Text(
                     text = data.koreanName,
-                    style = typography.subTitle
+                    style = typography.subTitle,
+                    color = colors.black,
                 )
             }
             Column(
