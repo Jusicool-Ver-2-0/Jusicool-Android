@@ -18,9 +18,8 @@ import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.trade.view.enum.TradeType
 import com.jusicool.trade.viewModel.TradeViewModel
-import com.jusicool.trade.viewModel.uiState.BuyUiState
 import com.jusicool.trade.viewModel.uiState.SellUiState
-import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 
 @Composable
 fun SellRoute(

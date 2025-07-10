@@ -51,6 +51,8 @@ import com.jusicool.utils.formatPercent
 import com.jusicool.utils.toSignedFormattedText
 import com.school_of_company.design_system.icon.RightArrowIcon
 import kotlinx.collections.immutable.persistentListOf
+import com.jusicool.design_system.icon.RightArrowIcon
+import kotlinx.collections.immutable.toPersistentList
 
 
 @Composable

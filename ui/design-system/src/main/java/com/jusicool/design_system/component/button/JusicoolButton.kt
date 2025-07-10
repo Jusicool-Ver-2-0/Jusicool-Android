@@ -22,7 +22,8 @@ fun JusicoolFilledButton(
     modifier: Modifier = Modifier,
     text: String,
     state: ButtonState = ButtonState.Enable,
-    filledColor: Color? =null,
+    filledColor: Color? = null,
+    filledDisableColor: Color? = null,
     onClick: () -> Unit,
 ) {
     JusicoolTheme { colors, typography ->
@@ -32,7 +33,7 @@ fun JusicoolFilledButton(
 
         val containerColor = when (state) {
             ButtonState.Enable -> filledColor ?: colors.main
-            ButtonState.Disable -> colors.gray300
+            ButtonState.Disable -> filledDisableColor ?: colors.gray300
         }
 
         Button(

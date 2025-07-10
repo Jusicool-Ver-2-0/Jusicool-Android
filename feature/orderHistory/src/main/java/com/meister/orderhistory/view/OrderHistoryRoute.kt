@@ -34,7 +34,7 @@ import com.jusicool.utils.formatMoney
 import com.meister.orderhistory.viewModel.uiState.CompletedOrderHistoryUiState
 import com.meister.orderhistory.viewModel.OrderHistoryViewModel
 import com.meister.orderhistory.viewModel.uiState.ReservedOrderHistoryUiState
-import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import com.google.accompanist.swiperefresh.SwipeRefresh

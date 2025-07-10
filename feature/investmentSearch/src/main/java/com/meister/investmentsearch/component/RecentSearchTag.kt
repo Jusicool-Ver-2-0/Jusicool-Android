@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.utils.formatPercent
-import com.school_of_company.design_system.icon.XIcon
+import com.jusicool.design_system.icon.XIcon
 
 
 @Composable
