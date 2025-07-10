@@ -20,6 +20,7 @@ import com.jusicool.trade.navigation.sellReserveRoute
 import com.jusicool.trade.navigation.sellRoute
 import com.jusicool.trade.navigation.tradeCompletedRoute
 import com.meister.investmentsearch.navigation.chartListRoute
+import com.meister.monthlyearnings.navigation.monthlyEarningsRoute
 import com.meister.orderhistory.navigation.navigateToOrderHistoryRoute
 import com.meister.orderhistory.navigation.orderHistoryRoute
 
@@ -42,6 +43,10 @@ fun JusicoolNavHost(
         accountRoute(
             navigateToOrderHistory = navController::navigateToOrderHistoryRoute,
             navigateToChart = navController::navigateToChartRoute
+        )
+
+        monthlyEarningsRoute(
+            popBackStack = navController::popBackStack
         )
 
         chartRoute(
