@@ -35,8 +35,8 @@ import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.signup.component.School
 import com.jusicool.signup.component.SchoolList
 import com.jusicool.signup.component.SchoolListItem
-import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
-import com.school_of_company.design_system.icon.SearchIcon
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
+import com.jusicool.design_system.icon.SearchIcon
 import kotlinx.coroutines.launch
 
 
