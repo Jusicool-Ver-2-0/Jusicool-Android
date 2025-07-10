@@ -4,7 +4,7 @@ import com.jusicool.entity.market.MarketType
 import com.jusicool.entity.market.RecommendMarketWithPrice
 import com.jusicool.repository.MarketRepository
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase
-import com.jusicool.usecase.market.combiner.mergeWithPrices
+import com.jusicool.usecase.market.util.mergeWithPrices
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
