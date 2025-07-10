@@ -255,6 +255,8 @@ private fun SearchKeywordRow(
                 )
             }
 
+            Spacer(Modifier.weight(1f))
+
             Text(
                 text = changeRate.formatPercent(),
                 style = typography.bodySmall,
