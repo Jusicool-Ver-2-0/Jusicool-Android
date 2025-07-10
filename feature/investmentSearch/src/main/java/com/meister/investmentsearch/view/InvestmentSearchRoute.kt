@@ -31,7 +31,7 @@ import com.jusicool.utils.formatPercent
 import com.meister.investmentsearch.component.RecentSearchTag
 import com.meister.investmentsearch.viewModel.InvestmentSearchUiState
 import com.meister.investmentsearch.viewModel.InvestmentSearchViewModel
-import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 

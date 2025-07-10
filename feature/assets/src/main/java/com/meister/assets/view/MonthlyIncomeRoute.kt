@@ -34,7 +34,7 @@ import com.jusicool.utils.formatMoney
 import com.meister.assets.component.DoughnutChart
 import com.meister.assets.viewModel.MonthlyIncomeViewModel
 import com.meister.assets.viewModel.uiState.MonthlyIncomeUiState
-import com.school_of_company.design_system.icon.LeftClarityArrowLineIcon
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.random.Random
 
