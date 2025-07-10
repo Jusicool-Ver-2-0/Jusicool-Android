@@ -9,7 +9,7 @@ import java.time.LocalDate
 
 fun MonthlyRateResponse.toEntity(): MonthlyRate {
 
-    val dailyRatesMap: Map<String, List<RateByMarket>> = markets.groupBy { it.date }
+    val dailyRatesMap: Map<String, List<RateByMarket>> = markets.groupBy { it.day }
 
     val dailyRates = dailyRatesMap.map { (dateStr, marketList) ->
         DailyRate(

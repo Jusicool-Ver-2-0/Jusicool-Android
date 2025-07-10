@@ -15,5 +15,5 @@ data class RateByMarket(
     @Json(name = "korean_name") val koreanName: String,
     val rate: Double,
     val proceed: Int,
-    val date: String,
+    val day: String,
 )
