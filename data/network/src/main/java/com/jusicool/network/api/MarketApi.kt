@@ -9,4 +9,9 @@ interface MarketApi {
     suspend fun getMarketList(
         @Query("request_param") requestParam: String
     ): List<MarketListResponse>
+
+    @GET("/market/search")
+    suspend fun searchMarket(
+        @Query("query_param") query: String
+    ): List<MarketListResponse>
 }

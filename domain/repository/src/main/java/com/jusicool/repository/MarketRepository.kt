@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface MarketRepository {
     fun getMarketList(requestParam: MarketType):  Flow<List<Market>>
+    fun searchMarket(requestParam: MarketType): Flow<List<Market>>
 }

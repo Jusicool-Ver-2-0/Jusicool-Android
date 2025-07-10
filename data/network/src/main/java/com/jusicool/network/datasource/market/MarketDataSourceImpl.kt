@@ -11,4 +11,7 @@ class MarketDataSourceImpl @Inject constructor(
 ) : MarketDataSource {
     override fun getMarketList(requestParam: String): Flow<List<MarketListResponse>> =
         performApiRequest { marketApi.getMarketList(requestParam = requestParam) }
+
+    override fun searchMarket(query: String): Flow<List<MarketListResponse>> =
+        performApiRequest { marketApi.searchMarket(query = query) }
 }
