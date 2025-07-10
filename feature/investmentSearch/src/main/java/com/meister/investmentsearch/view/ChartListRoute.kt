@@ -34,6 +34,8 @@ import com.meister.investmentsearch.viewModel.ChartListViewModel
 import com.jusicool.design_system.icon.RightArrowIcon
 import com.jusicool.design_system.icon.SearchIcon
 import com.jusicool.design_system.icon.UnionIcon
+import com.jusicool.entity.market.MarketType
+import com.jusicool.entity.market.RecommendMarketWithPrice
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.math.abs
@@ -92,7 +94,7 @@ internal fun ChartListScreen(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun ChartListScreenPreview() {
     ChartListScreen(
@@ -113,42 +115,50 @@ private fun ChartListScreenPreview() {
                     investmentName = "Amazon.com, Inc.",
                     investmentChangeRate = 0.0,
                     onClearClick = {},
-                ), InvestmentSearchTagData(
+                ),
+                InvestmentSearchTagData(
                     investmentName = "Google LLC",
                     investmentChangeRate = 3.1,
                     onClearClick = {},
                 )
             ),
             chartListData = persistentListOf(
-                ChartItemData(
-                    name = "Apple Inc.",
+                RecommendMarketWithPrice(
+                    id = 1,
+                    market = "NASDAQ",
+                    marketType = MarketType.STOCK,
+                    koreanName = "Apple Inc.",
+                    englishName = "Apple",
                     logoUrl = "https://example.com/apple-logo.png",
-                    priceChange = 1.5,
-                    percentageChange = 0.5,
+                    currentPrice = 1111131,
+                    profitRate = 0.05
                 ),
-                ChartItemData(
-                    name = "Microsoft Corporation",
+                RecommendMarketWithPrice(
+                    id = 2,
+                    market = "NASDAQ",
+                    marketType = MarketType.STOCK,
+                    koreanName = "Microsoft Corporation",
+                    englishName = "Microsoft",
                     logoUrl = "https://example.com/microsoft-logo.png",
-                    priceChange = -2.3,
-                    percentageChange = -0.7,
+                    currentPrice = 950000,
+                    profitRate = -0.02
                 ),
-                ChartItemData(
-                    name = "Amazon.com, Inc.",
+                RecommendMarketWithPrice(
+                    id = 3,
+                    market = "NASDAQ",
+                    marketType = MarketType.STOCK,
+                    koreanName = "Amazon.com, Inc.",
+                    englishName = "Amazon",
                     logoUrl = "https://example.com/amazon-logo.png",
-                    priceChange = 0.0,
-                    percentageChange = 0.0,
+                    currentPrice = 800000,
+                    profitRate = 0.0
                 ),
-                ChartItemData(
-                    name = "Google LLC",
-                    logoUrl = "https://example.com/google-logo.png",
-                    priceChange = 3.1,
-                    percentageChange = 1.2,
-                ),
-            ),
+            )
         ),
-        onSearchCLick = {},
+        onSearchCLick = {}
     )
 }
+
 
 @Composable
 private fun RecentSearchSection(data: PersistentList<InvestmentSearchTagData>) {
@@ -168,29 +178,25 @@ private fun RecentSearchSection(data: PersistentList<InvestmentSearchTagData>) {
 }
 
 @Composable
-private fun ChartListSection(data: PersistentList<ChartItemData>) {
+private fun ChartListSection(data: PersistentList<RecommendMarketWithPrice>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        itemsIndexed(data, key = { _, item -> item.name }) { _, item ->
+        itemsIndexed(data, key = { _, item -> item.market }) { _, item ->
             ChartItem(data = item)
         }
     }
 }
 
 @Composable
-private fun ChartItem(data: ChartItemData) {
+private fun ChartItem(data: RecommendMarketWithPrice) {
     JusicoolTheme { colors, typography ->
-        val textColor = if (data.priceChange > 0.0) {
-            colors.error
-        } else if (data.priceChange == 0.0) {
-            colors.gray400
-        } else {
-            colors.main
-        }
+        val textColor = if (data.isPositive) colors.error
+        else if (data.isNegative) colors.gray400
+        else colors.main
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -213,9 +219,9 @@ private fun ChartItem(data: ChartItemData) {
                 )*/
                 RightArrowIcon(modifier = Modifier.size(40.dp))
                 // TODO: 임시 코드 
-                
+
                 Text(
-                    text = data.name,
+                    text = data.koreanName,
                     style = typography.subTitle
                 )
             }
@@ -231,7 +237,7 @@ private fun ChartItem(data: ChartItemData) {
                 )
 
                 Text(
-                    text = "${data.priceChange.toSignedFormattedText()} (${abs(data.percentageChange)}%)",
+                    text = "${data.profit.toSignedFormattedText()} (${abs(data.profitRate)}%)",
                     style = typography.label,
                     color = textColor,
                 )
@@ -239,10 +245,3 @@ private fun ChartItem(data: ChartItemData) {
         }
     }
 }
-
-data class ChartItemData(
-    val name: String,             // 이름 (예: "애플", "비트코인")
-    val logoUrl: String?,         // 로고 URL 또는 리소스 ID (옵션)
-    val priceChange: Double,         // 가격 변화 (예: +1111816)
-    val percentageChange: Double  // 변화율 (예: 7.9)
-)
