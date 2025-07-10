@@ -17,8 +17,8 @@ class MarketRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun searchMarket(requestParam: MarketType): Flow<List<Market>> {
-        return marketDataSource.searchMarket(requestParam.name).map { marketList ->
+    override fun searchMarket(query: String): Flow<List<Market>> {
+        return marketDataSource.searchMarket(query).map { marketList ->
             marketList.map { it.toEntity() }
         }
     }
