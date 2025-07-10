@@ -1,22 +1,56 @@
 package com.meister.investmentsearch.viewModel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.jusicool.usecase.market.SearchMarketWithPriceUseCase
+import com.jusicool.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class InvestmentSearchViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow(InvestmentSearchUiState(isLoading = true))
-    val uiState: StateFlow<InvestmentSearchUiState> = _uiState.asStateFlow()
+class InvestmentSearchViewModel @Inject constructor(
+    searchMarketWithPriceUseCase: SearchMarketWithPriceUseCase,
+    private val savedStateHandle: SavedStateHandle,
+) : ViewModel() {
+    internal val searchQuery = savedStateHandle.getStateFlow("searchQuery", "")
 
-    fun searchInvestment(searchText: String) {
+    internal val uiState: StateFlow<InvestmentSearchUiState> = searchQuery
+        .debounce(300) // 빠른 타이핑 대응
+        .distinctUntilChanged()
+        .flatMapLatest { query ->
+            searchMarketWithPriceUseCase(query)
+                .map { marketWithPrice ->
+                    InvestmentSearchUiState(
+                        isLoading = false,
+                        resentSearchTagData = marketWithPrice.toPersistentList()
+                    )
+                }
+                .onStart {
+                    InvestmentSearchUiState(isLoading = true)
+                }
+                .catch { e ->
+                    Logger.e("InvestmentSearchViewModel", "Error fetching search results", e)
+                    InvestmentSearchUiState(isLoading = false, errorMessage = e.message)
+                }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = InvestmentSearchUiState()
+        )
 
-    }
-
-    fun onSearchTextChange(searchText: String) {
-
+    internal fun onSearchTextChange(searchText: String) {
+        savedStateHandle["searchQuery"] = searchText
     }
 }
