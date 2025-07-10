@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.theme.JusicoolTheme
 
 @Composable
@@ -32,6 +33,7 @@ fun JusicoolTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onTextChange: (String) -> Unit,
+    onHelperTextClick: (() -> Unit)? = null
 ) {
     JusicoolTheme { colors, typography ->
         Column(
@@ -89,6 +91,7 @@ fun JusicoolTextField(
                 )
 
                 Text(
+                    modifier = Modifier.JusicoolClickable { onHelperTextClick?.invoke() },
                     text = helperText,
                     color = colors.main,
                     style = typography.label
