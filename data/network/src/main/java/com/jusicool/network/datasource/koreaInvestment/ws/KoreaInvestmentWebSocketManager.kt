@@ -6,6 +6,7 @@ import com.jusicool.network.util.KoreaInvestmentAuthManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import okhttp3.*
 import org.json.JSONObject
@@ -20,8 +21,8 @@ class KoreaInvestmentWebSocketManager @Inject constructor(
     private var webSocket: WebSocket? = null
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    private val _stockTickerMapFlow = MutableStateFlow<Map<String, StockPriceSummary>>(emptyMap())
-    override val stockTickerMapFlow: StateFlow<Map<String, StockPriceSummary>> = _stockTickerMapFlow
+    private val _stockTickerListFlow = MutableStateFlow<List<StockPriceSummary>>(emptyList())
+    override val stockTickerMapFlow: StateFlow<List<StockPriceSummary>> = _stockTickerListFlow.asStateFlow()
 
     override fun connect(stockCodes: List<String>) {
         if (webSocket != null) {
@@ -71,7 +72,7 @@ class KoreaInvestmentWebSocketManager @Inject constructor(
     override fun disconnect() {
         webSocket?.close(1000, "Client disconnect")
         webSocket = null
-        _stockTickerMapFlow.value = emptyMap()
+        _stockTickerListFlow.value = emptyList()
     }
 
     private fun createSubscribeMessage(
@@ -102,9 +103,18 @@ class KoreaInvestmentWebSocketManager @Inject constructor(
 
         val parsed = StockPriceSummary.parseStockPriceSummary(payload) ?: return
 
-        _stockTickerMapFlow.update { currentMap ->
-            currentMap + (stockCode to parsed)
+        // 기존 리스트에서 해당 종목이 있으면 교체, 없으면 추가
+        _stockTickerListFlow.update { currentList ->
+            val mutableList = currentList.toMutableList()
+            val index = mutableList.indexOfFirst { it.stockCode == stockCode }
+            if (index >= 0) {
+                mutableList[index] = parsed
+            } else {
+                mutableList.add(parsed)
+            }
+            mutableList.toList()
         }
+
         Log.d("WebSocket", "📈 $stockCode 업데이트: $parsed")
     }
 }
