@@ -33,7 +33,7 @@ class InvestmentSearchViewModel @Inject constructor(
                 .map { marketWithPrice ->
                     InvestmentSearchUiState(
                         isLoading = false,
-                        resentSearchTagData = marketWithPrice.toPersistentList()
+                        popularKeywordData = marketWithPrice.map { it.koreanName to it.profitRate }.toPersistentList()
                     )
                 }
                 .onStart {
