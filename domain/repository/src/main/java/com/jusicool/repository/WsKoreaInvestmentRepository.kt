@@ -4,5 +4,5 @@ import com.jusicool.entity.koreaInvestment.StockPriceEntity
 import kotlinx.coroutines.flow.Flow
 
 interface WsKoreaInvestmentRepository {
-    fun observeStockTicker(stockCode: String): Flow<StockPriceEntity>
+    fun observeStockTicker(stockCode: List<String>): Flow<List<StockPriceEntity>>
 }

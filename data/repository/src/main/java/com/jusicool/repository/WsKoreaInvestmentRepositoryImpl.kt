@@ -15,20 +15,21 @@ class WsKoreaInvestmentRepositoryImpl @Inject constructor(
     private val webSocketManager: KoreaInvestmentWebSocketManagerInterface
 ) : WsKoreaInvestmentRepository {
 
-    override fun observeStockTicker(stockCode: String): Flow<StockPriceEntity> = callbackFlow {
-        webSocketManager.connect(stockCode)
+    override fun observeStockTicker(stockCode: List<String>): Flow<List<StockPriceEntity>> =
+        callbackFlow {
+            webSocketManager.connect(stockCode)
 
-        val job = launch {
-            webSocketManager.stockTickerFlow
-                .filterNotNull()
-                .map { it.toEntity() }
-                .collect { trySend(it).isSuccess }
-        }
+            val job = launch {
+                webSocketManager.stockTickerMapFlow
+                    .filterNotNull()
+                    .map { list -> list.map { it.toEntity() } }
+                    .collect { trySend(it).isSuccess }
+            }
 
-        awaitClose {
-            webSocketManager.disconnect()
-            job.cancel()
+            awaitClose {
+                webSocketManager.disconnect()
+                job.cancel()
+            }
         }
-    }
 
 }
