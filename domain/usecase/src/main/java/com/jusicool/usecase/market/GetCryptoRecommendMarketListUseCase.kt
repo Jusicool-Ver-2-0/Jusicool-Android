@@ -11,7 +11,7 @@ class GetCryptoRecommendMarketListUseCase @Inject constructor(
     private val marketRepository: MarketRepository,
 ) {
     operator fun invoke(): Flow<List<RecommendMarketWithPrice>> = flow {
-        marketRepository.getMarketList(MarketType.CRYPTO)
+        // marketRepository.getMarketList(MarketType.CRYPTO)
         // TODO: 코인 현재가 불러오는 로직 추가 
         emptyList<RecommendMarketWithPrice>()   
     }
