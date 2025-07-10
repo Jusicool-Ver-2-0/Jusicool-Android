@@ -55,6 +55,7 @@ import kotlinx.collections.immutable.persistentListOf
 internal fun AccountRoute(
     viewModel: AccountViewModel = hiltViewModel(),
     navigateToOrderHistory: () -> Unit,
+    navigateToMonthlyEarningsRoute: () -> Unit,
     navigateToChart: (marketCode: String, name: String, type: String, quantity: Int, money: Long, krwBalance: Long) -> Unit
 ) {
     val accountUiState by viewModel.accountUiState.collectAsStateWithLifecycle()
@@ -85,6 +86,7 @@ internal fun AccountRoute(
         getMonthOrderData = monthOrderUiState,
         holdingNewsModel = mockHoldingNewsModel,
         navigateToOrderHistory = navigateToOrderHistory,
+        navigateToMonthlyEarningsRoute = navigateToMonthlyEarningsRoute,
         navigateToChart = navigateToChart
     )
 }
@@ -97,6 +99,7 @@ private fun AccountScreen(
     getMonthOrderData: GetMonthOrderUiState,
     holdingNewsModel: HoldingNewsModel,
     navigateToOrderHistory: () -> Unit,
+    navigateToMonthlyEarningsRoute: () -> Unit,
     navigateToChart: (marketCode: String, name: String, type: String, quantity: Int, money: Long, krwBalance: Long) -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -162,7 +165,8 @@ private fun AccountScreen(
                                 currentAssetsPriceUiState,
                                 krwBalance,
                             ) {
-                                val totalValue = if (currentAssetsPriceUiState is GetHoldingsPriceUiState.Success) {
+                                val totalValue =
+                                    if (currentAssetsPriceUiState is GetHoldingsPriceUiState.Success) {
                                         currentAssetsPriceUiState.stockHoldings.sumOf { it.totalValue() } +
                                                 currentAssetsPriceUiState.cryptoHoldings.sumOf { it.totalValue() }
                                     } else {
@@ -183,11 +187,14 @@ private fun AccountScreen(
                                     val stockHoldings = currentAssetsPriceUiState.stockHoldings
                                     val cryptoHoldings = currentAssetsPriceUiState.cryptoHoldings
 
-                                    val totalInvestment = stockHoldings.totalInvestment() + cryptoHoldings.totalInvestment()
-                                    val totalCurrentValue = stockHoldings.totalCurrentValue() + cryptoHoldings.totalCurrentValue()
+                                    val totalInvestment =
+                                        stockHoldings.totalInvestment() + cryptoHoldings.totalInvestment()
+                                    val totalCurrentValue =
+                                        stockHoldings.totalCurrentValue() + cryptoHoldings.totalCurrentValue()
 
                                     val profit = totalCurrentValue - totalInvestment
-                                    val rate = if (totalInvestment != 0) (profit.toFloat() / totalInvestment) * 100 else 0f
+                                    val rate =
+                                        if (totalInvestment != 0) (profit.toFloat() / totalInvestment) * 100 else 0f
 
                                     Pair(profit, rate)
                                 } else {
@@ -291,7 +298,7 @@ private fun AccountScreen(
                                 )
 
                                 Row(
-                                    modifier = Modifier.JusicoolClickable { /*TODO()*/ },
+                                    modifier = Modifier.JusicoolClickable(onClick = navigateToMonthlyEarningsRoute),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     val monthProfitText = when (getMonthOrderData) {
@@ -387,6 +394,7 @@ private fun AccountScreenPreview() {
         getMonthOrderData = mockMonthOrderUiState,
         holdingNewsModel = mockHoldingNewsModel,
         navigateToOrderHistory = { },
+        navigateToMonthlyEarningsRoute = { },
         navigateToChart = { marketCode, name, type, quantity, money, krwBalance -> }
     )
 }
