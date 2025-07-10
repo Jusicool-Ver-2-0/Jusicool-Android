@@ -1,4 +1,4 @@
-package com.jusicool.usecase.market.combiner
+package com.jusicool.usecase.market.util
 
 import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
 import com.jusicool.entity.market.Market
