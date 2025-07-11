@@ -68,6 +68,7 @@ chucker = "3.5.2"
 runtimeAndroid = "1.7.8"
 uiTextAndroid = "1.7.8"
 uiAndroid = "1.7.8"
+lifecycleProcess = "2.9.1"
 
 
 [libraries]
@@ -170,6 +171,7 @@ ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 androidx-ui-text-android = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "uiTextAndroid" }
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
 
 [plugins]
 #Define Plugins

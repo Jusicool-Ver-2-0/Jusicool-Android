@@ -41,6 +41,7 @@ dependencies {
 
     implementation(libs.junit)
     implementation(project(":feature:orderHistory"))
+    implementation(libs.androidx.lifecycle.process)
     androidTestImplementation(libs.androidx.test.ext)
     implementation(libs.app.update.ktx)
 }
