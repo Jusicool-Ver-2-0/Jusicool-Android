@@ -68,8 +68,7 @@ chucker = "3.5.2"
 runtimeAndroid = "1.7.8"
 uiTextAndroid = "1.7.8"
 uiAndroid = "1.7.8"
-lifecycleProcess = "2.9.1"
-
+lifecycleProcess = "2.6.2"
 
 [libraries]
 #Define Library
