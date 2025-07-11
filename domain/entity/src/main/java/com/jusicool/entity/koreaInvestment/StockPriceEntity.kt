@@ -27,7 +27,6 @@ data class StockPriceEntity(
     init {
         require(stockCode.isNotBlank()) { "종목 코드는 비어 있을 수 없습니다." }
         require(currentPrice >= 0) { "현재가는 0 이상이어야 합니다." }
-        require(priceChange >= 0) { "전일 대비 금액은 0 이상이어야 합니다." }
         require(priceChangeSign in listOf("1", "2", "3", "4", "5")) {
             "전일 대비 부호는 \"1\"(상한), \"2\"(상승), \"3\"(보합), \"4\"(하한), \"5\"(하락) 중 하나여야 합니다."
         }
