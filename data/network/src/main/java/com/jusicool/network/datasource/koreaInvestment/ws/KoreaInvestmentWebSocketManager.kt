@@ -33,7 +33,7 @@ class KoreaInvestmentWebSocketManager @Inject constructor(
             runCatching { authManager.getApprovalKey() }
                 .onSuccess { approvalKey ->
                     val request = Request.Builder()
-                        .url("ws://ops.koreainvestment.com:21000/tryitout")
+                        .url("ws://ops.koreainvestment.com:21000/tryitout/H0STCNT0")
                         .build()
 
                     webSocket = client.newWebSocket(request, object : WebSocketListener() {
@@ -88,7 +88,7 @@ class KoreaInvestmentWebSocketManager @Inject constructor(
             })
             put("body", JSONObject().apply {
                 put("input", JSONObject().apply {
-                    put("tr_id", "H0STASP0")
+                    put("tr_id", "H0STCNT0")
                     put("tr_key", stockCode)
                 })
             })
