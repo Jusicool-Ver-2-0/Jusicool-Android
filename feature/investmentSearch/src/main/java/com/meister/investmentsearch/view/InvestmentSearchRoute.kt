@@ -38,7 +38,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 internal fun InvestmentSearchRoute(
     modifier: Modifier = Modifier,
-    popUpBackStack: () -> Unit,
+    popBackStack: () -> Unit,
     viewModel: InvestmentSearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -52,7 +52,7 @@ internal fun InvestmentSearchRoute(
                 modifier = modifier,
                 searchTextState = searchTextState,
                 uiState = uiState,
-                popUpBackStack = popUpBackStack,
+                popBackStack= popBackStack,
                 onSearchTextChange = viewModel::onSearchTextChange,
             )
         }
@@ -64,7 +64,7 @@ private fun InvestmentSearchScreen(
     modifier: Modifier = Modifier,
     searchTextState: String,
     uiState: InvestmentSearchUiState,
-    popUpBackStack: () -> Unit,
+    popBackStack: () -> Unit,
     onSearchTextChange: (String) -> Unit,
 ) {
     JusicoolTheme { colors, _ ->
@@ -75,7 +75,7 @@ private fun InvestmentSearchScreen(
                 popularKeyword = uiState.popularKeyword,
                 searchTextState = searchTextState,
                 onSearchTextChange = onSearchTextChange,
-                onArrowClick = popUpBackStack,
+                onArrowClick = popBackStack,
             )
 
             Divider(
@@ -101,7 +101,7 @@ private fun InvestmentSearchScreenPreview() {
     InvestmentSearchScreen(
         searchTextState = "",
         onSearchTextChange = {},
-        popUpBackStack = {},
+        popBackStack = {},
         uiState = InvestmentSearchUiState(
             popularKeywordData = persistentListOf(
                 "삼성전자" to 12.1,
