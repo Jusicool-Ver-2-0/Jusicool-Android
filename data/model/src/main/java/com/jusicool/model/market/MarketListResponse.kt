@@ -5,7 +5,7 @@ import com.squareup.moshi.Json
 data class MarketListResponse(
     val id: Int,
     @Json(name = "korean_name") val koreanName: String,
-    @Json(name = "english_name") val englishName: String,
+    @Json(name = "english_name") val englishName: String?,
     val market: String,
     @Json(name = "market_type") val marketType: String,
 )
