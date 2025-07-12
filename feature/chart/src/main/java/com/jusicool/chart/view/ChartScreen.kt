@@ -11,13 +11,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -52,6 +55,7 @@ import com.jusicool.model.community.CommunityModel
 import com.jusicool.model.news.NewsModel
 import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import com.jusicool.design_system.icon.LetsIconsSettingFillIcon
+import com.jusicool.design_system.icon.PencilIcon
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -69,6 +73,7 @@ fun ChartRoute(
     navigateToSell: (String, String, Int, String) -> Unit,
     navigateToReserveBuy: (String, String, Long, Long, String) -> Unit,
     navigateToReserveSell: (String, String, Int, String) -> Unit,
+    navigateToCommunityPost: () -> Unit,
     popUpBackStack: () -> Unit
 ) {
     val minuteCandleUiState by viewModel.minuteCandleUiState.collectAsStateWithLifecycle()
@@ -190,7 +195,8 @@ fun ChartRoute(
         navigateToBuy = navigateToBuy,
         navigateToSell = navigateToSell,
         navigateToReserveBuy = navigateToReserveBuy,
-        navigateToReserveSell = navigateToReserveSell
+        navigateToReserveSell = navigateToReserveSell,
+        navigateToCommunityPost = navigateToCommunityPost
     )
 }
 
@@ -215,6 +221,7 @@ fun ChartScreen(
     navigateToReserveBuy: (String, String, Long, Long, String) -> Unit,
     navigateToReserveSell: (String, String, Int, String) -> Unit,
     onRefresh: (String) -> Unit,
+    navigateToCommunityPost: () -> Unit,
     popUpBackStack: () -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -263,269 +270,300 @@ fun ChartScreen(
             }
         }
 
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .background(color = colors.white)
-        ) {
-            JusicoolTopBar(
-                modifier = Modifier.fillMaxWidth(),
-                betweenText = koreanName,
-                startIcon = { LeftClarityArrowLineIcon(modifier = Modifier.JusicoolClickable { popUpBackStack() }) },
-                endIcon = { LetsIconsSettingFillIcon(modifier = Modifier.JusicoolClickable { /*TODO()*/ }) }
-            )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                ChartPrice(currentMinuteCandleData = currentMinuteCandleData)
-
-                val candles = when (minuteCandleData) {
-                    is GetMinuteCandleUiState.Success -> minuteCandleData.chart
-                    else -> emptyList()
-                }
-
-                CandleChart(
-                    modifier = Modifier.fillMaxWidth(),
-                    candles = candles,
-                    currentCandlesData = currentMinuteCandleData,
-                    market = marketCode,
-                    onRefresh = { onRefresh(marketCode) }
-                )
-
-                if (quantity < 1) {
-                    JusicoolFilledButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp),
-                        text = "구매하기",
-                        state = ButtonState.Enable,
-                        filledColor = colors.error,
-                        onClick = {
-                            coroutineScope.launch {
-                                showBuyBottomSheet = true
-                                sheetState.show()
-                            }
-                        }
-                    )
-                }
-                else {
-                    Row(
-                        modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        JusicoolFilledButton(
-                            modifier = Modifier.weight(1f),
-                            text = "구매하기",
-                            state = ButtonState.Enable,
-                            filledColor = colors.error,
-                            onClick = {
-                                coroutineScope.launch {
-                                    showBuyBottomSheet = true
-                                    sheetState.show()
-                                }
-                            }
-                        )
-
-                        JusicoolFilledButton(
-                            modifier = Modifier.weight(1f),
-                            text = "판매하기",
-                            state = ButtonState.Enable,
-                            filledColor = colors.main,
-                            onClick = {
-                                coroutineScope.launch {
-                                    showSellBottomSheet = true
-                                    sheetState.show()
-                                }
-                            }
-                        )
-                    }
-                }
-
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+            content = { paddingValues ->
                 Column(
-                    modifier = Modifier
+                    modifier = modifier
                         .fillMaxSize()
-                        .padding(horizontal = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                        .verticalScroll(scrollState)
+                        .background(color = colors.white)
+                        .padding(paddingValues)
                 ) {
-                    Row(
+                    JusicoolTopBar(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        betweenText = koreanName,
+                        startIcon = { LeftClarityArrowLineIcon(modifier = Modifier.JusicoolClickable { popUpBackStack() }) },
+                        endIcon = { LetsIconsSettingFillIcon(modifier = Modifier.JusicoolClickable { /*TODO()*/ }) }
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(vertical = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
-                        Text(
-                            modifier = Modifier.JusicoolClickable {
-                                selectedInfo = "종목 정보"
-                            },
-                            text = "종목 정보",
-                            color = if (selectedInfo == "종목 정보") colors.black else colors.gray400,
-                            style = typography.subTitle
-                        )
+                        ChartPrice(currentMinuteCandleData = currentMinuteCandleData)
 
-                        Text(
-                            modifier = Modifier.JusicoolClickable {
-                                selectedInfo = "시세"
-                            },
-                            text = "시세",
-                            color = if (selectedInfo == "시세") colors.black else colors.gray400,
-                            style = typography.subTitle
-                        )
-
-                        Text(
-                            modifier = Modifier.JusicoolClickable {
-                                selectedInfo = "뉴스"
-                            },
-                            text = "뉴스",
-                            color = if (selectedInfo == "뉴스") colors.black else colors.gray400,
-                            style = typography.subTitle
-                        )
-
-                        Text(
-                            modifier = Modifier.JusicoolClickable {
-                                selectedInfo = "커뮤니티"
-                            },
-                            text = "커뮤니티",
-                            color = if (selectedInfo == "커뮤니티") colors.black else colors.gray400,
-                            style = typography.subTitle
-                        )
-                    }
-
-                    when (selectedInfo) {
-                        "종목 정보" -> {
-                            Text(
-                                text = chartInformation.information,
-                                color = colors.black,
-                                style = typography.bodySmall
-                            )
+                        val candles = when (minuteCandleData) {
+                            is GetMinuteCandleUiState.Success -> minuteCandleData.chart
+                            else -> emptyList()
                         }
-                        "시세" -> {
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment =Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(20.dp)
+
+                        CandleChart(
+                            modifier = Modifier.fillMaxWidth(),
+                            candles = candles,
+                            currentCandlesData = currentMinuteCandleData,
+                            market = marketCode,
+                            onRefresh = { onRefresh(marketCode) }
+                        )
+
+                        if (quantity < 1) {
+                            JusicoolFilledButton(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp),
+                                text = "구매하기",
+                                state = ButtonState.Enable,
+                                filledColor = colors.error,
+                                onClick = {
+                                    coroutineScope.launch {
+                                        showBuyBottomSheet = true
+                                        sheetState.show()
+                                    }
+                                }
+                            )
+                        } else {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                PriceBarChart(
-                                    price = price
+                                JusicoolFilledButton(
+                                    modifier = Modifier.weight(1f),
+                                    text = "구매하기",
+                                    state = ButtonState.Enable,
+                                    filledColor = colors.error,
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            showBuyBottomSheet = true
+                                            sheetState.show()
+                                        }
+                                    }
                                 )
 
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(IntrinsicSize.Min),
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
-                                    Column(
-                                        modifier = Modifier.weight(1f),
-                                        verticalArrangement = Arrangement.spacedBy(14.dp)
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = "시작가",
-                                                color = colors.black,
-                                                style = typography.bodyMedium
-                                            )
-
-                                            Text(
-                                                text = "${"%,d".format(price.dayOpen)}원",
-                                                color = colors.gray600,
-                                                style = typography.label
-                                            )
-                                        }
-
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = "종가",
-                                                color = colors.black,
-                                                style = typography.bodyMedium
-                                            )
-
-                                            Text(
-                                                text = "${"%,d".format(price.dayClose)}원",
-                                                color = colors.gray600,
-                                                style = typography.label
-                                            )
+                                JusicoolFilledButton(
+                                    modifier = Modifier.weight(1f),
+                                    text = "판매하기",
+                                    state = ButtonState.Enable,
+                                    filledColor = colors.main,
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            showSellBottomSheet = true
+                                            sheetState.show()
                                         }
                                     }
+                                )
+                            }
+                        }
 
-                                    Box(
-                                        modifier = Modifier
-                                            .width(1.dp)
-                                            .fillMaxHeight()
-                                            .background(color = colors.gray100, shape = RoundedCornerShape(size = 1.dp))
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 24.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    modifier = Modifier.JusicoolClickable {
+                                        selectedInfo = "종목 정보"
+                                    },
+                                    text = "종목 정보",
+                                    color = if (selectedInfo == "종목 정보") colors.black else colors.gray400,
+                                    style = typography.subTitle
+                                )
+
+                                Text(
+                                    modifier = Modifier.JusicoolClickable {
+                                        selectedInfo = "시세"
+                                    },
+                                    text = "시세",
+                                    color = if (selectedInfo == "시세") colors.black else colors.gray400,
+                                    style = typography.subTitle
+                                )
+
+                                Text(
+                                    modifier = Modifier.JusicoolClickable {
+                                        selectedInfo = "뉴스"
+                                    },
+                                    text = "뉴스",
+                                    color = if (selectedInfo == "뉴스") colors.black else colors.gray400,
+                                    style = typography.subTitle
+                                )
+
+                                Text(
+                                    modifier = Modifier.JusicoolClickable {
+                                        selectedInfo = "커뮤니티"
+                                    },
+                                    text = "커뮤니티",
+                                    color = if (selectedInfo == "커뮤니티") colors.black else colors.gray400,
+                                    style = typography.subTitle
+                                )
+                            }
+
+                            when (selectedInfo) {
+                                "종목 정보" -> {
+                                    Text(
+                                        text = chartInformation.information,
+                                        color = colors.black,
+                                        style = typography.bodySmall
                                     )
+                                }
 
+                                "시세" -> {
                                     Column(
-                                        modifier = Modifier.weight(1f),
-                                        verticalArrangement = Arrangement.spacedBy(14.dp)
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.spacedBy(20.dp)
                                     ) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = "거래량",
-                                                color = colors.black,
-                                                style = typography.bodyMedium
-                                            )
-
-                                            Text(
-                                                text = "${"%,d".format(price.tradingVolume)}개",
-                                                color = colors.gray600,
-                                                style = typography.label
-                                            )
-                                        }
+                                        PriceBarChart(
+                                            price = price
+                                        )
 
                                         Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(IntrinsicSize.Min),
+                                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                                         ) {
-                                            Text(
-                                                text = "거래대금",
-                                                color = colors.black,
-                                                style = typography.bodyMedium
+                                            Column(
+                                                modifier = Modifier.weight(1f),
+                                                verticalArrangement = Arrangement.spacedBy(14.dp)
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Text(
+                                                        text = "시작가",
+                                                        color = colors.black,
+                                                        style = typography.bodyMedium
+                                                    )
+
+                                                    Text(
+                                                        text = "${"%,d".format(price.dayOpen)}원",
+                                                        color = colors.gray600,
+                                                        style = typography.label
+                                                    )
+                                                }
+
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Text(
+                                                        text = "종가",
+                                                        color = colors.black,
+                                                        style = typography.bodyMedium
+                                                    )
+
+                                                    Text(
+                                                        text = "${"%,d".format(price.dayClose)}원",
+                                                        color = colors.gray600,
+                                                        style = typography.label
+                                                    )
+                                                }
+                                            }
+
+                                            Box(
+                                                modifier = Modifier
+                                                    .width(1.dp)
+                                                    .fillMaxHeight()
+                                                    .background(
+                                                        color = colors.gray100,
+                                                        shape = RoundedCornerShape(size = 1.dp)
+                                                    )
                                             )
 
-                                            Text(
-                                                text = "${"%,d".format(price.tradingPrice)}원",
-                                                color = colors.gray600,
-                                                style = typography.label
-                                            )
+                                            Column(
+                                                modifier = Modifier.weight(1f),
+                                                verticalArrangement = Arrangement.spacedBy(14.dp)
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Text(
+                                                        text = "거래량",
+                                                        color = colors.black,
+                                                        style = typography.bodyMedium
+                                                    )
+
+                                                    Text(
+                                                        text = "${"%,d".format(price.tradingVolume)}개",
+                                                        color = colors.gray600,
+                                                        style = typography.label
+                                                    )
+                                                }
+
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Text(
+                                                        text = "거래대금",
+                                                        color = colors.black,
+                                                        style = typography.bodyMedium
+                                                    )
+
+                                                    Text(
+                                                        text = "${"%,d".format(price.tradingPrice)}원",
+                                                        color = colors.gray600,
+                                                        style = typography.label
+                                                    )
+                                                }
+                                            }
                                         }
                                     }
                                 }
+
+                                "뉴스" -> {
+                                    NewsCard(
+                                        news = news
+                                    )
+                                }
+
+                                "커뮤니티" -> {
+                                    CommunityCard(
+                                        community = community
+                                    )
+                                }
+
+                                else -> {}
                             }
                         }
-                        "뉴스" -> {
-                            NewsCard(
-                                news = news
-                            )
-                        }
-                        "커뮤니티" -> {
-                            CommunityCard(
-                                community = community
-                            )
-                        }
-                        else -> { }
                     }
                 }
-            }
-        }
+            },
+            floatingActionButton = {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(
+                            color = colors.main,
+                            shape = RoundedCornerShape(size = 18.dp)
+                        )
+                        .padding(12.dp)
+                ) {
+                    PencilIcon(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .JusicoolClickable { navigateToCommunityPost() }
+                    )
+                }
+            },
+            floatingActionButtonPosition = FabPosition.End
+        )
     }
 }
 
@@ -575,10 +613,11 @@ fun ChartScreenPreview() {
         type = "",
         krwBalance = 1,
         onRefresh = {},
-        navigateToBuy = { _,_,_,_,_ -> },
-        navigateToSell = { _,_,_,_ -> },
-        navigateToReserveBuy = { _,_,_,_,_ ->},
-        navigateToReserveSell = { _,_,_,_ -> }
+        navigateToBuy = { _, _, _, _, _ -> },
+        navigateToSell = { _, _, _, _ -> },
+        navigateToReserveBuy = { _, _, _, _, _ -> },
+        navigateToReserveSell = { _, _, _, _ -> },
+        navigateToCommunityPost = {}
     )
 }
 
