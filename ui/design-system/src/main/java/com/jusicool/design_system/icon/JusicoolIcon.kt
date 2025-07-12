@@ -215,3 +215,16 @@ fun SendIcon(
         tint = tint
     )
 }
+
+@Composable
+fun PencilIcon(
+    modifier: Modifier = Modifier,
+    tint: Color = Color.Unspecified
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.lucide_pencil_line),
+        contentDescription = "pencil_icon",
+        modifier = modifier,
+        tint = tint
+    )
+}
