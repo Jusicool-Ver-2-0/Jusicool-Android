@@ -31,7 +31,7 @@ import com.meister.community.component.WriteForm
 internal fun WritePostRoute(
     modifier: Modifier = Modifier,
     viewModel: WritePostViewModel = hiltViewModel(),
-    onBackPressed: () -> Unit,
+    popUpBackStack: () -> Unit,
 ) {
     val title by viewModel.title.collectAsStateWithLifecycle()
     val content by viewModel.content.collectAsStateWithLifecycle()
@@ -39,7 +39,7 @@ internal fun WritePostRoute(
 
     LaunchedEffect(uiState) {
         when (uiState) {
-            is WritePostUiState.Success -> onBackPressed()
+            is WritePostUiState.Success -> popUpBackStack()
             is WritePostUiState.Error -> {
                 // Handle error state
             }
@@ -57,7 +57,7 @@ internal fun WritePostRoute(
         onTitleChange = viewModel::onTitleChange,
         onContentChange = viewModel::onContentChange,
         onPostSubmit = viewModel::submitPost,
-        onBackPressed = onBackPressed
+        popUpBackStack = popUpBackStack
     )
 }
 
@@ -69,7 +69,7 @@ private fun WritePostScreen(
     onTitleChange: (String) -> Unit,
     onContentChange: (String) -> Unit,
     onPostSubmit: () -> Unit,
-    onBackPressed: () -> Unit,
+    popUpBackStack: () -> Unit,
 ) {
     val submitButtonState =
         if (title.isNotBlank() && content.isNotBlank()) ButtonState.Enable
@@ -84,7 +84,7 @@ private fun WritePostScreen(
                     LeftClarityArrowLineIcon(
                         modifier = Modifier
                             .size(24.dp)
-                            .JusicoolClickable(onClick = onBackPressed),
+                            .JusicoolClickable(onClick = popUpBackStack),
                     )
                 },
             )
@@ -127,6 +127,6 @@ private fun WritePostScreenPreview() {
         onTitleChange = {},
         onContentChange = {},
         onPostSubmit = {},
-        onBackPressed = {}
+        popUpBackStack = {}
     )
 }
