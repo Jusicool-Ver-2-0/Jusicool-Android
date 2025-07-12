@@ -48,18 +48,11 @@ internal fun ChartListRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-
-    when {
-        uiState.isLoading -> {}
-        uiState.errorMessage != null -> {}
-        else -> {
-            ChartListScreen(
-                modifier = modifier,
-                uiState = uiState,
-                onSearchCLick = onSearchClick
-            )
-        }
-    }
+    ChartListScreen(
+        modifier = modifier,
+        uiState = uiState,
+        onSearchCLick = onSearchClick
+    )
 }
 
 

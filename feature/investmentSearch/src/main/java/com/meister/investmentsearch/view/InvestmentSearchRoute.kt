@@ -38,45 +38,37 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 internal fun InvestmentSearchRoute(
     modifier: Modifier = Modifier,
-    popUpBackStack: () -> Unit,
+    popBackStack: () -> Unit,
     viewModel: InvestmentSearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-
-    when {
-        uiState.isLoading -> {}
-        uiState.errorMessage != null -> {}
-        else -> {
-            InvestmentSearchScreen(
-                modifier = modifier,
-                uiState = uiState,
-                popUpBackStack = popUpBackStack,
-                searchInvestment = viewModel::searchInvestment,
-                onSearchTextChange = viewModel::onSearchTextChange,
-            )
-        }
-    }
+    InvestmentSearchScreen(
+        modifier = modifier,
+        searchTextState = "",
+        uiState = uiState,
+        popBackStack = popBackStack,
+        onSearchTextChange = viewModel::onSearchTextChange,
+    )
 }
 
 @Composable
 private fun InvestmentSearchScreen(
     modifier: Modifier = Modifier,
+    searchTextState: String,
     uiState: InvestmentSearchUiState,
-    popUpBackStack: () -> Unit,
-    searchInvestment: (String) -> Unit,
-    onSearchTextChange: (String) -> Unit
+    popBackStack: () -> Unit,
+    onSearchTextChange: (String) -> Unit,
 ) {
     JusicoolTheme { colors, _ ->
         Column(
             modifier = modifier.fillMaxSize()
         ) {
             SearchBox(
-                searchTextState = uiState.searchTextState,
                 popularKeyword = uiState.popularKeyword,
+                searchTextState = searchTextState,
                 onSearchTextChange = onSearchTextChange,
-                onArrowClick = popUpBackStack,
-                onSearchClick = { searchInvestment(it) }
+                onArrowClick = popBackStack,
             )
 
             Divider(
@@ -96,12 +88,13 @@ private fun InvestmentSearchScreen(
     }
 }
 
-@Preview(showBackground = true,backgroundColor = 0xFFFFFF)
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 private fun InvestmentSearchScreenPreview() {
     InvestmentSearchScreen(
+        searchTextState = "",
         onSearchTextChange = {},
-        popUpBackStack = {},
+        popBackStack = {},
         uiState = InvestmentSearchUiState(
             popularKeywordData = persistentListOf(
                 "삼성전자" to 12.1,
@@ -110,7 +103,6 @@ private fun InvestmentSearchScreenPreview() {
                 "카카오" to 10.3,
             ),
             isLoading = false,
-            searchTextState = "",
             popularKeyword = "삼성전자",
             resentSearchTagData = persistentListOf(
                 InvestmentSearchTagData(
@@ -136,7 +128,6 @@ private fun InvestmentSearchScreenPreview() {
             ),
             errorMessage = null,
         ),
-        searchInvestment = {},
     )
 }
 
@@ -203,7 +194,6 @@ private fun SearchBox(
     popularKeyword: String,
     onSearchTextChange: (String) -> Unit,
     onArrowClick: () -> Unit,
-    onSearchClick: (String) -> Unit
 ) {
     Row(
         modifier = modifier.padding(horizontal = 24.dp, vertical = 16.dp),
@@ -254,6 +244,8 @@ private fun SearchKeywordRow(
                     style = typography.bodySmall,
                 )
             }
+
+            Spacer(Modifier.weight(1f))
 
             Text(
                 text = changeRate.formatPercent(),
