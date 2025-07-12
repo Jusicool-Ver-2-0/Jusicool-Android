@@ -12,7 +12,8 @@ class GetTotalRecommendMarketListUseCase @Inject constructor(
     operator fun invoke(
         sortBy: SortOption = SortOption.BY_PRICE_DESC
     ): Flow<List<RecommendMarketWithPrice>> {
-        return combine(
+        return getStockRecommendMarketListUseCase()
+        combine(
             getStockRecommendMarketListUseCase(),
             getCryptoRecommendMarketListUseCase()
         ) { stocks, cryptos ->
