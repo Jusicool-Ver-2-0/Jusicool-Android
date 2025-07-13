@@ -41,6 +41,7 @@ dependencies {
     implementation(project(":feature:monthlyEarnings"))
     implementation(project(":feature:orderHistory"))
     implementation(project(":feature:community"))
+    implementation(project(":feature:assets"))
 
     implementation(libs.junit)
     implementation(libs.androidx.lifecycle.process)
