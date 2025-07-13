@@ -26,12 +26,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.TransparentTextField
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.utils.formatPercent
 import com.meister.investmentsearch.component.RecentSearchTag
 import com.meister.investmentsearch.viewModel.InvestmentSearchUiState
 import com.meister.investmentsearch.viewModel.InvestmentSearchViewModel
-import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -39,16 +38,19 @@ import kotlinx.collections.immutable.persistentListOf
 internal fun InvestmentSearchRoute(
     modifier: Modifier = Modifier,
     popBackStack: () -> Unit,
+    navigateToChart: (String, String) -> Unit,
     viewModel: InvestmentSearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val searchTextState by viewModel.searchQuery.collectAsStateWithLifecycle()
 
     InvestmentSearchScreen(
         modifier = modifier,
-        searchTextState = "",
+        searchTextState = searchTextState,
         uiState = uiState,
         popBackStack = popBackStack,
         onSearchTextChange = viewModel::onSearchTextChange,
+        navigateToChart = navigateToChart,
     )
 }
 
@@ -59,6 +61,7 @@ private fun InvestmentSearchScreen(
     uiState: InvestmentSearchUiState,
     popBackStack: () -> Unit,
     onSearchTextChange: (String) -> Unit,
+    navigateToChart: (String, String) -> Unit,
 ) {
     JusicoolTheme { colors, _ ->
         Column(
@@ -83,7 +86,14 @@ private fun InvestmentSearchScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            PopularKeywordSection(data = uiState.popularKeywordData)
+            if (searchTextState.isEmpty()) {
+                PopularKeywordSection(data = uiState.popularKeywordData)
+            } else {
+                SearchedMarketSection(
+                    data = uiState.popularKeywordData,
+                    navigateToChart = navigateToChart,
+                )
+            }
         }
     }
 }
@@ -128,6 +138,7 @@ private fun InvestmentSearchScreenPreview() {
             ),
             errorMessage = null,
         ),
+        navigateToChart = { investmentName, investmentChangeRate -> }
     )
 }
 
@@ -159,13 +170,14 @@ private fun RecentSearchSection(data: PersistentList<InvestmentSearchTagData>) {
 private fun PopularKeywordSection(
     data: PersistentList<Pair<String, Double>>,
 ) {
-    JusicoolTheme { _, typography ->
+    JusicoolTheme { colors, typography ->
         Row {
             Spacer(modifier = Modifier.width(24.dp))
 
             Text(
                 text = "인기 검색어",
                 style = typography.bodyMedium,
+                color = colors.black
             )
         }
 
@@ -186,6 +198,45 @@ private fun PopularKeywordSection(
     }
 }
 
+
+@Composable
+private fun SearchedMarketSection(
+    data: PersistentList<Pair<String, Double>>,
+    navigateToChart: (String, String) -> Unit,
+) {
+    JusicoolTheme { colors, typography ->
+        Row {
+            Spacer(modifier = Modifier.width(24.dp))
+
+            Text(
+                text = "검색 결과",
+                style = typography.bodyMedium,
+                color = colors.black,
+            )
+        }
+
+        Spacer(Modifier.height(11.dp))
+
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            itemsIndexed(data, key = { _, item -> item.first }) { index, item ->
+                SearchKeywordRow(
+                    modifier = Modifier.JusicoolClickable {
+                        navigateToChart(
+                            item.first,
+                            item.second.toString()
+                        )
+                    },
+                    order = index + 1,
+                    keyword = item.first,
+                    changeRate = item.second,
+                )
+            }
+        }
+    }
+}
 
 @Composable
 private fun SearchBox(
@@ -235,6 +286,7 @@ private fun SearchKeywordRow(
                 Text(
                     text = "$order",
                     style = typography.bodyMedium,
+                    color = colors.black,
                 )
 
                 Spacer(Modifier.width(50.dp))
@@ -242,13 +294,14 @@ private fun SearchKeywordRow(
                 Text(
                     text = keyword,
                     style = typography.bodySmall,
+                    color = colors.black,
                 )
             }
 
             Spacer(Modifier.weight(1f))
 
             Text(
-                text = changeRate.formatPercent(),
+                text = changeRate.toString(),
                 style = typography.bodySmall,
                 color = if (isPlus) colors.error else colors.main,
             )

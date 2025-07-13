@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface MarketDataSource {
     fun getMarketList(requestParam: String): Flow<List<MarketListResponse>>
+    fun searchMarket(query: String): Flow<List<MarketListResponse>>
 }

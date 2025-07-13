@@ -22,6 +22,8 @@ import com.jusicool.trade.navigation.tradeCompletedRoute
 import com.meister.community.navigation.navigateToWritePostRoute
 import com.meister.community.navigation.writePostRoute
 import com.meister.investmentsearch.navigation.chartListRoute
+import com.meister.investmentsearch.navigation.investmentSearchRoute
+import com.meister.investmentsearch.navigation.navigateToInvestmentSearchRoute
 import com.meister.monthlyearnings.navigation.monthlyEarningsRoute
 import com.meister.monthlyearnings.navigation.navigateToMonthlyEarningsRoute
 import com.meister.orderhistory.navigation.navigateToOrderHistoryRoute
@@ -63,15 +65,17 @@ fun JusicoolNavHost(
         )
 
         chartListRoute(
-            navigateToSearchInvestmentRoute = { /*TODO()*/ },
-            navigateToChart = {marketCode, koreanName -> navController.navigateToChartRoute(
-                marketCode = marketCode,
-                koreanName = koreanName,
-                type = "CRYPTO",
-                quantity = 0,
-                money = 100002316431413L,
-                krwBalance = 0L
-            ) }
+            navigateToSearchInvestmentRoute = navController::navigateToInvestmentSearchRoute,
+            navigateToChart = { marketCode, koreanName ->
+                navController.navigateToChartRoute(
+                    marketCode = marketCode,
+                    koreanName = koreanName,
+                    type = "CRYPTO",
+                    quantity = 0,
+                    money = 100002316431413L,
+                    krwBalance = 0L
+                )
+            }
         )
 
         buyRoute(
@@ -103,7 +107,21 @@ fun JusicoolNavHost(
             popBackStack = navController::popBackStack
         )
 
-        writePostRoute (
+        investmentSearchRoute(
+            navigateToChart = { marketCode, koreanName ->
+                navController.navigateToChartRoute(
+                    marketCode = marketCode,
+                    koreanName = koreanName,
+                    type = "CRYPTO",
+                    quantity = 0,
+                    money = 100002316431413L,
+                    krwBalance = 0L
+                )
+            },
+            popBackStack = navController::popBackStack
+        )
+
+        writePostRoute(
             popUpBackStack = navController::popBackStack
         )
     }
