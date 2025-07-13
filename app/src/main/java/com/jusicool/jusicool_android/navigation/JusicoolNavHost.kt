@@ -63,7 +63,15 @@ fun JusicoolNavHost(
         )
 
         chartListRoute(
-            navigateToSearchInvestmentRoute = { /*TODO()*/ }
+            navigateToSearchInvestmentRoute = { /*TODO()*/ },
+            navigateToChart = {marketCode, koreanName -> navController.navigateToChartRoute(
+                marketCode = marketCode,
+                koreanName = koreanName,
+                type = "CRYPTO",
+                quantity = 0,
+                money = 100002316431413L,
+                krwBalance = 0L
+            ) }
         )
 
         buyRoute(
