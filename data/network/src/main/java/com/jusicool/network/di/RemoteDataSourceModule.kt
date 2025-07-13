@@ -4,6 +4,8 @@ import com.jusicool.network.datasource.account.AccountDataSource
 import com.jusicool.network.datasource.account.AccountDataSourceImpl
 import com.jusicool.network.datasource.auth.AuthDataSource
 import com.jusicool.network.datasource.auth.AuthDataSourceImpl
+import com.jusicool.network.datasource.community.CommunityDataSource
+import com.jusicool.network.datasource.community.CommunityDataSourceImpl
 import com.jusicool.network.datasource.crypto.CryptoDataSource
 import com.jusicool.network.datasource.crypto.CryptoDataSourceImpl
 import com.jusicool.network.datasource.holding.HoldingDataSource
@@ -63,4 +65,9 @@ abstract class RemoteDataSourceModule {
     abstract fun provideKoreaInvestmentWebSocketManager(
         koreaInvestmentWebSocketManager: KoreaInvestmentWebSocketManager
     ): KoreaInvestmentWebSocketManagerInterface
+
+    @Binds
+    abstract fun bindCommunityDataSource(
+        communityDataSourceImpl: CommunityDataSourceImpl
+    ): CommunityDataSource
 }
