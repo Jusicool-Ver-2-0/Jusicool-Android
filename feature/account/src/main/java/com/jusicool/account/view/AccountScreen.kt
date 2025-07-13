@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -31,25 +30,17 @@ import com.jusicool.account.component.AssetList
 import com.jusicool.account.component.HoldingNewsCard
 import com.jusicool.account.viewModel.AccountViewModel
 import com.jusicool.account.viewModel.uiState.GetAccountUiState
-import com.jusicool.account.viewModel.uiState.GetHoldingsPriceUiState
 import com.jusicool.account.viewModel.uiState.GetMonthOrderUiState
 import com.jusicool.design_system.R
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.icon.RightArrowIcon
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.entity.market.Market
-import com.jusicool.entity.market.MarketType
 import com.jusicool.entity.order.OrderModel
-import com.jusicool.entity.price.HoldingWithCurrentPrice
 import com.jusicool.model.news.HoldingNewsModel
-import com.jusicool.usecase.holding.totalCurrentValue
-import com.jusicool.usecase.holding.totalInvestment
 import com.jusicool.utils.formatMoney
 import com.jusicool.utils.formatPercent
 import com.jusicool.utils.toSignedFormattedText
-import kotlinx.collections.immutable.persistentListOf
-
 
 @Composable
 internal fun AccountRoute(
@@ -165,8 +156,7 @@ private fun AccountScreen(
                                 currentAssetsPriceUiState,
                                 krwBalance,
                             ) {
-                                val totalValue =
-                                    if (currentAssetsPriceUiState is GetHoldingsPriceUiState.Success) {
+                                val totalValue = if (currentAssetsPriceUiState is GetHoldingsPriceUiState.Success) {
                                         currentAssetsPriceUiState.stockHoldings.sumOf { it.totalValue() } +
                                                 currentAssetsPriceUiState.cryptoHoldings.sumOf { it.totalValue() }
                                     } else {
@@ -187,14 +177,11 @@ private fun AccountScreen(
                                     val stockHoldings = currentAssetsPriceUiState.stockHoldings
                                     val cryptoHoldings = currentAssetsPriceUiState.cryptoHoldings
 
-                                    val totalInvestment =
-                                        stockHoldings.totalInvestment() + cryptoHoldings.totalInvestment()
-                                    val totalCurrentValue =
-                                        stockHoldings.totalCurrentValue() + cryptoHoldings.totalCurrentValue()
+                                    val totalInvestment = stockHoldings.totalInvestment() + cryptoHoldings.totalInvestment()
+                                    val totalCurrentValue = stockHoldings.totalCurrentValue() + cryptoHoldings.totalCurrentValue()
 
                                     val profit = totalCurrentValue - totalInvestment
-                                    val rate =
-                                        if (totalInvestment != 0) (profit.toFloat() / totalInvestment) * 100 else 0f
+                                    val rate = if (totalInvestment != 0) (profit.toFloat() / totalInvestment) * 100 else 0f
 
                                     Pair(profit, rate)
                                 } else {

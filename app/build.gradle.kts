@@ -43,6 +43,7 @@ dependencies {
     implementation(project(":feature:community"))
 
     implementation(libs.junit)
+    implementation(libs.androidx.lifecycle.process)
     androidTestImplementation(libs.androidx.test.ext)
     implementation(libs.app.update.ktx)
 }
