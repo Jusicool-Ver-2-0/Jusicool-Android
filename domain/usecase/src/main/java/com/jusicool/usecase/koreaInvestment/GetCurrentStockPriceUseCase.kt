@@ -23,7 +23,7 @@ class GetCurrentStockPriceUseCase @Inject constructor(
                 updatedMarkets.add(it)
             }
             emit(updatedMarkets)
-            delay(300)
+            delay(400)
         }
     }
 }

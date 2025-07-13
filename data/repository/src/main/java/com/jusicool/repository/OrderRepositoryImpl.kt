@@ -3,6 +3,7 @@ package com.jusicool.repository
 import com.jusicool.entity.order.BuyRequestModel
 import com.jusicool.entity.order.BuyReserveModel
 import com.jusicool.entity.order.BuyResponseModel
+import com.jusicool.entity.order.MonthlyRate
 import com.jusicool.entity.order.OrderModel
 import com.jusicool.entity.order.SellRequestModel
 import com.jusicool.entity.order.SellReserveModel
@@ -21,6 +22,10 @@ class OrderRepositoryImpl @Inject constructor(
 ) : OrderRepository {
     override fun getMonthOrder(): Flow<OrderModel> {
         return orderDataSource.getMonthOrder().map { it.toModel() }
+    }
+
+    override fun getMonthlyRate(): Flow<MonthlyRate> {
+        return orderDataSource.getMonthlyRate().map { it.toEntity() }
     }
 
     override fun postBuy(marketCode: String, quantity: BuyRequestModel): Flow<BuyResponseModel> {

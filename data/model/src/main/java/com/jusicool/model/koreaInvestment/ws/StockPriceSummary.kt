@@ -1,36 +1,30 @@
 package com.jusicool.model.koreaInvestment.ws
 
-import android.util.Log
-
 data class StockPriceSummary(
-    val stockCode: String,
-    val currentPrice: Double,
-    val prevDiffPrice: Double,
-    val prevDiffRatio: Double,
-    val prevDiffSign: Int,
-    val time: String
+    val stockCode: String,       // MKSC_SHRN_ISCD (0)
+    val prevDiffRatio: Double,    // PRDY_CTRT (5)
+    val currentPrice: Double,    // STCK_PRPR (2)
+    val prevDiffPrice: Double,   // PRDY_VRSS (4)
+    val prevDiffSign: Int,       // PRDY_VRSS_SIGN (3)
+    val time: String,            // STCK_CNTG_HOUR (1)
 ) {
     companion object {
         fun parseStockPriceSummary(rawData: String): StockPriceSummary? {
-            Log.d("Raw input:", rawData)
+            val splitData = rawData.split("^")
+            if (splitData.size <= 52) return null
 
-            val parts = rawData.split("|")
-            if (parts.size < 4) {
-                return null
+            return try {
+                StockPriceSummary(
+                    stockCode = splitData[0],
+                    time = splitData[1],
+                    currentPrice = splitData[2].toDoubleOrNull() ?: 0.0,
+                    prevDiffPrice = splitData[4].toDoubleOrNull() ?: 0.0,
+                    prevDiffSign = splitData[3].toIntOrNull() ?: 0,
+                    prevDiffRatio = splitData[5].toDoubleOrNull() ?: 0.0
+                )
+            } catch (e: Exception) {
+                null
             }
-
-            val body = parts[3]
-
-            val splitData = body.split("^")
-
-            return StockPriceSummary(
-                stockCode = splitData[0],
-                time = splitData[1],
-                currentPrice = splitData[3].toDoubleOrNull() ?: 0.0,
-                prevDiffPrice = splitData[51].toDoubleOrNull() ?: 0.0,
-                prevDiffSign = splitData[53].toIntOrNull() ?: 0,
-                prevDiffRatio = splitData[54].toDoubleOrNull() ?: 0.0
-            )
         }
     }
 }

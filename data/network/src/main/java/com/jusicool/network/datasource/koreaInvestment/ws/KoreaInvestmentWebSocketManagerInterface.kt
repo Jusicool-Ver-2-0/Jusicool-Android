@@ -4,8 +4,8 @@ import com.jusicool.model.koreaInvestment.ws.StockPriceSummary
 import kotlinx.coroutines.flow.StateFlow
 
 interface KoreaInvestmentWebSocketManagerInterface {
-    val stockTickerFlow: StateFlow<StockPriceSummary?>
+    val stockTickerMapFlow: StateFlow<List<StockPriceSummary>>
 
-    fun connect(stockCode: String)
+    fun connect(stockCodes: List<String>)
     fun disconnect()
 }

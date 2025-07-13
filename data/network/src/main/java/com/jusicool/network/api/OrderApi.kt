@@ -3,6 +3,7 @@ package com.jusicool.network.api
 import com.jusicool.model.order.BuyRequest
 import com.jusicool.model.order.BuyReserveRequest
 import com.jusicool.model.order.BuyResponse
+import com.jusicool.model.order.MonthlyRateResponse
 import com.jusicool.model.order.OrderHistoryResponse
 import com.jusicool.model.order.OrderResponse
 import com.jusicool.model.order.SellRequest
@@ -16,6 +17,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface OrderApi {
+
     @GET("/order/my")
     suspend fun getOrderHistory(
         @Query("type") type: String,
@@ -24,8 +26,8 @@ interface OrderApi {
     @GET("/order/month")
     suspend fun getMonthOrder(): OrderResponse
 
-    @GET("/order/my")
-    suspend fun getMonthlyRate(): List<OrderHistoryResponse>
+    @GET("/order/month/rate")
+    suspend fun getMonthlyRate(): MonthlyRateResponse
 
   @POST("/order/buy/{market_code}")
     suspend fun postBuy(

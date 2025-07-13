@@ -16,7 +16,7 @@ data class RecommendMarketWithPrice(
         require(!profitRate.isNaN()) { "profitRate는 숫자여야 합니다." }
     }
 
-    val profit: Int get() = (currentPrice * profitRate).toInt()
+    val profit: Int get() = ((currentPrice * profitRate) / 100).toInt()
     val isPositive: Boolean get() = profit > 0
     val isNegative: Boolean get() = profit < 0
 }

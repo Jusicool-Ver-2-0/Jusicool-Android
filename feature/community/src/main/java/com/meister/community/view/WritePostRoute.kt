@@ -20,20 +20,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.design_system.component.button.JusicoolFilledButton
 import com.jusicool.design_system.component.button.state.ButtonState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
-import com.jusicool.design_system.component.textField.TransparentTextField
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.meister.community.viewModel.WritePostViewModel
 import com.meister.community.viewModel.uiState.WritePostUiState
 import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import com.meister.community.component.WriteForm
 
 @Composable
 internal fun WritePostRoute(
     modifier: Modifier = Modifier,
     viewModel: WritePostViewModel = hiltViewModel(),
-    onBackPressed: () -> Unit,
+    popUpBackStack: () -> Unit,
 ) {
     val title by viewModel.title.collectAsStateWithLifecycle()
     val content by viewModel.content.collectAsStateWithLifecycle()
@@ -41,7 +39,7 @@ internal fun WritePostRoute(
 
     LaunchedEffect(uiState) {
         when (uiState) {
-            is WritePostUiState.Success -> onBackPressed()
+            is WritePostUiState.Success -> popUpBackStack()
             is WritePostUiState.Error -> {
                 // Handle error state
             }
@@ -59,7 +57,7 @@ internal fun WritePostRoute(
         onTitleChange = viewModel::onTitleChange,
         onContentChange = viewModel::onContentChange,
         onPostSubmit = viewModel::submitPost,
-        onBackPressed = onBackPressed
+        popUpBackStack = popUpBackStack
     )
 }
 
@@ -71,12 +69,11 @@ private fun WritePostScreen(
     onTitleChange: (String) -> Unit,
     onContentChange: (String) -> Unit,
     onPostSubmit: () -> Unit,
-    onBackPressed: () -> Unit,
+    popUpBackStack: () -> Unit,
 ) {
     val submitButtonState =
         if (title.isNotBlank() && content.isNotBlank()) ButtonState.Enable
         else ButtonState.Disable
-        val scrollState = rememberScrollState()
 
     JusicoolTheme { colors, typography ->
         Column(modifier = modifier.fillMaxSize()) {
@@ -87,7 +84,7 @@ private fun WritePostScreen(
                     LeftClarityArrowLineIcon(
                         modifier = Modifier
                             .size(24.dp)
-                            .JusicoolClickable(onClick = onBackPressed),
+                            .JusicoolClickable(onClick = popUpBackStack),
                     )
                 },
             )
@@ -96,11 +93,10 @@ private fun WritePostScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(scrollState)
                     .padding(horizontal = 24.dp)
                     .padding(top = 12.dp, bottom = 20.dp),
             ) {
-                WritePostForm(
+                WriteForm(
                     title = title,
                     content = content,
                     onTitleChange = onTitleChange,
@@ -123,42 +119,6 @@ private fun WritePostScreen(
 }
 
 @Composable
-private fun WritePostForm(
-    modifier: Modifier = Modifier,
-    title: String,
-    content: String,
-    onTitleChange: (String) -> Unit,
-    onContentChange: (String) -> Unit,
-) {
-    val scrollState = rememberScrollState()
-
-    JusicoolTheme { colors, typography ->
-        Column(
-            modifier = modifier
-                .verticalScroll(scrollState)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            TransparentTextField(
-                textState = title,
-                placeHolder = "제목을 입력하세요",
-                onTextChange = onTitleChange,
-                textStyle = typography.titleSmall.copy(color = colors.black),
-                placeholderStyle = typography.titleSmall.copy(color = colors.gray200),
-            )
-
-            TransparentTextField(
-                textState = content,
-                placeHolder = "내용을 입력하세요",
-                onTextChange = onContentChange,
-                textStyle = typography.bodySmall.copy(color = colors.black),
-                placeholderStyle = typography.bodySmall.copy(color = colors.gray200),
-            )
-        }
-    }
-}
-
-@Composable
 @Preview(showBackground = true)
 private fun WritePostScreenPreview() {
     WritePostScreen(
@@ -167,17 +127,6 @@ private fun WritePostScreenPreview() {
         onTitleChange = {},
         onContentChange = {},
         onPostSubmit = {},
-        onBackPressed = {}
-    )
-}
-
-@Composable
-@Preview(showBackground = true)
-private fun WritePostFormPreview() {
-    WritePostForm(
-        title = "",
-        content = "",
-        onTitleChange = {},
-        onContentChange = {}
+        popUpBackStack = {}
     )
 }

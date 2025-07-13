@@ -44,19 +44,13 @@ internal fun InvestmentSearchRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchTextState by viewModel.searchQuery.collectAsStateWithLifecycle()
 
-    when {
-        uiState.isLoading -> {}
-        uiState.errorMessage != null -> {}
-        else -> {
-            InvestmentSearchScreen(
-                modifier = modifier,
-                searchTextState = searchTextState,
-                uiState = uiState,
-                popBackStack= popBackStack,
-                onSearchTextChange = viewModel::onSearchTextChange,
-            )
-        }
-    }
+    InvestmentSearchScreen(
+        modifier = modifier,
+        searchTextState = "",
+        uiState = uiState,
+        popBackStack = popBackStack,
+        onSearchTextChange = viewModel::onSearchTextChange,
+    )
 }
 
 @Composable

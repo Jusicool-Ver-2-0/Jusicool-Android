@@ -31,14 +31,13 @@ import com.jusicool.account.component.AssetList
 import com.jusicool.account.component.HoldingNewsCard
 import com.jusicool.account.viewModel.AccountViewModel
 import com.jusicool.account.viewModel.uiState.GetAccountUiState
-import com.jusicool.account.viewModel.uiState.GetHoldingUiState
 import com.jusicool.account.viewModel.uiState.GetHoldingsPriceUiState
 import com.jusicool.account.viewModel.uiState.GetMonthOrderUiState
 import com.jusicool.design_system.R
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
+import com.jusicool.design_system.icon.RightArrowIcon
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.entity.holding.HoldingModel
 import com.jusicool.entity.market.Market
 import com.jusicool.entity.market.MarketType
 import com.jusicool.entity.order.OrderModel
@@ -50,14 +49,13 @@ import com.jusicool.utils.formatMoney
 import com.jusicool.utils.formatPercent
 import com.jusicool.utils.toSignedFormattedText
 import kotlinx.collections.immutable.persistentListOf
-import com.jusicool.design_system.icon.RightArrowIcon
-import kotlinx.collections.immutable.toPersistentList
 
 
 @Composable
 internal fun AccountRoute(
     viewModel: AccountViewModel = hiltViewModel(),
     navigateToOrderHistory: () -> Unit,
+    navigateToMonthlyEarningsRoute: () -> Unit,
     navigateToChart: (marketCode: String, name: String, type: String, quantity: Int, money: Long, krwBalance: Long) -> Unit
 ) {
     val accountUiState by viewModel.accountUiState.collectAsStateWithLifecycle()
@@ -88,6 +86,7 @@ internal fun AccountRoute(
         getMonthOrderData = monthOrderUiState,
         holdingNewsModel = mockHoldingNewsModel,
         navigateToOrderHistory = navigateToOrderHistory,
+        navigateToMonthlyEarningsRoute = navigateToMonthlyEarningsRoute,
         navigateToChart = navigateToChart
     )
 }
@@ -100,6 +99,7 @@ private fun AccountScreen(
     getMonthOrderData: GetMonthOrderUiState,
     holdingNewsModel: HoldingNewsModel,
     navigateToOrderHistory: () -> Unit,
+    navigateToMonthlyEarningsRoute: () -> Unit,
     navigateToChart: (marketCode: String, name: String, type: String, quantity: Int, money: Long, krwBalance: Long) -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -294,7 +294,7 @@ private fun AccountScreen(
                                 )
 
                                 Row(
-                                    modifier = Modifier.JusicoolClickable { /*TODO()*/ },
+                                    modifier = Modifier.JusicoolClickable(onClick = navigateToMonthlyEarningsRoute),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     val monthProfitText = when (getMonthOrderData) {
@@ -390,6 +390,7 @@ private fun AccountScreenPreview() {
         getMonthOrderData = mockMonthOrderUiState,
         holdingNewsModel = mockHoldingNewsModel,
         navigateToOrderHistory = { },
+        navigateToMonthlyEarningsRoute = { },
         navigateToChart = { marketCode, name, type, quantity, money, krwBalance -> }
     )
 }

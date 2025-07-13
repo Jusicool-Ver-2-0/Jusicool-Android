@@ -25,41 +25,35 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
-import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.utils.toSignedFormattedText
-import com.meister.investmentsearch.component.RecentSearchTag
-import com.meister.investmentsearch.viewModel.ChartListUiState
-import com.meister.investmentsearch.viewModel.ChartListViewModel
 import com.jusicool.design_system.icon.RightArrowIcon
 import com.jusicool.design_system.icon.SearchIcon
 import com.jusicool.design_system.icon.UnionIcon
+import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.entity.market.MarketType
 import com.jusicool.entity.market.RecommendMarketWithPrice
+import com.meister.investmentsearch.component.RecentSearchTag
+import com.meister.investmentsearch.viewModel.ChartListUiState
+import com.meister.investmentsearch.viewModel.ChartListViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
-import kotlin.math.abs
 
 @Composable
 internal fun ChartListRoute(
     modifier: Modifier = Modifier,
     onSearchClick: () -> Unit,
-    viewModel: ChartListViewModel = hiltViewModel()
+    navigateToChart: (String, String) -> Unit,
+    viewModel: ChartListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-
-    when {
-        uiState.isLoading -> {}
-        uiState.errorMessage != null -> {}
-        else -> {
-            ChartListScreen(
-                modifier = modifier,
-                uiState = uiState,
-                onSearchCLick = onSearchClick
-            )
-        }
-    }
+    ChartListScreen(
+        modifier = modifier,
+        uiState = uiState,
+        onSearchCLick = onSearchClick,
+        navigateToChart = navigateToChart,
+    )
 }
 
 
@@ -68,6 +62,7 @@ internal fun ChartListScreen(
     modifier: Modifier = Modifier,
     uiState: ChartListUiState,
     onSearchCLick: () -> Unit,
+    navigateToChart: (String, String) -> Unit
 ) {
     JusicoolTheme { colors, _ ->
         Column(
@@ -89,7 +84,10 @@ internal fun ChartListScreen(
                 Spacer(Modifier.height(16.dp))
             }
 
-            ChartListSection(data = uiState.chartListData)
+            ChartListSection(
+                data = uiState.chartListData,
+                navigateToChart = navigateToChart
+            )
         }
     }
 }
@@ -155,7 +153,8 @@ private fun ChartListScreenPreview() {
                 ),
             )
         ),
-        onSearchCLick = {}
+        onSearchCLick = {},
+        navigateToChart = { _, _ -> },
     )
 }
 
@@ -178,7 +177,10 @@ private fun RecentSearchSection(data: PersistentList<InvestmentSearchTagData>) {
 }
 
 @Composable
-private fun ChartListSection(data: PersistentList<RecommendMarketWithPrice>) {
+private fun ChartListSection(
+    data: PersistentList<RecommendMarketWithPrice>,
+    navigateToChart: (String, String) -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -186,20 +188,30 @@ private fun ChartListSection(data: PersistentList<RecommendMarketWithPrice>) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         itemsIndexed(data, key = { _, item -> item.market }) { _, item ->
-            ChartItem(data = item)
+            ChartItem(
+                data = item,
+                navigateToChart = navigateToChart,
+            )
         }
     }
 }
 
 @Composable
-private fun ChartItem(data: RecommendMarketWithPrice) {
+private fun ChartItem(
+    data: RecommendMarketWithPrice,
+    navigateToChart: (String, String) -> Unit
+) {
     JusicoolTheme { colors, typography ->
         val textColor = if (data.isPositive) colors.error
-        else if (data.isNegative) colors.gray400
-        else colors.main
+        else if (data.isNegative) colors.main
+        else colors.gray400
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .JusicoolClickable {
+                    navigateToChart(data.market, data.koreanName)
+                },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -222,7 +234,8 @@ private fun ChartItem(data: RecommendMarketWithPrice) {
 
                 Text(
                     text = data.koreanName,
-                    style = typography.subTitle
+                    style = typography.subTitle,
+                    color = colors.black,
                 )
             }
             Column(
@@ -230,17 +243,17 @@ private fun ChartItem(data: RecommendMarketWithPrice) {
                 horizontalAlignment = Alignment.End,
             ) {
                 Text(
-                    text = "11,111,131 원",
+                    text = "${data.currentPrice} 원",
                     style = typography.bodySmall,
                     color = colors.black,
                     textAlign = TextAlign.End,
                 )
 
-                Text(
-                    text = "${data.profit.toSignedFormattedText()} (${abs(data.profitRate)}%)",
-                    style = typography.label,
-                    color = textColor,
-                )
+//                Text(
+//                    text = "${data.profit.toSignedFormattedText()} (${abs(data.profitRate)}%)",
+//                    style = typography.label,
+//                    color = textColor,
+//                )
             }
         }
     }
