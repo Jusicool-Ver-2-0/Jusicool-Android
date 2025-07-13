@@ -30,12 +30,13 @@ import com.meister.community.component.WriteForm
 @Composable
 internal fun WritePostRoute(
     modifier: Modifier = Modifier,
+    marketCode: String,
     viewModel: WritePostViewModel = hiltViewModel(),
     popUpBackStack: () -> Unit,
 ) {
     val title by viewModel.title.collectAsStateWithLifecycle()
     val content by viewModel.content.collectAsStateWithLifecycle()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.writePostUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState) {
         when (uiState) {
@@ -52,6 +53,7 @@ internal fun WritePostRoute(
 
     WritePostScreen(
         modifier = modifier,
+        marketCode = marketCode,
         title = title,
         content = content,
         onTitleChange = viewModel::onTitleChange,
@@ -64,11 +66,12 @@ internal fun WritePostRoute(
 @Composable
 private fun WritePostScreen(
     modifier: Modifier = Modifier,
+    marketCode: String,
     title: String,
     content: String,
     onTitleChange: (String) -> Unit,
     onContentChange: (String) -> Unit,
-    onPostSubmit: () -> Unit,
+    onPostSubmit: (String) -> Unit,
     popUpBackStack: () -> Unit,
 ) {
     val submitButtonState =
@@ -111,7 +114,7 @@ private fun WritePostScreen(
                     state = submitButtonState,
                     filledColor = colors.main,
                     filledDisableColor = colors.gray400,
-                    onClick = onPostSubmit
+                    onClick = { onPostSubmit(marketCode) }
                 )
             }
         }
@@ -122,6 +125,7 @@ private fun WritePostScreen(
 @Preview(showBackground = true)
 private fun WritePostScreenPreview() {
     WritePostScreen(
+        marketCode = "",
         title = "제목 예시",
         content = "내용 예시",
         onTitleChange = {},

@@ -4,6 +4,7 @@ import android.util.Log
 import com.jusicool.network.BuildConfig
 import com.jusicool.network.api.AccountApi
 import com.jusicool.network.api.AuthApi
+import com.jusicool.network.api.CommunityApi
 import com.jusicool.network.api.CryptoApi
 import com.jusicool.network.api.HoldingApi
 import com.jusicool.network.api.KoreaInvestmentApi
@@ -170,4 +171,8 @@ object NetworkModule {
     @Provides
     fun provideKoreaInvestmentApi(@KoreaInvestmentRetrofit retrofit: Retrofit): KoreaInvestmentApi =
         retrofit.create(KoreaInvestmentApi::class.java)
+
+    @Provides
+    fun provideCommunityApi(@BaseApiRetrofit retrofit: Retrofit): CommunityApi =
+        retrofit.create(CommunityApi::class.java)
 }
