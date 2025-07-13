@@ -6,7 +6,6 @@ import javax.inject.Inject
 class GetMonthOrderUseCase @Inject constructor(
     private val orderRepository: OrderRepository
 ) {
-    operator fun invoke() = runCatching {
+    operator fun invoke() =
         orderRepository.getMonthOrder()
-    }
 }
