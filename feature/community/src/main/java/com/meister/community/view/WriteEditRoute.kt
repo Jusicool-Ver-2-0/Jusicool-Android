@@ -7,11 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,17 +22,18 @@ import com.jusicool.design_system.component.button.JusicoolFilledButton
 import com.jusicool.design_system.component.button.state.ButtonState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
-import com.jusicool.design_system.theme.JusicoolTheme
-import com.meister.community.viewModel.WritePostViewModel
-import com.meister.community.viewModel.uiState.WritePostUiState
 import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
+import com.jusicool.design_system.theme.JusicoolTheme
+import com.meister.community.component.CommonAlertDialog
 import com.meister.community.component.WriteForm
+import com.meister.community.viewModel.WriteEditViewModel
+import com.meister.community.viewModel.uiState.WriteEditUiState
 
 @Composable
-internal fun WritePostRoute(
+internal fun WriteEditRoute(
     modifier: Modifier = Modifier,
-    viewModel: WritePostViewModel = hiltViewModel(),
-    popUpBackStack: () -> Unit,
+    viewModel: WriteEditViewModel = hiltViewModel(),
+    popBackStack: () -> Unit,
 ) {
     val title by viewModel.title.collectAsStateWithLifecycle()
     val content by viewModel.content.collectAsStateWithLifecycle()
@@ -39,52 +41,53 @@ internal fun WritePostRoute(
 
     LaunchedEffect(uiState) {
         when (uiState) {
-            is WritePostUiState.Success -> popUpBackStack()
-            is WritePostUiState.Error -> {
+            is WriteEditUiState.Success -> popBackStack()
+            is WriteEditUiState.Error -> {
                 // Handle error state
             }
 
-            is WritePostUiState.Loading -> {
+            is WriteEditUiState.Loading -> {
                 // Handle loading state
             }
         }
     }
 
-    WritePostScreen(
+    WriteEditScreen(
         modifier = modifier,
         title = title,
         content = content,
         onTitleChange = viewModel::onTitleChange,
         onContentChange = viewModel::onContentChange,
-        onPostSubmit = viewModel::submitPost,
-        popUpBackStack = popUpBackStack
+        onPostSubmit = viewModel::editPost,
+        popBackStack = popBackStack
     )
 }
 
 @Composable
-private fun WritePostScreen(
+private fun WriteEditScreen(
     modifier: Modifier = Modifier,
     title: String,
     content: String,
     onTitleChange: (String) -> Unit,
     onContentChange: (String) -> Unit,
     onPostSubmit: () -> Unit,
-    popUpBackStack: () -> Unit,
+    popBackStack: () -> Unit,
 ) {
     val submitButtonState =
         if (title.isNotBlank() && content.isNotBlank()) ButtonState.Enable
         else ButtonState.Disable
+    var editCancelDialog by remember { mutableStateOf(false) }
 
-    JusicoolTheme { colors, typography ->
+    JusicoolTheme { colors, _ ->
         Column(modifier = modifier.fillMaxSize()) {
             JusicoolTopBar(
                 modifier = Modifier.fillMaxWidth(),
-                betweenText = "글 작성",
+                betweenText = "글 수정",
                 startIcon = {
                     LeftClarityArrowLineIcon(
                         modifier = Modifier
                             .size(24.dp)
-                            .JusicoolClickable(onClick = popUpBackStack),
+                            .JusicoolClickable(onClick = { editCancelDialog = true }),
                     )
                 },
             )
@@ -102,12 +105,12 @@ private fun WritePostScreen(
                     onTitleChange = onTitleChange,
                     onContentChange = onContentChange,
                 )
-                
+
                 Spacer(modifier = Modifier.weight(1f))
 
                 JusicoolFilledButton(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "올리기",
+                    text = "수정하기",
                     state = submitButtonState,
                     filledColor = colors.main,
                     filledDisableColor = colors.gray400,
@@ -115,18 +118,30 @@ private fun WritePostScreen(
                 )
             }
         }
+
+        if (editCancelDialog) {
+            CommonAlertDialog(
+                contentText = "수정을 그만둘까요?",
+                onDismissRequest = { editCancelDialog = false },
+                onConfirm = {
+                    editCancelDialog = false
+                    popBackStack()
+                }
+            )
+        }
     }
 }
 
+
 @Composable
 @Preview(showBackground = true)
-private fun WritePostScreenPreview() {
-    WritePostScreen(
+private fun WriteEditScreenPreview() {
+    WriteEditScreen(
         title = "제목 예시",
         content = "내용 예시",
         onTitleChange = {},
         onContentChange = {},
         onPostSubmit = {},
-        popUpBackStack = {}
+        popBackStack = {}
     )
 }

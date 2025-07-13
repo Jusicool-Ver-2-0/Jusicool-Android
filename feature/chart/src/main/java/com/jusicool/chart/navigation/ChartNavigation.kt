@@ -28,6 +28,7 @@ fun NavGraphBuilder.chartRoute(
     navigateToSell: (String,String, Int, String) -> Unit,
     navigateToReserveBuy: (String,String, Long, Long, String) -> Unit,
     navigateToReserveSell: (String, String, Int, String) -> Unit,
+    navigateToCommunityPost: () -> Unit
 ) {
     composable(
         route = "$chartRoute/{marketCode}/{koreanName}/{type}/{quantity}/{money}/{krwBalance}",
@@ -57,6 +58,7 @@ fun NavGraphBuilder.chartRoute(
             navigateToSell = navigateToSell,
             navigateToReserveBuy = navigateToReserveBuy,
             navigateToReserveSell = navigateToReserveSell,
+            navigateToCommunityPost = navigateToCommunityPost,
             popUpBackStack = popUpBackStack
         )
     }
