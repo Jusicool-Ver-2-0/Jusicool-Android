@@ -284,6 +284,7 @@ private fun SearchKeywordRow(
                 Text(
                     text = "$order",
                     style = typography.bodyMedium,
+                    color = colors.black,
                 )
 
                 Spacer(Modifier.width(50.dp))
