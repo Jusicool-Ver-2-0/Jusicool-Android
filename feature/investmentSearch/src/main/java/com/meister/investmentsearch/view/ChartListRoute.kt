@@ -1,5 +1,6 @@
 package com.meister.investmentsearch.view
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -188,8 +190,8 @@ private fun ChartListSection(data: PersistentList<RecommendMarketWithPrice>) {
 private fun ChartItem(data: RecommendMarketWithPrice) {
     JusicoolTheme { colors, typography ->
         val textColor = if (data.isPositive) colors.error
-        else if (data.isNegative) colors.gray400
-        else colors.main
+        else if (data.isNegative) colors.main
+        else colors.gray400
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -215,7 +217,8 @@ private fun ChartItem(data: RecommendMarketWithPrice) {
 
                 Text(
                     text = data.koreanName,
-                    style = typography.subTitle
+                    style = typography.subTitle,
+                    color = colors.black,
                 )
             }
             Column(
@@ -223,7 +226,7 @@ private fun ChartItem(data: RecommendMarketWithPrice) {
                 horizontalAlignment = Alignment.End,
             ) {
                 Text(
-                    text = "11,111,131 원",
+                    text = "${data.currentPrice} 원",
                     style = typography.bodySmall,
                     color = colors.black,
                     textAlign = TextAlign.End,
