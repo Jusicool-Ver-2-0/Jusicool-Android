@@ -19,7 +19,11 @@ import com.jusicool.trade.navigation.navigateToTradeCompletedRoute
 import com.jusicool.trade.navigation.sellReserveRoute
 import com.jusicool.trade.navigation.sellRoute
 import com.jusicool.trade.navigation.tradeCompletedRoute
+import com.meister.community.navigation.navigateToWritePostRoute
+import com.meister.community.navigation.writePostRoute
 import com.meister.investmentsearch.navigation.chartListRoute
+import com.meister.monthlyearnings.navigation.monthlyEarningsRoute
+import com.meister.monthlyearnings.navigation.navigateToMonthlyEarningsRoute
 import com.meister.orderhistory.navigation.navigateToOrderHistoryRoute
 import com.meister.orderhistory.navigation.orderHistoryRoute
 
@@ -41,7 +45,12 @@ fun JusicoolNavHost(
 
         accountRoute(
             navigateToOrderHistory = navController::navigateToOrderHistoryRoute,
+            navigateToMonthlyEarningsRoute = navController::navigateToMonthlyEarningsRoute,
             navigateToChart = navController::navigateToChartRoute
+        )
+
+        monthlyEarningsRoute(
+            popBackStack = navController::popBackStack
         )
 
         chartRoute(
@@ -50,6 +59,7 @@ fun JusicoolNavHost(
             navigateToSell = navController::navigateToSellRoute,
             navigateToReserveBuy = navController::navigateToBuyReserveRoute,
             navigateToReserveSell = navController::navigateToSellReserveRoute,
+            navigateToCommunityPost = navController::navigateToWritePostRoute
         )
 
         chartListRoute(
@@ -83,6 +93,10 @@ fun JusicoolNavHost(
 
         orderHistoryRoute(
             popBackStack = navController::popBackStack
+        )
+
+        writePostRoute (
+            popUpBackStack = navController::popBackStack
         )
     }
 }

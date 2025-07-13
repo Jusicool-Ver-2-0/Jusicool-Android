@@ -5,15 +5,20 @@ import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
 import com.jusicool.entity.price.HoldingWithCurrentPrice
 import com.jusicool.usecase.crypto.GetCurrentCryptoPriceUseCase
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase
+import com.jusicool.usecase.koreaInvestment.ObserveRealtimeStockPriceUseCase
+import com.jusicool.utils.isStockMarketOpen
+import com.jusicool.utils.tickerFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 class GetHoldingWithCurrentPriceUseCase @Inject constructor(
     private val getHoldingResponseUseCase: GetHoldingResponseUseCase,
     private val getCurrentStockPriceUseCase: GetCurrentStockPriceUseCase,
     private val getCurrentCryptoPriceUseCase: GetCurrentCryptoPriceUseCase,
+    private val observeRealtimeStockPriceUseCase: ObserveRealtimeStockPriceUseCase
 ) {
     operator fun invoke(): Flow<HoldingWithCurrentPriceResult> {
         return getHoldingResponseUseCase()
@@ -22,10 +27,10 @@ class GetHoldingWithCurrentPriceUseCase @Inject constructor(
                 val stockMarkets = holdingType.stockHoldings.map { it.market.market }
                 val cryptoMarkets = holdingType.cryptoHoldings.map { it.market.market }
 
-                combine(
-                    getCurrentStockPriceUseCase(stockMarkets),
-                    getCurrentCryptoPriceUseCase(cryptoMarkets),
-                ) { stockPrices, cryptoPrices ->
+                val stockPriceFlow = getStockPriceFlow(stockMarkets)
+                val cryptoPriceFlow = getCryptoPriceFlow(cryptoMarkets)
+
+                combine(stockPriceFlow, cryptoPriceFlow) { stockPrices, cryptoPrices ->
 
                     val stockWithPrice = holdingType.stockHoldings.map { holding ->
                         HoldingWithCurrentPrice(
@@ -47,11 +52,30 @@ class GetHoldingWithCurrentPriceUseCase @Inject constructor(
                         )
                     }
 
-                    return@combine HoldingWithCurrentPriceResult(
+                    HoldingWithCurrentPriceResult(
                         stockHoldings = stockWithPrice,
                         cryptoHoldings = cryptoWithPrice
                     )
                 }
+            }
+    }
+
+    private fun getStockPriceFlow(stockMarkets: List<String>): Flow<List<AssetsCurrentPrice>> {
+        if (stockMarkets.isEmpty()) return flowOf(emptyList())
+
+        return if (isStockMarketOpen()) {
+            observeRealtimeStockPriceUseCase(stockMarkets)
+        } else {
+            getCurrentStockPriceUseCase(stockMarkets)
+        }
+    }
+
+    private fun getCryptoPriceFlow(cryptoMarkets: List<String>): Flow<List<CurrentCryptoPriceModel>> {
+        if (cryptoMarkets.isEmpty()) return flowOf(emptyList())
+
+        return tickerFlow(200)
+            .flatMapLatest {
+                getCurrentCryptoPriceUseCase(cryptoMarkets)
             }
     }
 
