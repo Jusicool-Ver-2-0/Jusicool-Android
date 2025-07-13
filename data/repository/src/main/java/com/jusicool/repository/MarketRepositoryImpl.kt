@@ -15,7 +15,7 @@ class MarketRepositoryImpl @Inject constructor(
         return marketDataSource.getMarketList(requestParam.name).map { marketList ->
             marketList
                 .map { it.toEntity() }
-                .take(10)
+                .take(20)
         }
     }
 }
