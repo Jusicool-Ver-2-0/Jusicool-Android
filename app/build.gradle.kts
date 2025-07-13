@@ -38,9 +38,10 @@ dependencies {
     implementation(project(":feature:signin"))
     implementation(project(":feature:trade"))
     implementation(project(":feature:investmentSearch"))
+    implementation(project(":feature:orderHistory"))
+    implementation(project(":feature:community"))
 
     implementation(libs.junit)
-    implementation(project(":feature:orderHistory"))
     implementation(libs.androidx.lifecycle.process)
     androidTestImplementation(libs.androidx.test.ext)
     implementation(libs.app.update.ktx)
