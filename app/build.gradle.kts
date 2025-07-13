@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":feature:signin"))
     implementation(project(":feature:trade"))
     implementation(project(":feature:investmentSearch"))
+    implementation(project(":feature:monthlyEarnings"))
     implementation(project(":feature:orderHistory"))
     implementation(project(":feature:community"))
 

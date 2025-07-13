@@ -54,6 +54,7 @@ import kotlinx.collections.immutable.persistentListOf
 internal fun AccountRoute(
     viewModel: AccountViewModel = hiltViewModel(),
     navigateToOrderHistory: () -> Unit,
+    navigateToMonthlyEarningsRoute: () -> Unit,
     navigateToChart: (marketCode: String, name: String, type: String, quantity: Int, money: Long, krwBalance: Long) -> Unit
 ) {
     val accountUiState by viewModel.accountUiState.collectAsStateWithLifecycle()
@@ -84,6 +85,7 @@ internal fun AccountRoute(
         getMonthOrderData = monthOrderUiState,
         holdingNewsModel = mockHoldingNewsModel,
         navigateToOrderHistory = navigateToOrderHistory,
+        navigateToMonthlyEarningsRoute = navigateToMonthlyEarningsRoute,
         navigateToChart = navigateToChart
     )
 }
@@ -96,6 +98,7 @@ private fun AccountScreen(
     getMonthOrderData: GetMonthOrderUiState,
     holdingNewsModel: HoldingNewsModel,
     navigateToOrderHistory: () -> Unit,
+    navigateToMonthlyEarningsRoute: () -> Unit,
     navigateToChart: (marketCode: String, name: String, type: String, quantity: Int, money: Long, krwBalance: Long) -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -290,7 +293,7 @@ private fun AccountScreen(
                                 )
 
                                 Row(
-                                    modifier = Modifier.JusicoolClickable { /*TODO()*/ },
+                                    modifier = Modifier.JusicoolClickable(onClick = navigateToMonthlyEarningsRoute),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     val monthProfitText = when (getMonthOrderData) {
@@ -386,6 +389,7 @@ private fun AccountScreenPreview() {
         getMonthOrderData = mockMonthOrderUiState,
         holdingNewsModel = mockHoldingNewsModel,
         navigateToOrderHistory = { },
+        navigateToMonthlyEarningsRoute = { },
         navigateToChart = { marketCode, name, type, quantity, money, krwBalance -> }
     )
 }

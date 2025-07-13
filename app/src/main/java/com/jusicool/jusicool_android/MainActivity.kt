@@ -3,7 +3,6 @@ package com.jusicool.jusicool_android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -23,7 +22,6 @@ class MainActivity : ComponentActivity() {
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(appLifecycleObserver)
 
-        enableEdgeToEdge()
         setContent {
             JusicoolApp(windowSizeClass = calculateWindowSizeClass(activity = this))
         }
