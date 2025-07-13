@@ -92,6 +92,7 @@ private fun MonthlyIncomeScreen(
                     Text(
                         text = "${uiState.myMoney.formatMoney()}원",
                         style = typography.titleMedium,
+                        color = colors.black,
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
@@ -112,22 +113,25 @@ private fun MonthlyIncomeScreen(
 
                     Text(
                         text = annotatedString,
-                        style = typography.bodySmall
+                        style = typography.bodySmall,
+                        color = colors.black,
                     )
                 }
 
-             /*   Column {
-                    Text(
-                        text = "주문 가능 금액",
-                        style = typography.bodyMedium,
-                        color = colors.gray600,
-                    )
+                /*   Column {
+                       Text(
+                           text = "주문 가능 금액",
+                           style = typography.bodyMedium,
+                           color = colors.gray600,
+                       )
 
-                    Text(
-                        text = "${uiState.availableOrderAmount.formatMoney()}원",
-                        style = typography.titleSmall,
-                    )
-                }*/
+                       Text(
+                           text = "${uiState.availableOrderAmount.formatMoney()}원",
+                           style = typography.titleSmall,
+                           color = colors.black,
+
+                       )
+                   }*/
 
                 Column(
                     verticalArrangement = Arrangement.spacedBy(24.dp),
@@ -226,19 +230,22 @@ private fun OwnedStocksBar(
                 Column {
                     Text(
                         text = corpName,
-                        style = typography.subTitle
+                        style = typography.subTitle,
+                        color = colors.black,
                     )
 
                     Text(
                         text = "${purchasedShares.formatMoney()}원",
-                        style = typography.label
+                        style = typography.label,
+                        color = colors.black,
                     )
                 }
             }
 
             Text(
                 text = "${holdingRatio}%",
-                style = typography.subTitle
+                style = typography.subTitle,
+                color = colors.black,
             )
         }
     }
