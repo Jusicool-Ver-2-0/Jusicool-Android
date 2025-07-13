@@ -4,6 +4,8 @@ import com.jusicool.repository.AccountRepository
 import com.jusicool.repository.AccountRepositoryImpl
 import com.jusicool.repository.AuthRepository
 import com.jusicool.repository.AuthRepositoryImpl
+import com.jusicool.repository.CommunityRepository
+import com.jusicool.repository.CommunityRepositoryImpl
 import com.jusicool.repository.CryptoRepository
 import com.jusicool.repository.CryptoRepositoryImpl
 import com.jusicool.repository.HoldingRepository
@@ -58,4 +60,9 @@ abstract class RepositoryModule {
     abstract fun binOrderRepository(
         orderRepositoryImpl: OrderRepositoryImpl
     ): OrderRepository
+
+    @Binds
+    abstract fun bindCommunityRepository(
+        communityRepositoryImpl: CommunityRepositoryImpl
+    ): CommunityRepository
 }
