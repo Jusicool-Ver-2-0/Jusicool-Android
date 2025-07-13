@@ -1,6 +1,6 @@
 package com.jusicool.model.mapper.koreaInvestment
 
-import com.jusicool.entity.price.AssetsCurrentPrice
+import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
 import com.jusicool.model.koreaInvestment.ws.StockPriceSummary
 
 fun StockPriceSummary.toEntity(): AssetsCurrentPrice {
