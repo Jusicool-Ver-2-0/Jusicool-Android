@@ -170,13 +170,14 @@ private fun RecentSearchSection(data: PersistentList<InvestmentSearchTagData>) {
 private fun PopularKeywordSection(
     data: PersistentList<Pair<String, Double>>,
 ) {
-    JusicoolTheme { _, typography ->
+    JusicoolTheme { colors, typography ->
         Row {
             Spacer(modifier = Modifier.width(24.dp))
 
             Text(
                 text = "인기 검색어",
                 style = typography.bodyMedium,
+                color = colors.black
             )
         }
 
@@ -203,13 +204,14 @@ private fun SearchedMarketSection(
     data: PersistentList<Pair<String, Double>>,
     navigateToChart: (String, String) -> Unit,
 ) {
-    JusicoolTheme { _, typography ->
+    JusicoolTheme { colors, typography ->
         Row {
             Spacer(modifier = Modifier.width(24.dp))
 
             Text(
                 text = "검색 결과",
                 style = typography.bodyMedium,
+                color = colors.black,
             )
         }
 
@@ -292,6 +294,7 @@ private fun SearchKeywordRow(
                 Text(
                     text = keyword,
                     style = typography.bodySmall,
+                    color = colors.black,
                 )
             }
 
