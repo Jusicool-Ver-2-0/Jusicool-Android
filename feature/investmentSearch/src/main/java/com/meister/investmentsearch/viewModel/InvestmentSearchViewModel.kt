@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -28,6 +29,7 @@ class InvestmentSearchViewModel @Inject constructor(
     internal val uiState: StateFlow<InvestmentSearchUiState> = searchQuery
         .debounce(300) // 빠른 타이핑 대응
         .distinctUntilChanged()
+        .filter { it.isNotBlank() }
         .flatMapLatest { query ->
             searchMarketWithPriceUseCase(query)
                 .map { marketWithPrice ->
