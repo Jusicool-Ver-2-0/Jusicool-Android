@@ -1,8 +1,9 @@
 package com.jusicool.repository
 
-import StockPriceResponse
 import com.jusicool.entity.koreaInvestment.CandleChartEntity
+import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.model.koreaInvestment.toCandleEntity
+import com.jusicool.model.mapper.koreaInvestment.toEntity
 import com.jusicool.network.datasource.koreaInvestment.KoreaInvestmentDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -44,10 +45,12 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
     override fun getStockCurrentPrice(
         marketDivCode: String,
         stockCode: String
-    ): Flow<StockPriceResponse> {
+    ): Flow<AssetsCurrentPrice> {
         return dataSource.getStockCurrentPrice(
             marketDivCode,
             stockCode
-        )
+        ).map { response ->
+            response.toEntity(stockCode)
+        }
     }
 }

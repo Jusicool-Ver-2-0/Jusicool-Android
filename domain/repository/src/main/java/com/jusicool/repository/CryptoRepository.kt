@@ -6,7 +6,7 @@ import com.jusicool.entity.crypto.MinuteCandleModel
 import kotlinx.coroutines.flow.Flow
 
 interface CryptoRepository {
-    fun getCurrentCryptoPrice(markets: String): Flow<List<CurrentCryptoPriceModel>>
+    fun getCurrentCryptoPrice(markets: List<String>): Flow<List<CurrentCryptoPriceModel>>
 
     fun getMinuteCandle(market: String, to: String, count: Int): Flow<List<MinuteCandleModel>>
 

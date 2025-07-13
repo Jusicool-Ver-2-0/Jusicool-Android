@@ -1,6 +1,6 @@
 package com.jusicool.repository
 
-import com.jusicool.entity.koreaInvestment.StockPriceEntity
+import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.model.mapper.koreaInvestment.toEntity
 import com.jusicool.network.datasource.koreaInvestment.ws.KoreaInvestmentWebSocketManagerInterface
 import kotlinx.coroutines.channels.awaitClose
@@ -15,20 +15,21 @@ class WsKoreaInvestmentRepositoryImpl @Inject constructor(
     private val webSocketManager: KoreaInvestmentWebSocketManagerInterface
 ) : WsKoreaInvestmentRepository {
 
-    override fun observeStockTicker(stockCode: String): Flow<StockPriceEntity> = callbackFlow {
-        webSocketManager.connect(stockCode)
+    override fun observeStockTicker(stockCode: List<String>): Flow<List<AssetsCurrentPrice>> =
+        callbackFlow {
+            webSocketManager.connect(stockCode)
 
-        val job = launch {
-            webSocketManager.stockTickerFlow
-                .filterNotNull()
-                .map { it.toEntity() }
-                .collect { trySend(it).isSuccess }
-        }
+            val job = launch {
+                webSocketManager.stockTickerMapFlow
+                    .filterNotNull()
+                    .map { list -> list.map { it.toEntity() } }
+                    .collect { trySend(it).isSuccess }
+            }
 
-        awaitClose {
-            webSocketManager.disconnect()
-            job.cancel()
+            awaitClose {
+                webSocketManager.disconnect()
+                job.cancel()
+            }
         }
-    }
 
 }

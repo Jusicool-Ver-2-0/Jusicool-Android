@@ -1,7 +1,7 @@
 package com.jusicool.repository
 
-import StockPriceResponse
 import com.jusicool.entity.koreaInvestment.CandleChartEntity
+import com.jusicool.entity.price.AssetsCurrentPrice
 import kotlinx.coroutines.flow.Flow
 
 interface KoreaInvestmentRepository {
@@ -21,5 +21,5 @@ interface KoreaInvestmentRepository {
     fun getStockCurrentPrice(
         marketDivCode: String,
         stockCode: String
-    ): Flow<StockPriceResponse>
+    ): Flow<AssetsCurrentPrice>
 }

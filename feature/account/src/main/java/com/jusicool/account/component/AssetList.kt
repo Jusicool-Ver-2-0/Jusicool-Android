@@ -1,5 +1,6 @@
 package com.jusicool.account.component
 
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
@@ -7,10 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jusicool.account.viewModel.uiState.GetCurrentCryptoPriceUiState
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.entity.holding.HoldingModel
-import com.jusicool.usecase.crypto.CurrentCryptoHoldingPrice
+import com.jusicool.entity.market.Market
+import com.jusicool.entity.market.MarketType
+import com.jusicool.entity.price.HoldingWithCurrentPrice
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -18,8 +19,8 @@ import kotlinx.collections.immutable.persistentListOf
 fun AssetList(
     modifier: Modifier = Modifier,
     krwBalance: Long,
-    holdings: PersistentList<HoldingModel>,
-    getCurrentCryptoPriceData: GetCurrentCryptoPriceUiState,
+    getCurrentCryptoPriceData: PersistentList<HoldingWithCurrentPrice>,
+    getCurrentStockPriceData: PersistentList<HoldingWithCurrentPrice>,
     navigateToChart: (marketCode: String, name: String, type: String, quantity: Int, money: Long, krwBalance: Long) -> Unit,
 ) {
     JusicoolTheme { colors, typography ->
@@ -27,46 +28,31 @@ fun AssetList(
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (holdings.any { it.marketType == "STOCK" }) {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(
-                        text = "주식",
-                        color = colors.black,
-                        style = typography.bodySmall
-                    )
+            Text(
+                text = "주식",
+                color = colors.black,
+                style = typography.bodySmall
+            )
 
-                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        holdings.filter { it.marketType == "STOCK" }.forEach { asset ->
-                            StockAssetListItem(
-                                holding = asset
-                            )
-                        }
-                    }
-                }
-            }
+            getCurrentStockPriceData.forEach { stockData ->
+                AssetListItem(
+                    krwBalance = krwBalance,
+                    currentCryptoPriceData = stockData,
+                    navigateToChart = navigateToChart
+                )            }
 
+            Text(
+                text = "코인",
+                color = colors.black,
+                style = typography.bodySmall
+            )
 
-            if (holdings.any { it.marketType == "CRYPTO" }) {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(
-                        text = "코인",
-                        color = colors.black,
-                        style = typography.bodySmall
-                    )
-
-
-                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        holdings.filter { it.marketType == "CRYPTO" }.forEach { holding ->
-                            CryptoAssetListItem(
-                                holding = holding,
-                                krwBalance = krwBalance,
-                                getCurrentCryptoPriceData = getCurrentCryptoPriceData,
-                                navigateToChart = navigateToChart
-                            )
-                        }
-                    }
-                }
-
+            getCurrentCryptoPriceData.forEach { cryptoData ->
+                AssetListItem(
+                    krwBalance = krwBalance,
+                    currentCryptoPriceData = cryptoData,
+                    navigateToChart = navigateToChart
+                )
             }
         }
     }
@@ -76,23 +62,45 @@ fun AssetList(
 @Composable
 fun AssetListPreview() {
     AssetList(
-        holdings = persistentListOf(
-            HoldingModel(1, 1, "삼성전자", "Samsung", "005930.KQ", "STOCK", 10, 70000),
-            HoldingModel(2, 2, "비트코인", "Bitcoin", "BTC", "CRYPTO", 2, 55000000)
-        ),
-        getCurrentCryptoPriceData = GetCurrentCryptoPriceUiState.Success(
-            markets = listOf(
-                CurrentCryptoHoldingPrice(
-                    marketCode = "weqwe",
-                    currentPrice = 12.00,
-                    priceVariation= 12,
-                    priceVariationPercent= 12.00,
-                    totalVariation = 1,
-                    totalValue = 1
-                )
+        krwBalance = 1,
+        getCurrentStockPriceData = persistentListOf(
+            HoldingWithCurrentPrice(
+                id = 1,
+                market = Market(
+                    1,
+                    "삼성전자",
+                    "Samsung Electronics",
+                    "005930",
+                    MarketType.STOCK
+                ),
+                purchasePrice = 50000,
+                quantity = 2,
+                currentPrice = 60000.0,
+            ),
+            HoldingWithCurrentPrice(
+                id = 2,
+                market = Market(2, "SK하이닉스", "SK Hynix", "000660", MarketType.STOCK),
+                purchasePrice = 50000,
+                quantity = 2,
+                currentPrice = 60000.0,
             )
         ),
-        krwBalance = 1,
-        navigateToChart = { marketCode, name,type, quantity, money, krwBalance -> }
+        getCurrentCryptoPriceData = persistentListOf(
+            HoldingWithCurrentPrice(
+                id = 1,
+                market = Market(2, "비트코인", "bitcoin", "005930", MarketType.CRYPTO),
+                purchasePrice = 50000,
+                quantity = 12,
+                currentPrice = 60000.0,
+            ),
+            HoldingWithCurrentPrice(
+                id = 2,
+                market = Market(3, "이더리움", "ethereum", "005930", MarketType.CRYPTO),
+                purchasePrice = 50000,
+                quantity = 12,
+                currentPrice = 60000.0,
+            )
+        ),
+        navigateToChart = { _, _, _, _, _, _ -> },
     )
 }
