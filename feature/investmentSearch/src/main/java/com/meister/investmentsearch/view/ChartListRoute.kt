@@ -1,5 +1,6 @@
 package com.meister.investmentsearch.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,43 +20,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
-import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.utils.toSignedFormattedText
-import com.meister.investmentsearch.component.RecentSearchTag
-import com.meister.investmentsearch.viewModel.ChartListUiState
-import com.meister.investmentsearch.viewModel.ChartListViewModel
 import com.jusicool.design_system.icon.RightArrowIcon
 import com.jusicool.design_system.icon.SearchIcon
 import com.jusicool.design_system.icon.UnionIcon
+import com.jusicool.design_system.theme.JusicoolTheme
+import com.jusicool.entity.market.MarketType
+import com.jusicool.entity.market.RecommendMarketWithPrice
+import com.meister.investmentsearch.component.RecentSearchTag
+import com.meister.investmentsearch.viewModel.ChartListUiState
+import com.meister.investmentsearch.viewModel.ChartListViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
-import kotlin.math.abs
 
 @Composable
 internal fun ChartListRoute(
     modifier: Modifier = Modifier,
     onSearchClick: () -> Unit,
-    viewModel: ChartListViewModel = hiltViewModel()
+    navigateToChart: (String, String) -> Unit,
+    viewModel: ChartListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-
-    when {
-        uiState.isLoading -> {}
-        uiState.errorMessage != null -> {}
-        else -> {
-            ChartListScreen(
-                modifier = modifier,
-                uiState = uiState,
-                onSearchCLick = onSearchClick
-            )
-        }
-    }
+    ChartListScreen(
+        modifier = modifier,
+        uiState = uiState,
+        onSearchCLick = onSearchClick,
+        navigateToChart = navigateToChart,
+    )
 }
 
 
@@ -64,29 +62,37 @@ internal fun ChartListScreen(
     modifier: Modifier = Modifier,
     uiState: ChartListUiState,
     onSearchCLick: () -> Unit,
+    navigateToChart: (String, String) -> Unit
 ) {
-    Column(
-        modifier = modifier.fillMaxSize()
-    ) {
-        JusicoolTopBar(
-            modifier = Modifier.fillMaxWidth(),
-            startIcon = { UnionIcon() },
-            endIcon = {
-                SearchIcon(modifier = Modifier.clickable(onClick = onSearchCLick))
+    JusicoolTheme { colors, _ ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(colors.white),
+        ) {
+            JusicoolTopBar(
+                modifier = Modifier.fillMaxWidth(),
+                startIcon = { UnionIcon() },
+                endIcon = {
+                    SearchIcon(modifier = Modifier.clickable(onClick = onSearchCLick))
+                }
+            )
+
+            if (uiState.resentSearchTagData.isNotEmpty()) {
+                RecentSearchSection(data = uiState.resentSearchTagData)
+
+                Spacer(Modifier.height(16.dp))
             }
-        )
 
-        if (uiState.resentSearchTagData.isNotEmpty()) {
-            RecentSearchSection(data = uiState.resentSearchTagData)
-
-            Spacer(Modifier.height(16.dp))
+            ChartListSection(
+                data = uiState.chartListData,
+                navigateToChart = navigateToChart
+            )
         }
-
-        ChartListSection(data = uiState.chartListData)
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun ChartListScreenPreview() {
     ChartListScreen(
@@ -107,42 +113,51 @@ private fun ChartListScreenPreview() {
                     investmentName = "Amazon.com, Inc.",
                     investmentChangeRate = 0.0,
                     onClearClick = {},
-                ), InvestmentSearchTagData(
+                ),
+                InvestmentSearchTagData(
                     investmentName = "Google LLC",
                     investmentChangeRate = 3.1,
                     onClearClick = {},
                 )
             ),
             chartListData = persistentListOf(
-                ChartItemData(
-                    name = "Apple Inc.",
+                RecommendMarketWithPrice(
+                    id = 1,
+                    market = "NASDAQ",
+                    marketType = MarketType.STOCK,
+                    koreanName = "Apple Inc.",
+                    englishName = "Apple",
                     logoUrl = "https://example.com/apple-logo.png",
-                    priceChange = 1.5,
-                    percentageChange = 0.5,
+                    currentPrice = 1111131,
+                    profitRate = 0.05
                 ),
-                ChartItemData(
-                    name = "Microsoft Corporation",
+                RecommendMarketWithPrice(
+                    id = 2,
+                    market = "NASDAQ",
+                    marketType = MarketType.STOCK,
+                    koreanName = "Microsoft Corporation",
+                    englishName = "Microsoft",
                     logoUrl = "https://example.com/microsoft-logo.png",
-                    priceChange = -2.3,
-                    percentageChange = -0.7,
+                    currentPrice = 950000,
+                    profitRate = -0.02
                 ),
-                ChartItemData(
-                    name = "Amazon.com, Inc.",
+                RecommendMarketWithPrice(
+                    id = 3,
+                    market = "NASDAQ",
+                    marketType = MarketType.STOCK,
+                    koreanName = "Amazon.com, Inc.",
+                    englishName = "Amazon",
                     logoUrl = "https://example.com/amazon-logo.png",
-                    priceChange = 0.0,
-                    percentageChange = 0.0,
+                    currentPrice = 800000,
+                    profitRate = 0.0
                 ),
-                ChartItemData(
-                    name = "Google LLC",
-                    logoUrl = "https://example.com/google-logo.png",
-                    priceChange = 3.1,
-                    percentageChange = 1.2,
-                ),
-            ),
+            )
         ),
         onSearchCLick = {},
+        navigateToChart = { _, _ -> },
     )
 }
+
 
 @Composable
 private fun RecentSearchSection(data: PersistentList<InvestmentSearchTagData>) {
@@ -162,32 +177,41 @@ private fun RecentSearchSection(data: PersistentList<InvestmentSearchTagData>) {
 }
 
 @Composable
-private fun ChartListSection(data: PersistentList<ChartItemData>) {
+private fun ChartListSection(
+    data: PersistentList<RecommendMarketWithPrice>,
+    navigateToChart: (String, String) -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        itemsIndexed(data, key = { _, item -> item.name }) { _, item ->
-            ChartItem(data = item)
+        itemsIndexed(data, key = { _, item -> item.market }) { _, item ->
+            ChartItem(
+                data = item,
+                navigateToChart = navigateToChart,
+            )
         }
     }
 }
 
 @Composable
-private fun ChartItem(data: ChartItemData) {
+private fun ChartItem(
+    data: RecommendMarketWithPrice,
+    navigateToChart: (String, String) -> Unit
+) {
     JusicoolTheme { colors, typography ->
-        val textColor = if (data.priceChange > 0.0) {
-            colors.error
-        } else if (data.priceChange == 0.0) {
-            colors.gray400
-        } else {
-            colors.main
-        }
+        val textColor = if (data.isPositive) colors.error
+        else if (data.isNegative) colors.main
+        else colors.gray400
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .JusicoolClickable {
+                    navigateToChart(data.market, data.koreanName)
+                },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -207,10 +231,11 @@ private fun ChartItem(data: ChartItemData) {
                 )*/
                 RightArrowIcon(modifier = Modifier.size(40.dp))
                 // TODO: 임시 코드 
-                
+
                 Text(
-                    text = data.name,
-                    style = typography.subTitle
+                    text = data.koreanName,
+                    style = typography.subTitle,
+                    color = colors.black,
                 )
             }
             Column(
@@ -218,24 +243,18 @@ private fun ChartItem(data: ChartItemData) {
                 horizontalAlignment = Alignment.End,
             ) {
                 Text(
-                    text = data.priceChange.toSignedFormattedText(),
+                    text = "${data.currentPrice} 원",
                     style = typography.bodySmall,
-                    color = textColor
+                    color = colors.black,
+                    textAlign = TextAlign.End,
                 )
 
-                Text(
-                    text = "(${abs(data.percentageChange)}%)",
-                    style = typography.label,
-                    color = textColor,
-                )
+//                Text(
+//                    text = "${data.profit.toSignedFormattedText()} (${abs(data.profitRate)}%)",
+//                    style = typography.label,
+//                    color = textColor,
+//                )
             }
         }
     }
 }
-
-data class ChartItemData(
-    val name: String,             // 이름 (예: "애플", "비트코인")
-    val logoUrl: String?,         // 로고 URL 또는 리소스 ID (옵션)
-    val priceChange: Double,         // 가격 변화 (예: +1111816)
-    val percentageChange: Double  // 변화율 (예: 7.9)
-)

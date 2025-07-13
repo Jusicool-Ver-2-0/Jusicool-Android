@@ -1,6 +1,6 @@
 package com.jusicool.usecase.koreaInvestment
 
-import com.jusicool.entity.price.AssetsCurrentPrice
+import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
 import com.jusicool.repository.KoreaInvestmentRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -23,7 +23,7 @@ class GetCurrentStockPriceUseCase @Inject constructor(
                 updatedMarkets.add(it)
             }
             emit(updatedMarkets)
-            delay(300)
+            delay(400)
         }
     }
 }

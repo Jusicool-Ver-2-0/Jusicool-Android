@@ -14,6 +14,8 @@ import com.jusicool.network.datasource.koreaInvestment.KoreaInvestmentDataSource
 import com.jusicool.network.datasource.koreaInvestment.KoreaInvestmentDataSourceImpl
 import com.jusicool.network.datasource.koreaInvestment.ws.KoreaInvestmentWebSocketManager
 import com.jusicool.network.datasource.koreaInvestment.ws.KoreaInvestmentWebSocketManagerInterface
+import com.jusicool.network.datasource.market.MarketDataSource
+import com.jusicool.network.datasource.market.MarketDataSourceImpl
 import com.jusicool.network.datasource.order.OrderDataSource
 import com.jusicool.network.datasource.order.OrderDataSourceImpl
 import dagger.Binds
@@ -62,7 +64,7 @@ abstract class RemoteDataSourceModule {
     ): KoreaInvestmentDataSource
 
     @Binds
-    abstract fun provideKoreaInvestmentWebSocketManager(
+    abstract fun bindKoreaInvestmentWebSocketManager(
         koreaInvestmentWebSocketManager: KoreaInvestmentWebSocketManager
     ): KoreaInvestmentWebSocketManagerInterface
 
@@ -70,4 +72,9 @@ abstract class RemoteDataSourceModule {
     abstract fun bindCommunityDataSource(
         communityDataSourceImpl: CommunityDataSourceImpl
     ): CommunityDataSource
+
+    @Binds
+    abstract fun bindMarketDataSource(
+        marketDataSourceImpl: MarketDataSourceImpl
+    ): MarketDataSource
 }

@@ -12,6 +12,8 @@ import com.jusicool.repository.HoldingRepository
 import com.jusicool.repository.HoldingRepositoryImpl
 import com.jusicool.repository.KoreaInvestmentRepository
 import com.jusicool.repository.KoreaInvestmentRepositoryImpl
+import com.jusicool.repository.MarketRepository
+import com.jusicool.repository.MarketRepositoryImpl
 import com.jusicool.repository.OrderRepository
 import com.jusicool.repository.OrderRepositoryImpl
 import com.jusicool.repository.WsKoreaInvestmentRepository
@@ -60,6 +62,11 @@ abstract class RepositoryModule {
     abstract fun binOrderRepository(
         orderRepositoryImpl: OrderRepositoryImpl
     ): OrderRepository
+
+    @Binds
+    abstract fun bindMarketRepository(
+        marketRepositoryImpl: MarketRepositoryImpl
+    ): MarketRepository
 
     @Binds
     abstract fun bindCommunityRepository(

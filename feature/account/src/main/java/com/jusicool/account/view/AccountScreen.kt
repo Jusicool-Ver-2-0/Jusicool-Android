@@ -50,6 +50,7 @@ import com.jusicool.utils.formatPercent
 import com.jusicool.utils.toSignedFormattedText
 import kotlinx.collections.immutable.persistentListOf
 
+
 @Composable
 internal fun AccountRoute(
     viewModel: AccountViewModel = hiltViewModel(),

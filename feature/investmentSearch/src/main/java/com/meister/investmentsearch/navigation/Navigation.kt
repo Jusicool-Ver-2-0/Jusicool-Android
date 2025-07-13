@@ -16,8 +16,12 @@ fun NavController.navigateToChartListRoute(
 
 fun NavGraphBuilder.chartListRoute(
     navigateToSearchInvestmentRoute: () -> Unit,
+    navigateToChart: (String, String) -> Unit
 ) {
     composable(route = chartListRoute) {
-        ChartListRoute(onSearchClick = navigateToSearchInvestmentRoute)
+        ChartListRoute(
+            onSearchClick = navigateToSearchInvestmentRoute,
+            navigateToChart = navigateToChart
+        )
     }
 }

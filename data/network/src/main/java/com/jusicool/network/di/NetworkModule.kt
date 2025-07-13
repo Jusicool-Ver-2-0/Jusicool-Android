@@ -8,6 +8,7 @@ import com.jusicool.network.api.CommunityApi
 import com.jusicool.network.api.CryptoApi
 import com.jusicool.network.api.HoldingApi
 import com.jusicool.network.api.KoreaInvestmentApi
+import com.jusicool.network.api.MarketApi
 import com.jusicool.network.api.OrderApi
 import com.jusicool.network.util.BaseApiRetrofit
 import com.jusicool.network.util.BasicCookieJar
@@ -84,6 +85,7 @@ object NetworkModule {
     ): KoreaInvestmentInterceptor {
         return KoreaInvestmentInterceptor(authManager)
     }
+
     @Provides
     @Singleton
     fun provideCookieJar(): CookieJar {
@@ -153,6 +155,10 @@ object NetworkModule {
     @Provides
     fun provideHoldingApi(@BaseApiRetrofit retrofit: Retrofit): HoldingApi =
         retrofit.create(HoldingApi::class.java)
+
+    @Provides
+    fun provideMarketApi(@BaseApiRetrofit retrofit: Retrofit): MarketApi =
+        retrofit.create(MarketApi::class.java)
 
     @Provides
     fun provideCryptoApi(@UpbitRetrofit retrofit: Retrofit): CryptoApi =

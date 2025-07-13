@@ -29,7 +29,7 @@ interface OrderApi {
     @GET("/order/month/rate")
     suspend fun getMonthlyRate(): MonthlyRateResponse
 
-    @POST("/order/buy/{market_code}")
+  @POST("/order/buy/{market_code}")
     suspend fun postBuy(
         @Path("market_code") marketCode: String,
         @Body quantity: BuyRequest

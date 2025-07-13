@@ -1,6 +1,6 @@
 package com.jusicool.repository
 
-import com.jusicool.entity.price.AssetsCurrentPrice
+import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
 import kotlinx.coroutines.flow.Flow
 
 interface WsKoreaInvestmentRepository {
