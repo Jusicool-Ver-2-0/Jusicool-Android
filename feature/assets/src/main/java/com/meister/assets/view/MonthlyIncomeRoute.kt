@@ -47,17 +47,11 @@ internal fun MonthlyIncomeRoute(
 ) {
     val uiState by monthlyIncomeViewModel.uiState.collectAsState()
 
-    when {
-        uiState.isLoading -> {}
-        uiState.errorMessage != null -> {}
-        else -> {
-            MonthlyIncomeScreen(
-                modifier = modifier,
-                uiState = uiState,
-                navigateToBack = navigateToBack,
-            )
-        }
-    }
+    MonthlyIncomeScreen(
+        modifier = modifier,
+        uiState = uiState,
+        navigateToBack = navigateToBack,
+    )
 }
 
 @Composable
@@ -122,7 +116,7 @@ private fun MonthlyIncomeScreen(
                     )
                 }
 
-                Column {
+             /*   Column {
                     Text(
                         text = "주문 가능 금액",
                         style = typography.bodyMedium,
@@ -133,12 +127,12 @@ private fun MonthlyIncomeScreen(
                         text = "${uiState.availableOrderAmount.formatMoney()}원",
                         style = typography.titleSmall,
                     )
-                }
+                }*/
 
                 Column(
                     verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
-                    Column {
+                    /*Column {
                         Text(
                             text = "투자 금액",
                             style = typography.bodyMedium,
@@ -150,7 +144,7 @@ private fun MonthlyIncomeScreen(
                             style = typography.titleSmall,
                         )
                     }
-
+*/
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center,
@@ -192,7 +186,13 @@ private fun MonthlyIncomeScreenPreview() {
             moneyChangeFromLastMonth = 50,
             availableOrderAmount = 200,
             investedAmount = 800,
-            ownedStocks = persistentListOf("dqdw" to 100, "dqdw" to 100,"#34ㄺㄷㅈ" to 120,"dwqe" to 100,"dwqe1" to 100),
+            ownedStocks = persistentListOf(
+                "dqdw" to 100,
+                "dqdw" to 100,
+                "#34ㄺㄷㅈ" to 120,
+                "dwqe" to 100,
+                "dwqe1" to 100
+            ),
             errorMessage = null
         ),
         navigateToBack = {},
