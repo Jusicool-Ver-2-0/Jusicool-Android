@@ -24,7 +24,7 @@ fun NavController.navigateToInvestmentSearchRoute(
 
 fun NavGraphBuilder.chartListRoute(
     navigateToSearchInvestmentRoute: () -> Unit,
-    navigateToChart: (String, String) -> Unit
+    navigateToChart: (String, String) -> Unit,
 ) {
     composable(route = chartListRoute) {
         ChartListRoute(
@@ -36,10 +36,12 @@ fun NavGraphBuilder.chartListRoute(
 
 fun NavGraphBuilder.investmentSearchRoute(
     popBackStack: () -> Unit,
+    navigateToChart: (String, String) -> Unit,
 ) {
     composable(route = investmentSearchRoute) {
         InvestmentSearchRoute(
             popBackStack= popBackStack,
+            navigateToChart = navigateToChart,
         )
     }
 }

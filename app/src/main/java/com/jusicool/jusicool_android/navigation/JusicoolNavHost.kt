@@ -65,15 +65,17 @@ fun JusicoolNavHost(
         )
 
         chartListRoute(
-            navigateToSearchInvestmentRoute = navController::navigateToInvestmentSearchRoute
-            navigateToChart = {marketCode, koreanName -> navController.navigateToChartRoute(
-                marketCode = marketCode,
-                koreanName = koreanName,
-                type = "CRYPTO",
-                quantity = 0,
-                money = 100002316431413L,
-                krwBalance = 0L
-            ) }
+            navigateToSearchInvestmentRoute = navController::navigateToInvestmentSearchRoute,
+            navigateToChart = { marketCode, koreanName ->
+                navController.navigateToChartRoute(
+                    marketCode = marketCode,
+                    koreanName = koreanName,
+                    type = "CRYPTO",
+                    quantity = 0,
+                    money = 100002316431413L,
+                    krwBalance = 0L
+                )
+            }
         )
 
         buyRoute(
@@ -106,10 +108,20 @@ fun JusicoolNavHost(
         )
 
         investmentSearchRoute(
+            navigateToChart = { marketCode, koreanName ->
+                navController.navigateToChartRoute(
+                    marketCode = marketCode,
+                    koreanName = koreanName,
+                    type = "CRYPTO",
+                    quantity = 0,
+                    money = 100002316431413L,
+                    krwBalance = 0L
+                )
+            },
             popBackStack = navController::popBackStack
         )
 
-        writePostRoute (
+        writePostRoute(
             popUpBackStack = navController::popBackStack
         )
     }

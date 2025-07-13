@@ -39,6 +39,7 @@ import kotlinx.collections.immutable.persistentListOf
 internal fun InvestmentSearchRoute(
     modifier: Modifier = Modifier,
     popBackStack: () -> Unit,
+    navigateToChart: (String, String) -> Unit,
     viewModel: InvestmentSearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
