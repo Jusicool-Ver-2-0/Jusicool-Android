@@ -73,7 +73,7 @@ fun ChartRoute(
     navigateToSell: (String, String, Int, String) -> Unit,
     navigateToReserveBuy: (String, String, Long, Long, String) -> Unit,
     navigateToReserveSell: (String, String, Int, String) -> Unit,
-    navigateToCommunityPost: () -> Unit,
+    navigateToCommunityPost: (String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
     val minuteCandleUiState by viewModel.minuteCandleUiState.collectAsStateWithLifecycle()
@@ -221,7 +221,7 @@ fun ChartScreen(
     navigateToReserveBuy: (String, String, Long, Long, String) -> Unit,
     navigateToReserveSell: (String, String, Int, String) -> Unit,
     onRefresh: (String) -> Unit,
-    navigateToCommunityPost: () -> Unit,
+    navigateToCommunityPost: (String) -> Unit,
     popUpBackStack: () -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -558,7 +558,7 @@ fun ChartScreen(
                     PencilIcon(
                         modifier = Modifier
                             .size(24.dp)
-                            .JusicoolClickable { navigateToCommunityPost() }
+                            .JusicoolClickable { navigateToCommunityPost(marketCode) }
                     )
                 }
             },
