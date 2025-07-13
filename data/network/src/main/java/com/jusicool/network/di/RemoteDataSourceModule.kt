@@ -72,7 +72,6 @@ abstract class RemoteDataSourceModule {
     abstract fun bindCommunityDataSource(
         communityDataSourceImpl: CommunityDataSourceImpl
     ): CommunityDataSource
-}
 
     @Binds
     abstract fun bindMarketDataSource(
