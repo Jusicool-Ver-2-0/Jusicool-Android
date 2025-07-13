@@ -22,7 +22,6 @@ class MainActivity : ComponentActivity() {
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(appLifecycleObserver)
 
-        enableEdgeToEdge()
         setContent {
             JusicoolApp(windowSizeClass = calculateWindowSizeClass(activity = this))
         }

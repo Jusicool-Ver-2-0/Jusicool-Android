@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,17 +31,24 @@ import com.jusicool.account.component.AssetList
 import com.jusicool.account.component.HoldingNewsCard
 import com.jusicool.account.viewModel.AccountViewModel
 import com.jusicool.account.viewModel.uiState.GetAccountUiState
+import com.jusicool.account.viewModel.uiState.GetHoldingsPriceUiState
 import com.jusicool.account.viewModel.uiState.GetMonthOrderUiState
 import com.jusicool.design_system.R
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.icon.RightArrowIcon
 import com.jusicool.design_system.theme.JusicoolTheme
+import com.jusicool.entity.market.Market
+import com.jusicool.entity.market.MarketType
 import com.jusicool.entity.order.OrderModel
+import com.jusicool.entity.price.HoldingWithCurrentPrice
 import com.jusicool.model.news.HoldingNewsModel
+import com.jusicool.usecase.holding.totalCurrentValue
+import com.jusicool.usecase.holding.totalInvestment
 import com.jusicool.utils.formatMoney
 import com.jusicool.utils.formatPercent
 import com.jusicool.utils.toSignedFormattedText
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun AccountRoute(
