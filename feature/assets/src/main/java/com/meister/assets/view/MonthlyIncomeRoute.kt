@@ -36,6 +36,7 @@ import com.meister.assets.viewModel.MonthlyIncomeViewModel
 import com.meister.assets.viewModel.uiState.MonthlyIncomeUiState
 import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.collections.immutable.persistentListOf
+import kotlin.math.abs
 import kotlin.random.Random
 
 
@@ -90,7 +91,7 @@ private fun MonthlyIncomeScreen(
 
                 Column {
                     Text(
-                        text = "${uiState.myMoney.formatMoney()}원",
+                        text = "${abs(uiState.myMoney).formatMoney()}원",
                         style = typography.titleMedium,
                         color = colors.black,
                     )
