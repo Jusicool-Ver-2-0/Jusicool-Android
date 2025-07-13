@@ -235,7 +235,7 @@ private fun OwnedStocksBar(
                     )
 
                     Text(
-                        text = "${purchasedShares.formatMoney()}원",
+                        text = "${purchasedShares.formatMoney()}개",
                         style = typography.label,
                         color = colors.black,
                     )
