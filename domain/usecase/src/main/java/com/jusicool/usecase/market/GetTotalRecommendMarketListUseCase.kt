@@ -10,9 +10,9 @@ class GetTotalRecommendMarketListUseCase @Inject constructor(
     private val getCryptoRecommendMarketListUseCase: GetCryptoRecommendMarketListUseCase,
 ) {
     operator fun invoke(
-        sortBy: SortOption = SortOption.BY_PRICE_DESC
+        sortBy: SortOption = SortOption.BY_PRICE_DESC,
     ): Flow<List<RecommendMarketWithPrice>> {
-        return getStockRecommendMarketListUseCase()
+        return getCryptoRecommendMarketListUseCase()
         combine(
             getStockRecommendMarketListUseCase(),
             getCryptoRecommendMarketListUseCase()
