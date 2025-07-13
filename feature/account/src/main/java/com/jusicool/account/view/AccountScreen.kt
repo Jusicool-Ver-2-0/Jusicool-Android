@@ -62,11 +62,6 @@ internal fun AccountRoute(
     val currentAssetsPriceUiState by viewModel.currentAssetsPriceUiState.collectAsStateWithLifecycle()
     val monthOrderUiState by viewModel.monthOrderUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.getAccount()
-        viewModel.getMonthOrder()
-    }
-
     val krwBalance = remember(accountUiState) {
         when (accountUiState) {
             is GetAccountUiState.Success -> (accountUiState as GetAccountUiState.Success).account.krwBalance

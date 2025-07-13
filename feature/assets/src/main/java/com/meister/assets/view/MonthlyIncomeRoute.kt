@@ -36,6 +36,7 @@ import com.meister.assets.viewModel.MonthlyIncomeViewModel
 import com.meister.assets.viewModel.uiState.MonthlyIncomeUiState
 import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import kotlinx.collections.immutable.persistentListOf
+import kotlin.math.abs
 import kotlin.random.Random
 
 
@@ -47,17 +48,11 @@ internal fun MonthlyIncomeRoute(
 ) {
     val uiState by monthlyIncomeViewModel.uiState.collectAsState()
 
-    when {
-        uiState.isLoading -> {}
-        uiState.errorMessage != null -> {}
-        else -> {
-            MonthlyIncomeScreen(
-                modifier = modifier,
-                uiState = uiState,
-                navigateToBack = navigateToBack,
-            )
-        }
-    }
+    MonthlyIncomeScreen(
+        modifier = modifier,
+        uiState = uiState,
+        navigateToBack = navigateToBack,
+    )
 }
 
 @Composable
@@ -96,8 +91,9 @@ private fun MonthlyIncomeScreen(
 
                 Column {
                     Text(
-                        text = "${uiState.myMoney.formatMoney()}원",
+                        text = "${abs(uiState.myMoney).formatMoney()}원",
                         style = typography.titleMedium,
+                        color = colors.black,
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
@@ -118,27 +114,30 @@ private fun MonthlyIncomeScreen(
 
                     Text(
                         text = annotatedString,
-                        style = typography.bodySmall
+                        style = typography.bodySmall,
+                        color = colors.black,
                     )
                 }
 
-                Column {
-                    Text(
-                        text = "주문 가능 금액",
-                        style = typography.bodyMedium,
-                        color = colors.gray600,
-                    )
+                /*   Column {
+                       Text(
+                           text = "주문 가능 금액",
+                           style = typography.bodyMedium,
+                           color = colors.gray600,
+                       )
 
-                    Text(
-                        text = "${uiState.availableOrderAmount.formatMoney()}원",
-                        style = typography.titleSmall,
-                    )
-                }
+                       Text(
+                           text = "${uiState.availableOrderAmount.formatMoney()}원",
+                           style = typography.titleSmall,
+                           color = colors.black,
+
+                       )
+                   }*/
 
                 Column(
                     verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
-                    Column {
+                    /*Column {
                         Text(
                             text = "투자 금액",
                             style = typography.bodyMedium,
@@ -150,7 +149,7 @@ private fun MonthlyIncomeScreen(
                             style = typography.titleSmall,
                         )
                     }
-
+*/
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center,
@@ -192,7 +191,13 @@ private fun MonthlyIncomeScreenPreview() {
             moneyChangeFromLastMonth = 50,
             availableOrderAmount = 200,
             investedAmount = 800,
-            ownedStocks = persistentListOf("dqdw" to 100, "dqdw" to 100,"#34ㄺㄷㅈ" to 120,"dwqe" to 100,"dwqe1" to 100),
+            ownedStocks = persistentListOf(
+                "dqdw" to 100,
+                "dqdw" to 100,
+                "#34ㄺㄷㅈ" to 120,
+                "dwqe" to 100,
+                "dwqe1" to 100
+            ),
             errorMessage = null
         ),
         navigateToBack = {},
@@ -226,19 +231,22 @@ private fun OwnedStocksBar(
                 Column {
                     Text(
                         text = corpName,
-                        style = typography.subTitle
+                        style = typography.subTitle,
+                        color = colors.black,
                     )
 
                     Text(
-                        text = "${purchasedShares.formatMoney()}원",
-                        style = typography.label
+                        text = "${purchasedShares.formatMoney()}개",
+                        style = typography.label,
+                        color = colors.black,
                     )
                 }
             }
 
             Text(
                 text = "${holdingRatio}%",
-                style = typography.subTitle
+                style = typography.subTitle,
+                color = colors.black,
             )
         }
     }

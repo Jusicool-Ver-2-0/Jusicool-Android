@@ -19,6 +19,7 @@ import com.jusicool.trade.navigation.navigateToTradeCompletedRoute
 import com.jusicool.trade.navigation.sellReserveRoute
 import com.jusicool.trade.navigation.sellRoute
 import com.jusicool.trade.navigation.tradeCompletedRoute
+import com.meister.assets.navigation.monthlyIncomeRoute
 import com.meister.community.navigation.navigateToWritePostRoute
 import com.meister.community.navigation.writePostRoute
 import com.meister.investmentsearch.navigation.chartListRoute
@@ -64,6 +65,10 @@ fun JusicoolNavHost(
             navigateToCommunityPost = navController::navigateToWritePostRoute
         )
 
+        monthlyIncomeRoute(
+            popBackStack = navController::popBackStack
+        )
+        
         chartListRoute(
             navigateToSearchInvestmentRoute = navController::navigateToInvestmentSearchRoute,
             navigateToChart = { marketCode, koreanName ->

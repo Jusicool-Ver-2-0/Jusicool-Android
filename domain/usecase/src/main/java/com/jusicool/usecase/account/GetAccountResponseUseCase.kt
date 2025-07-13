@@ -6,7 +6,6 @@ import javax.inject.Inject
 class GetAccountResponseUseCase @Inject constructor(
     private val accountRepository: AccountRepository
 ) {
-    operator fun invoke() = runCatching {
+    operator fun invoke() =
         accountRepository.getAccount()
-    }
 }
