@@ -1,7 +1,9 @@
 package com.jusicool.jusicool_android.ui
 
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
@@ -15,11 +17,11 @@ fun JusicoolApp(
     appState: JusicoolAppState = rememberJusicoolAppState(windowSizeClass = windowSizeClass)
 ) {
     Scaffold(
-        containerColor = Color.Transparent,
+        modifier = Modifier.padding(WindowInsets.systemBars.asPaddingValues()),
+        containerColor = Color.White,
         contentColor = Color.White,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            if (appState.shouldShowBottomBar){
+            if (appState.shouldShowBottomBar) {
                 JusicoolNavigationBar(appState = appState)
             }
         }
