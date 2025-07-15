@@ -18,6 +18,7 @@ fun JusicoolApp(
 ) {
     Scaffold(
         modifier = Modifier.padding(WindowInsets.systemBars.asPaddingValues()),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         containerColor = Color.White,
         contentColor = Color.White,
         bottomBar = {
