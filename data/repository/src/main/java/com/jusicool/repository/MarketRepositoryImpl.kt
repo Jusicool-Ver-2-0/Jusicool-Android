@@ -11,12 +11,10 @@ import javax.inject.Inject
 class MarketRepositoryImpl @Inject constructor(
     private val marketDataSource: MarketDataSource
 ) : MarketRepository {
-    override fun getMarketList(requestParam: MarketType): Flow<List<Market>> {
-        return marketDataSource.getMarketList(requestParam.name).map { marketList ->
-            marketList
-                .map { it.toEntity() }
-                .take(40)
-        }
+    override suspend fun getMarketList(type: MarketType, page: Int, size: Int): List<Market> {
+        return marketDataSource
+            .getMarketList(type.name, page, size)
+            .items.map { it.toEntity() }
     }
 
     override fun searchMarket(query: String): Flow<List<Market>> {
