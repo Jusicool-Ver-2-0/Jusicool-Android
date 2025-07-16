@@ -17,4 +17,5 @@ dependencies {
     implementation(project(":domain:repository"))
     implementation(project(":domain:entity"))
     implementation(libs.androidx.paging.common.android)
+    implementation(project(":domain:usecase"))
 }
