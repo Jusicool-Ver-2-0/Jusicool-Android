@@ -7,8 +7,10 @@ import retrofit2.http.Query
 
 interface MarketApi {
     @GET("/market/list")
-    suspend fun getMarketList(
-        @Query("type") requestParam: String
+    fun getMarketList(
+        @Query("type") type: String,
+        @Query("page") page: Int,
+        @Query("size") size: Int,
     ): MarketListResponse
 
     @GET("/market/search")
