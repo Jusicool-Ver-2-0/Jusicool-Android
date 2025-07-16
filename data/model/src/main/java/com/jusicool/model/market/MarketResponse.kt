@@ -1,7 +1,9 @@
 package com.jusicool.model.market
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class MarketResponse(
     val id: Int,
     @Json(name = "korean_name") val koreanName: String,
