@@ -29,7 +29,7 @@ internal class ChartListViewModel @Inject constructor(
             }
             .onEach { Logger.d("ChartListViewModel", it.toString()) }
             .catch { e ->
-                Logger.e("ChartListViewModel", "Error fetching holdings price at ChartListViewModel.kt:22", e)
+                Logger.e("ChartListViewModel", "Error fetching holdings price", e)
                 emit(ChartListUiState(errorMessage = e.message))
             }
             .stateIn(
