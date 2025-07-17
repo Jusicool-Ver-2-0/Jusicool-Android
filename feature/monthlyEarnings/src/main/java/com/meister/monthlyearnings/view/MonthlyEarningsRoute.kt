@@ -279,7 +279,7 @@ private fun AssetsHoldingList(
                 data.forEach { items ->
                     item {
                         Text(
-                            text = items.date.format(DateTimeFormatter.ofPattern("M월 d일")),
+                            text = items.date.toMonthDayString(),
                             style = typography.bodySmall,
                             color = colors.black,
                         )
