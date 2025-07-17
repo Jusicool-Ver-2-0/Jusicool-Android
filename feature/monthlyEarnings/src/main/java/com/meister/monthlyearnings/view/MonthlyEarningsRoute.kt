@@ -288,7 +288,7 @@ private fun AssetsHoldingList(
 
                     items(
                         items = items.marketRates,
-                        key = { "${it.market}_${it.rate}_${it.proceed}" },
+                        key = { it.uniqueKey },
                     ) { item ->
                         MonthlyAssetsItem(data = item)
 
