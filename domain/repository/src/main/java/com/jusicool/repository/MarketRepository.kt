@@ -1,10 +1,12 @@
 package com.jusicool.repository
 
+import androidx.paging.PagingData
 import com.jusicool.entity.market.Market
 import com.jusicool.entity.market.MarketType
+import com.jusicool.entity.market.RecommendMarketWithPrice
 import kotlinx.coroutines.flow.Flow
 
 interface MarketRepository {
-    suspend fun getMarketList(type: MarketType, page: Int, size: Int): List<Market>
+    fun getMarketListPaging(type: MarketType): Flow<PagingData<RecommendMarketWithPrice>>
     fun searchMarket(query: String): Flow<List<Market>>
 }
