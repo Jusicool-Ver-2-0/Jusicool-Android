@@ -12,6 +12,8 @@ import com.jusicool.entity.market.RecommendMarketWithPrice
  *
  * 각 마켓의 market 코드(market.market)를 기준으로 price 정보와 매칭합니다.
  */
+
+@JvmName("mergeWithStockPrices")
 fun List<Market>.mergeWithPrices(
     prices: List<AssetsCurrentPrice>
 ): List<RecommendMarketWithPrice> =
@@ -32,6 +34,7 @@ fun List<Market>.mergeWithPrices(
         }
     }
 
+@JvmName("mergeWithCryptoPrices")
 fun List<Market>.mergeWithPrices(
     prices: List<CurrentCryptoPriceModel>
 ): List<RecommendMarketWithPrice> =
