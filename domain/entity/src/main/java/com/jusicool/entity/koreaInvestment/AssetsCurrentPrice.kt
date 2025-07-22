@@ -11,12 +11,12 @@ data class AssetsCurrentPrice(
         require(priceDifferenceRate >= -100 && priceDifferenceRate <= 100) { "등락률은 -100% ~ 100% 사이여야 합니다." }
     }
 
-    // 상승장 여부
-    fun isRising(): Boolean = priceDifference > 0
+    val isRising: Boolean
+        get() = priceDifference > 0
 
-    // 하락장 여부
-    fun isFalling(): Boolean = priceDifference < 0
+    val isFalling: Boolean
+        get() = priceDifference < 0
 
-    // 보합 여부
-    fun isSteady(): Boolean = priceDifference == 0
+    val isSteady: Boolean
+        get() = priceDifference == 0
 }
