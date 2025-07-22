@@ -161,8 +161,8 @@ private fun AccountScreen(
                                 krwBalance,
                             ) {
                                 val totalValue = if (currentAssetsPriceUiState is GetHoldingsPriceUiState.Success) {
-                                        currentAssetsPriceUiState.stockHoldings.sumOf { it.totalValue() } +
-                                                currentAssetsPriceUiState.cryptoHoldings.sumOf { it.totalValue() }
+                                        currentAssetsPriceUiState.stockHoldings.sumOf { it.totalValue } +
+                                                currentAssetsPriceUiState.cryptoHoldings.sumOf { it.totalValue }
                                     } else {
                                         0
                                     }

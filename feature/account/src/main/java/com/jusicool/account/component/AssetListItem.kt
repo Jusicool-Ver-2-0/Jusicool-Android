@@ -103,26 +103,24 @@ fun AssetListItem(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 val textColor =
-                    if (currentCryptoPriceData.totalVariation() >= 0) colors.chartPriceIncreased
+                    if (currentCryptoPriceData.totalVariation >= 0) colors.chartPriceIncreased
                     else colors.chartPriceDecreased
 
                 Text(
-                    text = "${currentCryptoPriceData.totalValue().formatMoney()}원",
+                    text = "${currentCryptoPriceData.totalValue.formatMoney()}원",
                     color = colors.black,
                     style = typography.bodySmall
                 )
 
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        text = currentCryptoPriceData.totalVariation().toSignedFormattedText(),
+                        text = currentCryptoPriceData.totalVariation.toSignedFormattedText(),
                         color = textColor,
                         style = typography.label
                     )
 
                     Text(
-                        text = "(${
-                            currentCryptoPriceData.priceVariationPercent().formatPercent()
-                        })",
+                        text = "(${currentCryptoPriceData.priceVariationPercent.formatPercent()})",
                         color = textColor,
                         style = typography.label
                     )

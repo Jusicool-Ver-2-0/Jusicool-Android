@@ -6,14 +6,16 @@ data class MonthlyRate(
     val monthlyRate: Double,
     val dailyRates: List<DailyRate>
 ) {
-    fun monthlyProfit(): Int = dailyRates.sumOf { it.dailyProfit() }
+    val monthlyProfit: Int
+        get() = dailyRates.sumOf { it.dailyProfit }
 }
 
 data class DailyRate(
     val date: LocalDate,
     val marketRates: List<MarketRate>
 ) {
-    fun dailyProfit(): Int = marketRates.sumOf { it.proceed }
+    val dailyProfit: Int
+        get() = marketRates.sumOf { it.proceed }
 }
 
 data class MarketRate(
@@ -27,7 +29,9 @@ data class MarketRate(
         require(koreanName.isNotBlank()) { "koreanName은 비어 있을 수 없습니다." }
     }
 
-    fun isPositive(): Boolean = rate > 0
+    val isPositive: Boolean
+        get() = rate > 0
 
-    fun isNegative(): Boolean = rate < 0
+    val isNegative: Boolean
+        get() = rate < 0
 }
