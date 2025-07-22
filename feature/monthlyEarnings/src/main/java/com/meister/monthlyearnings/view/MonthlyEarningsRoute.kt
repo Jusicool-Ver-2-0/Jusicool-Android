@@ -303,8 +303,8 @@ private fun AssetsHoldingList(
 @Composable
 private fun MonthlyAssetsItem(modifier: Modifier = Modifier, data: MarketRate) {
     JusicoolTheme { colors, typography ->
-        val textColor = if (data.isPositive()) colors.error
-        else if (data.isNegative()) colors.main
+        val textColor = if (data.isPositive) colors.error
+        else if (data.isNegative) colors.main
         else colors.gray400
 
         Row(

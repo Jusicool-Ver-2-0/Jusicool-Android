@@ -98,4 +98,4 @@ data class HoldingWithCurrentPriceResult(
 )
 
 fun List<HoldingWithCurrentPrice>.totalInvestment() = sumOf { it.purchasePrice * it.quantity }
-fun List<HoldingWithCurrentPrice>.totalCurrentValue() = sumOf { it.totalValue() }
+fun List<HoldingWithCurrentPrice>.totalCurrentValue() = sumOf { it.totalValue }

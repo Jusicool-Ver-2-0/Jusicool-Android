@@ -34,7 +34,7 @@ internal class MonthlyEarningsViewModel @Inject constructor(
         .map { result ->
             MonthlyEarningsUiState(
                 isLoading = false,
-                monthlyEarnings = result.all.monthlyProfit(),
+                monthlyEarnings = result.all.monthlyProfit,
                 monthlyReturnRate = result.all.monthlyRate,
                 totalHoldingAssetsData = result.all.dailyRates.toPersistentList(),
                 stockHoldingsData = result.stock.dailyRates.toPersistentList(),
