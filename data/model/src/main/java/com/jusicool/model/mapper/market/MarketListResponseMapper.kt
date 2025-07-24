@@ -2,9 +2,9 @@ package com.jusicool.model.mapper.market
 
 import com.jusicool.entity.market.Market
 import com.jusicool.entity.market.MarketType
-import com.jusicool.model.market.MarketListResponse
+import com.jusicool.model.market.MarketResponse
 
-fun MarketListResponse.toEntity() = Market(
+fun MarketResponse.toEntity() = Market(
     id = this.id,
     koreanName = this.koreanName,
     englishName = this.englishName ?: "",
