@@ -35,7 +35,6 @@ data class MarketRate(
     val isPositive: Boolean
         get() = rate > 0
 
-    fun isPositive(): Boolean = rate > 0
 
     val isNegative: Boolean
         get() = rate < 0
