@@ -5,7 +5,9 @@ import com.jusicool.entity.koreaInvestment.CandleChartEntity
 import com.jusicool.model.koreaInvestment.toCandleEntity
 import com.jusicool.model.mapper.koreaInvestment.toEntity
 import com.jusicool.network.datasource.koreaInvestment.KoreaInvestmentDataSource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -41,16 +43,17 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
         }
     }
 
-
     override fun getStockCurrentPrice(
         marketDivCode: String,
-        stockCode: String
-    ): Flow<AssetsCurrentPrice> {
-        return dataSource.getStockCurrentPrice(
-            marketDivCode,
-            stockCode
-        ).map { response ->
-            response.toEntity(stockCode)
+        stockCodes: List<String>
+    ): Flow<List<AssetsCurrentPrice>> = flow {
+        val result = mutableListOf<AssetsCurrentPrice>()
+        stockCodes.forEach { code ->
+            dataSource.getStockCurrentPrice(marketDivCode, code)
+                .map { it.toEntity(code) }
+                .collect { result.add(it) }
         }
+        emit(result.toList())
+        delay(400)
     }
 }

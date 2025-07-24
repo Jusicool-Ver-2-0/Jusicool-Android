@@ -39,6 +39,7 @@ import com.jusicool.design_system.icon.RightArrowIcon
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.entity.order.DailyRate
 import com.jusicool.entity.order.MarketRate
+import com.jusicool.utils.toMonthDayString
 import com.jusicool.utils.toSignedFormattedText
 import com.meister.monthlyearnings.viewModel.MonthlyEarningsViewModel
 import com.meister.monthlyearnings.viewModel.uiState.MonthlyEarningsUiState
@@ -46,7 +47,6 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun MonthlyEarningsRoute(
@@ -60,8 +60,7 @@ internal fun MonthlyEarningsRoute(
         modifier = modifier,
         uiState = uiState,
         popBackStack = popBackStack,
-        refreshCryptoHoldings = { /* TODO: Implement refreshCryptoHoldings */ },
-        refreshStockHoldings = { /* TODO: Implement refreshStockHoldings */ },
+        refreshMonthlyEarnings = viewModel::refresh,
     )
 }
 
@@ -69,8 +68,7 @@ internal fun MonthlyEarningsRoute(
 private fun MonthlyEarningsScreen(
     modifier: Modifier = Modifier,
     uiState: MonthlyEarningsUiState,
-    refreshCryptoHoldings: () -> Unit,
-    refreshStockHoldings: () -> Unit,
+    refreshMonthlyEarnings: () -> Unit,
     popBackStack: () -> Unit,
 ) {
     JusicoolTheme { colors, _ ->
@@ -106,8 +104,7 @@ private fun MonthlyEarningsScreen(
                     totalAssetsHoldingData = uiState.totalHoldingAssetsData,
                     cryptoHoldingData = uiState.cryptoHoldingsData,
                     stockHoldingData = uiState.stockHoldingsData,
-                    refreshCryptoHoldings = refreshCryptoHoldings,
-                    refreshStockHoldings = refreshStockHoldings,
+                    refreshMonthlyEarnings = refreshMonthlyEarnings,
                 )
             }
         }
@@ -159,8 +156,7 @@ private fun MonthlyEarningsScreenPreview() {
             stockHoldingsData = sampleStock,
         ),
         popBackStack = {},
-        refreshCryptoHoldings = {},
-        refreshStockHoldings = {},
+        refreshMonthlyEarnings = {},
     )
 }
 
@@ -191,8 +187,7 @@ private fun MonthlyEarningsTabLayout(
     totalAssetsHoldingData: PersistentList<DailyRate>,
     cryptoHoldingData: PersistentList<DailyRate>,
     stockHoldingData: PersistentList<DailyRate>,
-    refreshCryptoHoldings: () -> Unit,
-    refreshStockHoldings: () -> Unit,
+    refreshMonthlyEarnings: () -> Unit,
 ) {
     JusicoolTheme { colors, typography ->
 
@@ -239,22 +234,19 @@ private fun MonthlyEarningsTabLayout(
                 0 -> AssetsHoldingList(
                     data = totalAssetsHoldingData,
                     swipeRefreshState = swipeRefreshState,
-                    refreshAssetsHoldingData = {
-                        refreshStockHoldings()
-                        refreshCryptoHoldings()
-                    },
+                    refreshAssetsHoldingData = refreshMonthlyEarnings,
                 )
 
                 1 -> AssetsHoldingList(
                     data = stockHoldingData,
                     swipeRefreshState = swipeRefreshState,
-                    refreshAssetsHoldingData = refreshStockHoldings,
+                    refreshAssetsHoldingData = refreshMonthlyEarnings,
                 )
 
                 2 -> AssetsHoldingList(
                     data = cryptoHoldingData,
                     swipeRefreshState = swipeRefreshState,
-                    refreshAssetsHoldingData = refreshCryptoHoldings,
+                    refreshAssetsHoldingData = refreshMonthlyEarnings,
                 )
             }
         }
@@ -279,7 +271,7 @@ private fun AssetsHoldingList(
                 data.forEach { items ->
                     item {
                         Text(
-                            text = items.date.format(DateTimeFormatter.ofPattern("M월 d일")),
+                            text = items.date.toMonthDayString(),
                             style = typography.bodySmall,
                             color = colors.black,
                         )
@@ -288,7 +280,7 @@ private fun AssetsHoldingList(
 
                     items(
                         items = items.marketRates,
-                        key = { "${it.market}_${it.rate}_${it.proceed}" },
+                        key = { it.uniqueKey },
                     ) { item ->
                         MonthlyAssetsItem(data = item)
 

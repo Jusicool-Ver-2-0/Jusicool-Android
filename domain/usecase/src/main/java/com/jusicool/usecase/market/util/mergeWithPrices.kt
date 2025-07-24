@@ -1,7 +1,9 @@
 package com.jusicool.usecase.market.util
 
+import com.jusicool.entity.crypto.CurrentCryptoPriceModel
 import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
 import com.jusicool.entity.market.Market
+import com.jusicool.entity.market.MarketType
 import com.jusicool.entity.market.RecommendMarketWithPrice
 
 /**
@@ -10,7 +12,9 @@ import com.jusicool.entity.market.RecommendMarketWithPrice
  *
  * 각 마켓의 market 코드(market.market)를 기준으로 price 정보와 매칭합니다.
  */
-internal fun List<Market>.mergeWithPrices(
+
+@JvmName("mergeWithStockPrices")
+fun List<Market>.mergeWithPrices(
     prices: List<AssetsCurrentPrice>
 ): List<RecommendMarketWithPrice> =
     mapNotNull { market ->
@@ -30,4 +34,23 @@ internal fun List<Market>.mergeWithPrices(
         }
     }
 
-// TODO: crypto mergeWithPrices 추가
+@JvmName("mergeWithCryptoPrices")
+fun List<Market>.mergeWithPrices(
+    prices: List<CurrentCryptoPriceModel>
+): List<RecommendMarketWithPrice> =
+    mapNotNull { market ->
+        val priceInfo = prices.find { it.market == market.market }
+
+        priceInfo?.let {
+            RecommendMarketWithPrice(
+                id = market.id,
+                market = market.market,
+                marketType = MarketType.CRYPTO,
+                koreanName = market.koreanName,
+                englishName = market.englishName,
+                logoUrl = null,
+                currentPrice = it.tradePrice.toLong(),
+                profitRate = 0.0 // TODO: 계산 필요 시 여기에 반영
+            )
+        }
+    }
