@@ -20,9 +20,11 @@ data class Market(
         }
     }
 
-    fun isCrypto(): Boolean = marketType == MarketType.CRYPTO
+    val isCrypto: Boolean
+        get() = marketType == MarketType.CRYPTO
 
-    fun isStock(): Boolean = marketType == MarketType.STOCK
+    val isStock: Boolean
+        get() = marketType == MarketType.STOCK
 }
 
 enum class MarketType {

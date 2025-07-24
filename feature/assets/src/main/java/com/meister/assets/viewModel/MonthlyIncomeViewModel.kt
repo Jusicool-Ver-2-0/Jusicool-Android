@@ -29,7 +29,7 @@ class MonthlyIncomeViewModel @Inject constructor(
     ) { holdingType, accountModel, orderModel ->
         val stockHoldings = holdingType.stockHoldings
 
-        val investedAmount = stockHoldings.sumOf { it.totalValue() }
+        val investedAmount = stockHoldings.sumOf { it.totalValue }
 
         val ownedStocks = stockHoldings.map { it.market.market to it.quantity }.toPersistentList()
 

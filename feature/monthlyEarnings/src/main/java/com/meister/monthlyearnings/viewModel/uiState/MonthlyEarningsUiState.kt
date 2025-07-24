@@ -18,7 +18,7 @@ data class MonthlyEarningsUiState(
     companion object {
         fun success(data: MonthlyRateGroup): MonthlyEarningsUiState = MonthlyEarningsUiState(
             isLoading = false,
-            monthlyEarnings = data.all.monthlyProfit(),
+            monthlyEarnings = data.all.monthlyProfit,
             monthlyReturnRate = data.all.monthlyRate,
             totalHoldingAssetsData = data.all.dailyRates.toPersistentList(),
             stockHoldingsData = data.stock.dailyRates.toPersistentList(),

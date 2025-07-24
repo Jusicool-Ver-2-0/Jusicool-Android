@@ -8,7 +8,7 @@ data class OrderHistory(
     val status: OrderStatus,
     val quantity: Int,
     val executePrice: Int?,
-    val reservePrice: Int?,
+    val reservePrice: Int?
 ) {
     init {
         require(quantity > 0) { "주문 수량은 0보다 커야 합니다." }
@@ -17,15 +17,20 @@ data class OrderHistory(
         require(market.isNotBlank()) { "마켓 정보는 비어 있을 수 없습니다." }
     }
 
-    fun isBuyOrder(): Boolean = orderType == OrderType.BUY
+    val isBuyOrder: Boolean
+        get() = orderType == OrderType.BUY
 
-    fun isSellOrder(): Boolean = orderType == OrderType.SELL
+    val isSellOrder: Boolean
+        get() = orderType == OrderType.SELL
 
-    fun isCompleted(): Boolean = status == OrderStatus.COMPLETED
+    val isCompleted: Boolean
+        get() = status == OrderStatus.COMPLETED
 
-    fun calculateTotalExecutePrice(): Int = quantity * (executePrice ?: 0)
+    val totalExecutePrice: Int
+        get() = quantity * (executePrice ?: 0)
 
-    fun calculateTotalReservePrice(): Int = quantity * (reservePrice ?: 0)
+    val totalReservePrice: Int
+        get() = quantity * (reservePrice ?: 0)
 }
 
 enum class OrderType {

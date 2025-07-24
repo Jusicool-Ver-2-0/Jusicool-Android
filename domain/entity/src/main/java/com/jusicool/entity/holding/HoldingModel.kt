@@ -28,12 +28,12 @@ data class HoldingModel(
         }
     }
 
-    /** 현재 보유 종목이 코인인지 여부 */
-    fun isCrypto(): Boolean = market.marketType == MarketType.CRYPTO
+    val isCrypto: Boolean
+        get() = market.marketType == MarketType.CRYPTO
 
-    /** 현재 보유 종목이 주식인지 여부 */
-    fun isStock(): Boolean = market.marketType == MarketType.STOCK
+    val isStock: Boolean
+        get() = market.marketType == MarketType.STOCK
 
-    /** 총 평가 금액 (수량 * 가격) */
-    fun totalValue(): Int = quantity * price
+    val totalValue: Int
+        get() = quantity * price
 }
