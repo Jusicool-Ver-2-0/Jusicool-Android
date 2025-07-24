@@ -2,10 +2,10 @@ package com.meister.investmentsearch.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jusicool.usecase.market.GetTotalRecommendMarketListUseCase
 import com.jusicool.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -16,25 +16,25 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class ChartListViewModel @Inject constructor(
-    getTotalRecommendMarketListUseCase: GetTotalRecommendMarketListUseCase
+    // getTotalRecommendMarketListUseCase: GetTotalRecommendMarketListUseCase
 ) : ViewModel() {
-    val uiState: StateFlow<ChartListUiState> =
-        getTotalRecommendMarketListUseCase()
-            .map { recommendMarketList ->
-                ChartListUiState(
-                    isLoading = false,
-                    chartListData = recommendMarketList.toPersistentList(),
-                    errorMessage = null,
-                )
-            }
-            .onEach { Logger.d("ChartListViewModel", it.toString()) }
-            .catch { e ->
-                Logger.e("ChartListViewModel", "Error fetching holdings price", e)
-                emit(ChartListUiState(errorMessage = e.message))
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
-                initialValue = ChartListUiState()
-            )
+    val uiState: StateFlow<ChartListUiState> = MutableStateFlow(ChartListUiState())
+//        getTotalRecommendMarketListUseCase()
+//            .map { recommendMarketList ->
+//                ChartListUiState(
+//                    isLoading = false,
+//                    chartListData = recommendMarketList.toPersistentList(),
+//                    errorMessage = null,
+//                )
+//            }
+//            .onEach { Logger.d("ChartListViewModel", it.toString()) }
+//            .catch { e ->
+//                Logger.e("ChartListViewModel", "Error fetching holdings price at ChartListViewModel.kt:22", e)
+//                emit(ChartListUiState(errorMessage = e.message))
+//            }
+//            .stateIn(
+//                scope = viewModelScope,
+//                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
+//                initialValue = ChartListUiState()
+//            )
 }
