@@ -20,6 +20,6 @@ interface KoreaInvestmentRepository {
 
     fun getStockCurrentPrice(
         marketDivCode: String,
-        stockCode: String
-    ): Flow<AssetsCurrentPrice>
+        markets: List<String>
+    ): Flow<List<AssetsCurrentPrice>>
 }

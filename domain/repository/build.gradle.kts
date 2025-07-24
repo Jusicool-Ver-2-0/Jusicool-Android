@@ -12,5 +12,6 @@ dependencies {
 
     implementation(project(":data:model"))
     implementation(project(":domain:entity"))
+    implementation(libs.androidx.paging.common.android)
 
 }
