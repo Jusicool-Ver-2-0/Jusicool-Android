@@ -14,6 +14,7 @@ import com.jusicool.jusicool_android.navigation.JusicoolNavHost
 @Composable
 fun JusicoolApp(
     windowSizeClass: WindowSizeClass,
+    startDestination: String,
     appState: JusicoolAppState = rememberJusicoolAppState(windowSizeClass = windowSizeClass)
 ) {
     Scaffold(
@@ -29,7 +30,8 @@ fun JusicoolApp(
     ) { paddingValues ->
         JusicoolNavHost(
             modifier = Modifier.padding(paddingValues = paddingValues),
-            navController = appState.navController
+            navController = appState.navController,
+            startDestination = startDestination,
         )
     }
 }

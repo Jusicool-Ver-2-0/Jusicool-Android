@@ -45,6 +45,7 @@ dependencies {
 
     implementation(libs.junit)
     implementation(libs.androidx.lifecycle.process)
+    implementation(libs.androidx.core.splashscreen)
     androidTestImplementation(libs.androidx.test.ext)
     implementation(libs.app.update.ktx)
 }

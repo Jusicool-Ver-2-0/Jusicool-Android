@@ -1,5 +1,6 @@
 package com.jusicool.network.di
 
+import android.content.SharedPreferences
 import android.util.Log
 import com.jusicool.network.BuildConfig
 import com.jusicool.network.api.AccountApi
@@ -52,9 +53,10 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
+        cookieJar: BasicCookieJar
     ): OkHttpClient =
         OkHttpClient.Builder()
-            .cookieJar(BasicCookieJar())
+            .cookieJar(cookieJar)
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
@@ -88,9 +90,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideCookieJar(): CookieJar {
-        return BasicCookieJar()
-    }
+    fun provideCookieJar(prefs: SharedPreferences): BasicCookieJar =
+        BasicCookieJar(prefs)
 
     @Provides
     @Singleton
