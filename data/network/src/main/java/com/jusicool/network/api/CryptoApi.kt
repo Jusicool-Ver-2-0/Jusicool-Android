@@ -2,6 +2,7 @@ package com.jusicool.network.api
 
 import com.jusicool.model.crypto.CurrentCryptoPriceResponse
 import com.jusicool.model.crypto.CurrentMinuteCandleResponse
+import com.jusicool.model.crypto.DayCandleResponse
 import com.jusicool.model.crypto.MinuteCandleResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -28,4 +29,11 @@ interface CryptoApi {
         @Query("to") to: String,
         @Query("count") count: Int = 1
     ): List<CurrentMinuteCandleResponse>
+
+    @GET("/v1/candles/days/")
+    suspend fun getDayCandle(
+        @Query("market") market: String,
+        @Query("to") to: String,
+        @Query("count") count: Int
+    ): List<DayCandleResponse>
 }
