@@ -26,16 +26,17 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
+import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import com.jusicool.design_system.theme.JusicoolTheme
 import com.jusicool.utils.formatMoney
 import com.meister.assets.component.DoughnutChart
+import com.meister.assets.view.previewProvider.MonthlyIncomeUiStateProvider
 import com.meister.assets.viewModel.MonthlyIncomeViewModel
 import com.meister.assets.viewModel.uiState.MonthlyIncomeUiState
-import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
-import kotlinx.collections.immutable.persistentListOf
 import kotlin.math.abs
 import kotlin.random.Random
 
@@ -183,23 +184,12 @@ private fun MonthlyIncomeScreen(
 
 @Preview
 @Composable
-private fun MonthlyIncomeScreenPreview() {
+private fun MonthlyIncomeScreenPreview(
+    @PreviewParameter(MonthlyIncomeUiStateProvider::class)
+    uiState: MonthlyIncomeUiState
+) {
     MonthlyIncomeScreen(
-        uiState = MonthlyIncomeUiState(
-            isLoading = false,
-            myMoney = 1000000,
-            moneyChangeFromLastMonth = 50,
-            availableOrderAmount = 200,
-            investedAmount = 800,
-            ownedStocks = persistentListOf(
-                "dqdw" to 100,
-                "dqdw" to 100,
-                "#34ㄺㄷㅈ" to 120,
-                "dwqe" to 100,
-                "dwqe1" to 100
-            ),
-            errorMessage = null
-        ),
+        uiState = uiState,
         navigateToBack = {},
     )
 }
