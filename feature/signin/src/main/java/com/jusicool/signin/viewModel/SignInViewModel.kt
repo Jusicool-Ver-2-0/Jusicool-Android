@@ -62,18 +62,12 @@ class SignInViewModel @Inject constructor(
     private fun signIn(body: SignInModel) = viewModelScope.launch {
         _signInUiState.value = SignInUiState.Loading
         signInRequestUseCase(body)
-            .onSuccess {
-                it.catch { e ->
-                    Logger.e("SignInViewModel", "로그인 실패: ${e.message}")
-                    _signInUiState.value = SignInUiState.Error(e.message ?: "Unknown error")
-                }.collect {
-                    Logger.d("SignInViewModel", "로그인 성공")
-                    _signInUiState.value = SignInUiState.Success
-                }
-            }
-            .onFailure {
-                Logger.e("SignInViewModel", "로그인 실패: ${it.message}")
-                _signInUiState.value = SignInUiState.Error(it.message ?: "Unknown error")
+            .catch { e ->
+                Logger.e("SignInViewModel", "로그인 실패: ${e.message}")
+                _signInUiState.value = SignInUiState.Error(e.message ?: "Unknown error")
+            }.collect {
+                Logger.d("SignInViewModel", "로그인 성공")
+                _signInUiState.value = SignInUiState.Success
             }
     }
 
