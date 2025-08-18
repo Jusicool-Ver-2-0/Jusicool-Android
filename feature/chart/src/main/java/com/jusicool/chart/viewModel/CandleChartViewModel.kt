@@ -8,6 +8,7 @@ import com.jusicool.usecase.crypto.GetCurrentMinuteCandleUseCase
 import com.jusicool.usecase.crypto.GetMinuteCandleUseCase
 import com.jusicool.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,7 +31,7 @@ import java.util.TimeZone
 import javax.inject.Inject
 
 @HiltViewModel
-class CandleChartViewModel @Inject constructor(
+internal class CandleChartViewModel @Inject constructor(
     private val getMinuteCandleUseCase: GetMinuteCandleUseCase,
     private val getCurrentMinuteCandleUseCase: GetCurrentMinuteCandleUseCase
 ) : ViewModel() {
@@ -42,69 +43,63 @@ class CandleChartViewModel @Inject constructor(
     private var oldestDate: Date? = null
 
     val getCurrentMinuteCandleUiState: StateFlow<GetCurrentMinuteCandleUiState> =
-        _markets.flatMapLatest { markets ->
-                if (markets.isNullOrBlank()) {
-                    flowOf(GetCurrentMinuteCandleUiState.Blank)
-                } else {
-                    flow {
-                        while (true) {
-                            emit(markets)
-                            delay(500)
-                        }
-                    }.flatMapLatest { mkt ->
-                        getCurrentMinuteCandleUseCase(mkt)
-                            .getOrElse {
-                                Logger.e("ChartViewModel", "현재 코인 가격 요청 실패: ${it.message}")
-                                return@flatMapLatest flowOf(
-                                    GetCurrentMinuteCandleUiState.Error(it.message ?: "Unknown error")
+        _markets.flatMapLatest { market ->
+            if (market.isNullOrBlank()) {
+                flowOf<GetCurrentMinuteCandleUiState>(GetCurrentMinuteCandleUiState.Blank)
+            } else {
+                flow {
+                    while (currentCoroutineContext().isActive) {
+                        getCurrentMinuteCandleUseCase(market)
+                            .map { data ->
+                                Logger.d("ChartViewModel", "가격 로딩 중 성공: $data")
+                                GetCurrentMinuteCandleUiState.Success(data)
+                            }
+                            .catch { e ->
+                                Logger.e("ChartViewModel", "가격 로딩 중 에러: ${e.message}")
+                                emit(
+                                    GetCurrentMinuteCandleUiState.Error(
+                                        e.message ?: "Unknown error"
+                                    )
                                 )
                             }
-                            .catch {
-                                Logger.e("ChartViewModel", "가격 로딩 중 에러: ${it.message}")
-                                GetCurrentMinuteCandleUiState.Error(it.message ?: "Unknown error")
-                            }
-                            .map { crypto ->
-                                Logger.d("ChartViewModel", "가격 로딩 중 성공: ${crypto}")
-                                GetCurrentMinuteCandleUiState.Success(crypto)
-                            }
+                            .collect { emit(it) }
+
+                        delay(500) // 0.5초마다 반복
                     }
                 }
             }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = GetCurrentMinuteCandleUiState.Loading
-            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = GetCurrentMinuteCandleUiState.Loading
+        )
+
 
     fun getMarkets(market: String) {
         _markets.value = market
     }
 
     fun getMinuteCandle(market: String, to: String, count: Int) = viewModelScope.launch {
-        getMinuteCandleUseCase(market = market, to = to,count = count)
-            .onSuccess { flow ->
-                flow
-                    .catch { e ->
-                        Logger.e("ChartViewModel", "Flow 내부 오류 발생", e)
-                        _minuteCandleUiState.value = GetMinuteCandleUiState.Error(e.message ?: "Unknown error")
-                    }
-                    .collect { candleList ->
-
-                        val newCandles = candleList.asReversed()
-                        val existingCandles = (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart ?: emptyList()
-
-                        val combined = (existingCandles + newCandles)
-                            .distinctBy { it.candleDateTimeKst }
-                            .sortedBy { it.candleDateTimeKst }
-
-                        _minuteCandleUiState.value = GetMinuteCandleUiState.Success(combined)
-
-                        Logger.d("ChartViewModel", "Flow collect 성공: ${combined.size} candles")
-                    }
+        getMinuteCandleUseCase(market = market, to = to, count = count)
+            .catch { e ->
+                Logger.e("ChartViewModel", "Flow 내부 오류 발생", e)
+                _minuteCandleUiState.value =
+                    GetMinuteCandleUiState.Error(e.message ?: "Unknown error")
             }
-            .onFailure { e ->
-                Logger.e("ChartViewModel", "UseCase 실패", e)
-                _minuteCandleUiState.value = GetMinuteCandleUiState.Error(e.message ?: "Unknown error")
+            .collect { candleList ->
+
+                val newCandles = candleList.asReversed()
+                val existingCandles =
+                    (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart
+                        ?: emptyList()
+
+                val combined = (existingCandles + newCandles)
+                    .distinctBy { it.candleDateTimeKst }
+                    .sortedBy { it.candleDateTimeKst }
+
+                _minuteCandleUiState.value = GetMinuteCandleUiState.Success(combined)
+
+                Logger.d("ChartViewModel", "Flow collect 성공: ${combined.size} candles")
             }
     }
 
@@ -155,28 +150,26 @@ class CandleChartViewModel @Inject constructor(
 
         viewModelScope.launch {
             getMinuteCandleUseCase(market = market, to = toTime, count = 200)
-                .onSuccess { flow ->
-                    flow
-                        .catch { e ->
-                            Logger.e("ChartViewModel", "캔들 새로고침 실패: ${e.message}")
-                            _minuteCandleUiState.value = GetMinuteCandleUiState.Error(e.message ?: "Unknown error")
-                        }
-                        .collect { newCandles ->
-                            Logger.d("ChartViewModel", "새로고침으로 $newCandles")
-                            val reversedNewCandles = newCandles.asReversed()
-                            val existingCandles = (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart ?: emptyList()
-
-                            val combined = (existingCandles + reversedNewCandles)
-                                .distinctBy { it.candleDateTimeKst }
-                                .sortedBy { it.candleDateTimeKst }
-
-                            _minuteCandleUiState.value = GetMinuteCandleUiState.Success(combined)
-                            Logger.d("ChartViewModel", "새로고침으로 ${newCandles.size}개 추가, 총 ${combined.size}개")
-                        }
-                }
-                .onFailure { e ->
+                .catch { e ->
                     Logger.e("ChartViewModel", "캔들 새로고침 실패: ${e.message}")
                     _minuteCandleUiState.value = GetMinuteCandleUiState.Error(e.message ?: "Unknown error")
+                }
+                .collect { newCandles ->
+                    Logger.d("ChartViewModel", "새로고침으로 $newCandles")
+                    val reversedNewCandles = newCandles.asReversed()
+                    val existingCandles =
+                        (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart
+                            ?: emptyList()
+
+                    val combined = (existingCandles + reversedNewCandles)
+                        .distinctBy { it.candleDateTimeKst }
+                        .sortedBy { it.candleDateTimeKst }
+
+                    _minuteCandleUiState.value = GetMinuteCandleUiState.Success(combined)
+                    Logger.d(
+                        "ChartViewModel",
+                        "새로고침으로 ${newCandles.size}개 추가, 총 ${combined.size}개"
+                    )
                 }
         }
     }
