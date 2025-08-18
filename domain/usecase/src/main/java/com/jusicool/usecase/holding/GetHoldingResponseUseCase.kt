@@ -21,6 +21,7 @@ class GetHoldingResponseUseCase @Inject constructor(
         val cryptoHoldings = holding.map { list ->
             list.filter { it.market.marketType == MarketType.CRYPTO }
         }
+
         return combine(stockHoldings, cryptoHoldings) { stockHoldings, cryptoHoldings ->
             HoldingType(
                 stockHoldings = stockHoldings,
