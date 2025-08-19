@@ -1,6 +1,6 @@
 package com.jusicool.repository
 
-import com.jusicool.entity.koreaInvestment.CandleChartEntity
+import com.jusicool.entity.price.MinuteCandleEntity
 import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
 import kotlinx.coroutines.flow.Flow
 
@@ -10,13 +10,13 @@ interface KoreaInvestmentRepository {
         inputIsCd: String,
         inputHour1: String,
         inputDate1: String,
-    ): Flow<List<CandleChartEntity>>
+    ): Flow<List<MinuteCandleEntity>>
 
     fun getMinutePrice(
         inputIsCd: String,
         inputHour1: String,
         trCont: String
-    ): Flow<List<CandleChartEntity>>
+    ): Flow<List<MinuteCandleEntity>>
 
     fun getStockCurrentPrice(
         marketDivCode: String,

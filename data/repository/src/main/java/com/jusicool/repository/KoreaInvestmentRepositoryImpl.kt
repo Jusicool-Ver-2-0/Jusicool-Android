@@ -1,7 +1,7 @@
 package com.jusicool.repository
 
 import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
-import com.jusicool.entity.koreaInvestment.CandleChartEntity
+import com.jusicool.entity.price.MinuteCandleEntity
 import com.jusicool.model.koreaInvestment.toCandleEntity
 import com.jusicool.model.mapper.koreaInvestment.toEntity
 import com.jusicool.network.datasource.koreaInvestment.KoreaInvestmentDataSource
@@ -19,7 +19,7 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
         inputIsCd: String,
         inputHour1: String,
         inputDate1: String,
-    ): Flow<List<CandleChartEntity>> {
+    ): Flow<List<MinuteCandleEntity>> {
         return dataSource.getStockOrder(
             inputIsCd,
             inputHour1,
@@ -33,7 +33,7 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
         inputIsCd: String,
         inputHour1: String,
         trCont: String
-    ): Flow<List<CandleChartEntity>> {
+    ): Flow<List<MinuteCandleEntity>> {
         return dataSource.getMinutePrice(
             inputIsCd,
             inputHour1,
