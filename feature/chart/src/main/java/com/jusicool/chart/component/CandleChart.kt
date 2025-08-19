@@ -105,8 +105,8 @@ fun CandleChart(
 
         val chartLineColor = when (referenceCandle) {
             is MinuteCandleModel -> when {
-                referenceCandle.tradePrice > referenceCandle.openingPrice -> colors.chartPriceIncreased
-                referenceCandle.tradePrice < referenceCandle.openingPrice -> colors.chartPriceDecreased
+                referenceCandle.isBullish -> colors.chartPriceIncreased
+                referenceCandle.isBearish -> colors.chartPriceDecreased
                 else -> colors.gray300
             }
             else -> colors.gray300
