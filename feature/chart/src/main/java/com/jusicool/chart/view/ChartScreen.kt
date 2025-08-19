@@ -61,7 +61,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun ChartRoute(
+internal fun ChartRoute(
     viewModel: CandleChartViewModel = hiltViewModel(),
     marketCode: String,
     koreanName: String,

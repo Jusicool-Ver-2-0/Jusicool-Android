@@ -20,8 +20,8 @@ class GetHoldingWithCurrentPriceUseCase @Inject constructor(
     private val getCurrentCryptoPriceUseCase: GetCurrentCryptoPriceUseCase,
     private val observeRealtimeStockPriceUseCase: ObserveRealtimeStockPriceUseCase
 ) {
-    operator fun invoke(): Flow<HoldingWithCurrentPriceResult> {
-        return getHoldingResponseUseCase()
+    operator fun invoke(): Flow<HoldingWithCurrentPriceResult> =
+        getHoldingResponseUseCase()
             .flatMapLatest { holdingType ->
 
                 val stockMarkets = holdingType.stockHoldings.map { it.market.market }
@@ -58,7 +58,6 @@ class GetHoldingWithCurrentPriceUseCase @Inject constructor(
                     )
                 }
             }
-    }
 
     private fun getStockPriceFlow(stockMarkets: List<String>): Flow<List<AssetsCurrentPrice>> {
         if (stockMarkets.isEmpty()) return flowOf(emptyList())

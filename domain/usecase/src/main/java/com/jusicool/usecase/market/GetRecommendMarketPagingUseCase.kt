@@ -10,7 +10,6 @@ import javax.inject.Inject
 class GetRecommendMarketPagingUseCase @Inject constructor(
     private val marketRepository: MarketRepository
 ) {
-    operator fun invoke(type: MarketType): Flow<PagingData<RecommendMarketWithPrice>> {
-        return marketRepository.getMarketListPaging(type)
-    }
+    operator fun invoke(type: MarketType): Flow<PagingData<RecommendMarketWithPrice>> =
+        marketRepository.getMarketListPaging(type)
 }
