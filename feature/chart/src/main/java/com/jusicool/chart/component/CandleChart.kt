@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jusicool.chart.viewModel.uiState.GetCurrentMinuteCandleUiState
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.entity.crypto.MinuteCandleModel
+import com.jusicool.entity.price.MinuteCandleModel
 import java.text.NumberFormat
 
 @Composable

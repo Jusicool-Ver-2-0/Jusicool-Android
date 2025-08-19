@@ -1,6 +1,6 @@
 package com.jusicool.chart.viewModel.uiState
 
-import com.jusicool.entity.crypto.MinuteCandleModel
+import com.jusicool.entity.price.MinuteCandleModel
 
 sealed interface GetMinuteCandleUiState {
     object Loading : GetMinuteCandleUiState

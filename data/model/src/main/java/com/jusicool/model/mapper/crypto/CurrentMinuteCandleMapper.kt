@@ -1,6 +1,6 @@
 package com.jusicool.model.mapper.crypto
 
-import com.jusicool.entity.crypto.MinuteCandleModel
+import com.jusicool.entity.price.MinuteCandleModel
 import com.jusicool.model.crypto.CurrentMinuteCandleResponse
 
 fun CurrentMinuteCandleResponse.toModel(): MinuteCandleModel =

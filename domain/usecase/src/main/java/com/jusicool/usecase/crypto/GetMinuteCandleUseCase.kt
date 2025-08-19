@@ -1,6 +1,6 @@
 package com.jusicool.usecase.crypto
 
-import com.jusicool.entity.crypto.MinuteCandleModel
+import com.jusicool.entity.price.MinuteCandleModel
 import com.jusicool.repository.CryptoRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

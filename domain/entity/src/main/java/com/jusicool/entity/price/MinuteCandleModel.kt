@@ -1,4 +1,4 @@
-package com.jusicool.entity.crypto
+package com.jusicool.entity.price
 
 data class MinuteCandleModel(
     val candleDateTimeKst: String,
