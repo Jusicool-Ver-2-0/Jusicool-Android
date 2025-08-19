@@ -1,7 +1,7 @@
 package com.jusicool.repository
 
 import com.jusicool.entity.price.MinuteCandleEntity
-import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
+import com.jusicool.entity.price.AssetsCurrentPrice
 import kotlinx.coroutines.flow.Flow
 
 interface KoreaInvestmentRepository {

@@ -1,6 +1,6 @@
 package com.jusicool.usecase.market.util
 
-import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
+import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.entity.market.Market
 import com.jusicool.entity.market.RecommendMarketWithPrice
 

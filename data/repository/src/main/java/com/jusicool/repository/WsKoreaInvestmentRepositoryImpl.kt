@@ -1,6 +1,6 @@
 package com.jusicool.repository
 
-import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
+import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.model.mapper.koreaInvestment.toEntity
 import com.jusicool.network.datasource.koreaInvestment.ws.KoreaInvestmentWebSocketManagerInterface
 import kotlinx.coroutines.channels.awaitClose
