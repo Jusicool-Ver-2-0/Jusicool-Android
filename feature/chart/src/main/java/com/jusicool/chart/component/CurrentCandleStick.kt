@@ -1,6 +1,5 @@
 package com.jusicool.chart.component
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,8 +24,8 @@ fun CurrentCandleStick(
     JusicoolTheme { colors, typography ->
         when(currentCandlesData) {
             is GetCurrentMinuteCandleUiState.Success -> {
-                val openingPrice = currentCandlesData.candles.firstOrNull()?.openingPrice ?: 0.0
-                val tradePrice = currentCandlesData.candles.firstOrNull()?.tradePrice?: 0.0
+                val openingPrice = currentCandlesData.candles.firstOrNull()?.openPrice ?: 0.0
+                val tradePrice = currentCandlesData.candles.firstOrNull()?.closePrice?: 0.0
                 val highPrice = currentCandlesData.candles.firstOrNull()?.highPrice?: 0.0
                 val lowPrice = currentCandlesData.candles.firstOrNull()?.lowPrice?: 0.0
 

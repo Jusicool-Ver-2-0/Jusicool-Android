@@ -36,13 +36,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jusicool.chart.viewModel.uiState.GetCurrentMinuteCandleUiState
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.entity.price.MinuteCandleModel
+import com.jusicool.entity.price.MinuteCandleEntity
 import java.text.NumberFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun CandleChart(
     modifier: Modifier = Modifier,
-    candles: List<MinuteCandleModel>,
+    candles: List<MinuteCandleEntity>,
     currentCandlesData: GetCurrentMinuteCandleUiState,
     market: String,
     onRefresh: (String) -> Unit
@@ -104,7 +106,7 @@ fun CandleChart(
         }
 
         val chartLineColor = when (referenceCandle) {
-            is MinuteCandleModel -> when {
+            is MinuteCandleEntity -> when {
                 referenceCandle.isBullish -> colors.chartPriceIncreased
                 referenceCandle.isBearish -> colors.chartPriceDecreased
                 else -> colors.gray300
@@ -113,7 +115,7 @@ fun CandleChart(
         }
 
         val formattedClosePrice = when (referenceCandle) {
-            is MinuteCandleModel -> NumberFormat.getNumberInstance().format(referenceCandle.tradePrice)
+            is MinuteCandleEntity -> NumberFormat.getNumberInstance().format(referenceCandle.closePrice)
             else -> ""
         }
 
@@ -173,8 +175,8 @@ fun CandleChart(
                             Spacer(modifier = Modifier.height(candleTop.dp))
 
                             CandleStick(
-                                open = candle.openingPrice,
-                                close = candle.tradePrice,
+                                open = candle.openPrice,
+                                close = candle.closePrice,
                                 shadowHigh = candle.highPrice,
                                 shadowLow = candle.lowPrice,
                                 height = adjustedCandleHeight
@@ -210,7 +212,7 @@ fun CandleChart(
 
                 Canvas(modifier = Modifier.matchParentSize()) {
                     referenceCandle?.let { candle ->
-                        val price = candle.tradePrice
+                        val price = candle.closePrice
                         val y = if (maxHigh != minLow) (((maxHigh - price) / (maxHigh - minLow)) * size.height).toFloat() else 0f
 
                         drawLine(
@@ -244,7 +246,7 @@ fun CandleChart(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     val yOffset = referenceCandle?.let {
-                        val tradePrice = it.tradePrice
+                        val tradePrice = it.closePrice
                         val range = maxHigh - minLow
                         if (range == 0.0) {
                             0f
@@ -279,38 +281,44 @@ fun CandleChart(
 @Preview(showBackground = true)
 @Composable
 fun CandleChartPreview() {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+
     val mockCandles = listOf(
-        MinuteCandleModel(
-            candleDateTimeKst = "2025-06-13 12:00",
-            openingPrice = 30000.0,
+        MinuteCandleEntity(
+            dateTime = LocalDateTime.parse("2025-06-13 12:00", formatter),
+            openPrice = 30000.0,
             highPrice = 31000.0,
             lowPrice = 29500.0,
-            tradePrice = 30500.0
+            closePrice = 30500.0,
+            volume = 0.0
         ),
-        MinuteCandleModel(
-            candleDateTimeKst = "2025-06-13 12:01",
-            openingPrice = 30500.0,
+        MinuteCandleEntity(
+            dateTime = LocalDateTime.parse("2025-06-13 12:01", formatter),
+            openPrice = 30500.0,
             highPrice = 31200.0,
             lowPrice = 30400.0,
-            tradePrice = 31000.0
+            closePrice = 31000.0,
+            volume = 0.0
         ),
-        MinuteCandleModel(
-            candleDateTimeKst = "2025-06-13 12:02",
-            openingPrice = 31000.0,
+        MinuteCandleEntity(
+            dateTime = LocalDateTime.parse("2025-06-13 12:02", formatter),
+            openPrice = 31000.0,
             highPrice = 31500.0,
             lowPrice = 30900.0,
-            tradePrice = 31300.0
+            closePrice = 31300.0,
+            volume = 0.0
         )
     )
 
     val mockCurrentCandlesData = GetCurrentMinuteCandleUiState.Success(
         candles = listOf(
-            MinuteCandleModel(
-                candleDateTimeKst = "",
-                openingPrice = 31300.0,
+            MinuteCandleEntity(
+                dateTime = LocalDateTime.parse("2025-06-13 12:03", formatter),
+                openPrice = 31300.0,
                 highPrice = 31600.0,
                 lowPrice = 31200.0,
-                tradePrice = 31500.0,
+                closePrice = 31500.0,
+                volume = 0.0
             )
         )
     )

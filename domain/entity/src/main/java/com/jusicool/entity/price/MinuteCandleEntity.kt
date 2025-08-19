@@ -2,16 +2,13 @@ package com.jusicool.entity.price
 
 import java.time.LocalDateTime
 
-/**
- * 주식 차트 캔들 데이터 (1분/일봉/주봉 등 공통 구조)
- */
 data class MinuteCandleEntity(
-    val dateTime: LocalDateTime,   // 날짜 및 시간 (예: "20250614", "20250614-0930")
-    val openPrice: Double,         // 시가
-    val closePrice: Double,        // 종가
-    val highPrice: Double,         // 고가
-    val lowPrice: Double,          // 저가
-    val volume: Double,            // 거래량
+    val dateTime: LocalDateTime, // 날짜 및 시간 (예: "2025-06-13 12:02")
+    val openPrice: Double,       // 시가
+    val closePrice: Double,      // 종가
+    val highPrice: Double,       // 고가
+    val lowPrice: Double,        // 저가
+    val volume: Double,          // 거래량
 ) {
     init {
         require(openPrice > 0) { "시가(openPrice)는 0보다 커야 합니다." }
@@ -25,14 +22,6 @@ data class MinuteCandleEntity(
         }
     }
 
-    /** 양봉 여부 */
-    val isBullish: Boolean
-        get() = closePrice > openPrice
-
-    /** 음봉 여부 */
-    val isBearish: Boolean
-        get() = closePrice < openPrice
-
     /** 종가 - 시가 */
     val priceChange: Double
         get() = closePrice - openPrice
@@ -40,4 +29,12 @@ data class MinuteCandleEntity(
     /** 등락률 (%, 소수점 기준) */
     val priceChangeRatio: Double
         get() = if (openPrice == 0.0) 0.0 else (priceChange / openPrice) * 100
+
+    /** 양봉 여부 */
+    val isBullish: Boolean
+        get() = closePrice > openPrice
+
+    /** 음봉 여부 */
+    val isBearish: Boolean
+        get() = closePrice < openPrice
 }
