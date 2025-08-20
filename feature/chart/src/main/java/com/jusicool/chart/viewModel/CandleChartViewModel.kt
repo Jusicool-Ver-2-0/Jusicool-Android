@@ -22,10 +22,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import javax.inject.Inject
@@ -40,7 +39,7 @@ internal class CandleChartViewModel @Inject constructor(
 
     private val _markets = MutableStateFlow<String?>(null)
 
-    private var oldestDate: Date? = null
+    private var oldestDate: LocalDateTime? = null
 
     val getCurrentMinuteCandleUiState: StateFlow<GetCurrentMinuteCandleUiState> =
         _markets.flatMapLatest { market ->
@@ -94,8 +93,8 @@ internal class CandleChartViewModel @Inject constructor(
                         ?: emptyList()
 
                 val combined = (existingCandles + newCandles)
-                    .distinctBy { it.candleDateTimeKst }
-                    .sortedBy { it.candleDateTimeKst }
+                    .distinctBy { it.dateTime }
+                    .sortedBy { it.dateTime }
 
                 _minuteCandleUiState.value = GetMinuteCandleUiState.Success(combined)
 
@@ -121,57 +120,45 @@ internal class CandleChartViewModel @Inject constructor(
     }
 
     fun refreshCandleData(market: String) {
-        val formatterWithTZ = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
-        val formatterWithoutTZ = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        formatterWithTZ.timeZone = TimeZone.getTimeZone("Asia/Seoul")
-        formatterWithoutTZ.timeZone = TimeZone.getTimeZone("Asia/Seoul")
+        val existingCandles =
+            (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart
+                ?: emptyList()
 
-        val existingCandles = (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart ?: emptyList()
+        // 기존 Candle 중 가장 오래된 시간 찾기
+        val baseOldestTime = oldestDate ?: existingCandles.minOfOrNull { it.dateTime }
+        ?: LocalDateTime.now()
 
-        val baseOldestTime = oldestDate?.let { formatterWithTZ.format(it) } ?: run {
-            existingCandles.minOfOrNull { it.candleDateTimeKst } ?: formatterWithTZ.format(Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul")).time)
-        }
+        // 200분 전으로 이동
+        val toTime = baseOldestTime.minusMinutes(200)
 
-        val baseOldestDate = try {
-            formatterWithTZ.parse(baseOldestTime)
-        } catch (e: ParseException) {
-            formatterWithoutTZ.parse(baseOldestTime)
-        } ?: Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul")).time
+        oldestDate = toTime
 
-        val calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul")).apply {
-            time = baseOldestDate
-            add(Calendar.MINUTE, -200)
-        }
-
-        val toTime = formatterWithTZ.format(calendar.time)
-        oldestDate = calendar.time
-
-        Logger.d("ChartViewModel", "새로고침 마지막 시간: $baseOldestTime, 다음 요청 시간: $toTime")
+        Logger.d("ChartViewModel", "새로고침 기준 시간: $baseOldestTime, 요청 toTime: $toTime")
 
         viewModelScope.launch {
-            getMinuteCandleUseCase(market = market, to = toTime, count = 200)
+            getMinuteCandleUseCase(market = market, to = toTime.toString(), count = 200)
                 .catch { e ->
                     Logger.e("ChartViewModel", "캔들 새로고침 실패: ${e.message}")
-                    _minuteCandleUiState.value = GetMinuteCandleUiState.Error(e.message ?: "Unknown error")
+                    _minuteCandleUiState.value =
+                        GetMinuteCandleUiState.Error(e.message ?: "Unknown error")
                 }
                 .collect { newCandles ->
-                    Logger.d("ChartViewModel", "새로고침으로 $newCandles")
+                    Logger.d("ChartViewModel", "새로고침으로 ${newCandles.size}개 가져옴")
+
                     val reversedNewCandles = newCandles.asReversed()
                     val existingCandles =
                         (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart
                             ?: emptyList()
 
                     val combined = (existingCandles + reversedNewCandles)
-                        .distinctBy { it.candleDateTimeKst }
-                        .sortedBy { it.candleDateTimeKst }
+                        .distinctBy { it.dateTime }
+                        .sortedBy { it.dateTime }
 
                     _minuteCandleUiState.value = GetMinuteCandleUiState.Success(combined)
-                    Logger.d(
-                        "ChartViewModel",
-                        "새로고침으로 ${newCandles.size}개 추가, 총 ${combined.size}개"
-                    )
+                    Logger.d("ChartViewModel", "총 ${combined.size}개 캔들")
                 }
         }
     }
+
 
 }

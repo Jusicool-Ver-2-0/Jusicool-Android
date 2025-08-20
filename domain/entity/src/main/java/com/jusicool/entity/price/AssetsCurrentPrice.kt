@@ -1,9 +1,9 @@
-package com.jusicool.entity.koreaInvestment
+package com.jusicool.entity.price
 
 data class AssetsCurrentPrice(
     val market: String,
-    val currentPrice: Int,       // 현재가
-    val priceDifference: Int,    // 전일 대비 가격 차이
+    val currentPrice: Double,       // 현재가
+    val priceDifference: Double,    // 전일 대비 가격 차이
     val priceDifferenceRate: Double // 전일 대비 등락률 (%)
 ) {
     init {
@@ -18,5 +18,5 @@ data class AssetsCurrentPrice(
         get() = priceDifference < 0
 
     val isSteady: Boolean
-        get() = priceDifference == 0
+        get() = priceDifference == 0.0
 }

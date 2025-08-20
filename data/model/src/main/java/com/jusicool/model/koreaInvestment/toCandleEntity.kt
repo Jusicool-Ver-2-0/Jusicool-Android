@@ -1,19 +1,19 @@
 package com.jusicool.model.koreaInvestment
 
 import StockMinuteCandle
-import com.jusicool.entity.koreaInvestment.CandleChartEntity
+import com.jusicool.entity.price.MinuteCandleEntity
 import com.jusicool.utils.parseDateTime
 
-fun StockMinuteCandle.toCandleEntity(): CandleChartEntity? {
+fun StockMinuteCandle.toCandleEntity(): MinuteCandleEntity? {
     return try {
         val dateTime = parseDateTime(date, time)
-        CandleChartEntity(
+        MinuteCandleEntity(
             dateTime = dateTime,
-            openPrice = openingPrice.toLong(),
-            closePrice = currentPrice.toLong(),
-            highPrice = highPrice.toLong(),
-            lowPrice = lowPrice.toLong(),
-            volume = transactionVolume.toLong()
+            openPrice = openingPrice.toLong().toDouble(),
+            closePrice = currentPrice.toLong().toDouble(),
+            highPrice = highPrice.toLong().toDouble(),
+            lowPrice = lowPrice.toLong().toDouble(),
+            volume = transactionVolume.toLong().toDouble(),
         )
     } catch (e: Exception) {
         e.printStackTrace()
@@ -21,16 +21,16 @@ fun StockMinuteCandle.toCandleEntity(): CandleChartEntity? {
     }
 }
 
-fun StockMinuteDetail.toCandleEntity(): CandleChartEntity? {
+fun StockMinuteDetail.toCandleEntity(): MinuteCandleEntity? {
     return try {
         val dateTime = parseDateTime(baseDate, baseHour)
-        CandleChartEntity(
+        MinuteCandleEntity(
             dateTime = dateTime,
-            openPrice = openPrice.toLong(),
-            closePrice = currentPrice.toLong(),
-            highPrice = highPrice.toLong(),
-            lowPrice = lowPrice.toLong(),
-            volume = volume.toLong()
+            openPrice = openPrice.toLong().toDouble(),
+            closePrice = currentPrice.toLong().toDouble(),
+            highPrice = highPrice.toLong().toDouble(),
+            lowPrice = lowPrice.toLong().toDouble(),
+            volume = volume.toLong().toDouble(),
         )
     } catch (e: Exception) {
         e.printStackTrace()

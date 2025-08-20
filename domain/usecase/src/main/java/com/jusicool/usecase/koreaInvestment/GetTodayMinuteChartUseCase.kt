@@ -1,6 +1,6 @@
 package com.jusicool.usecase.koreaInvestment
 
-import com.jusicool.entity.koreaInvestment.CandleChartEntity
+import com.jusicool.entity.price.MinuteCandleEntity
 import com.jusicool.repository.KoreaInvestmentRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -17,13 +17,13 @@ class GetTodayMinuteChartUseCase @Inject constructor(
         earliestTime: String, // ex: "090000"
         latestTime: String,   // ex: "153000"
         initialDelayMs: Long = 500L
-    ): Flow<List<CandleChartEntity>> = flow {
+    ): Flow<List<MinuteCandleEntity>> = flow {
 
         val formatter = DateTimeFormatter.ofPattern("HHmmss")
         var currentLocalTime = LocalTime.parse(earliestTime, formatter)
         val targetTime = LocalTime.parse(latestTime, formatter)
 
-        val allCandles = mutableListOf<CandleChartEntity>()
+        val allCandles = mutableListOf<MinuteCandleEntity>()
         var trCont = ""
 
         while (shouldContinueRequest(currentLocalTime, targetTime)) {
@@ -55,8 +55,8 @@ class GetTodayMinuteChartUseCase @Inject constructor(
         inputIsCd: String,
         inputHour1: String,
         trCont: String
-    ): List<CandleChartEntity> {
-        val candles = mutableListOf<CandleChartEntity>()
+    ): List<MinuteCandleEntity> {
+        val candles = mutableListOf<MinuteCandleEntity>()
 
         koreaInvestmentRepository.getMinutePrice(
             inputIsCd = inputIsCd,

@@ -1,6 +1,6 @@
 package com.jusicool.usecase.koreaInvestment
 
-import com.jusicool.entity.koreaInvestment.AssetsCurrentPrice
+import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.repository.KoreaInvestmentRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

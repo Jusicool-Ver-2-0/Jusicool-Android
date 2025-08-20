@@ -1,6 +1,6 @@
 package com.jusicool.usecase.crypto
 
-import com.jusicool.entity.crypto.CurrentMinuteCandleModel
+import com.jusicool.entity.price.MinuteCandleEntity
 import com.jusicool.repository.CryptoRepository
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
@@ -10,7 +10,7 @@ import javax.inject.Inject
 class GetCurrentMinuteCandleUseCase @Inject constructor(
     private val cryptoRepository: CryptoRepository
 ) {
-    operator fun invoke(market: String): Flow<List<CurrentMinuteCandleModel>> {
+    operator fun invoke(market: String): Flow<List<MinuteCandleEntity>> {
         val now = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
         val formattedNow = now.format(formatter)

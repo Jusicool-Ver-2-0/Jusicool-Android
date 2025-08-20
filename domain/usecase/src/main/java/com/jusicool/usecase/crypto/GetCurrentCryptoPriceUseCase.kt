@@ -1,6 +1,6 @@
 package com.jusicool.usecase.crypto
 
-import com.jusicool.entity.crypto.CurrentCryptoPriceModel
+import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.repository.CryptoRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -11,6 +11,6 @@ class GetCurrentCryptoPriceUseCase @Inject constructor(
 ) {
     operator fun invoke(
         markets: List<String>,
-    ): Flow<List<CurrentCryptoPriceModel>> =
+    ): Flow<List<AssetsCurrentPrice>> =
         cryptoRepository.getCurrentCryptoPrice(markets)
 }
