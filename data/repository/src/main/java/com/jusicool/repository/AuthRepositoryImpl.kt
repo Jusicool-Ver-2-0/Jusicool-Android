@@ -1,6 +1,7 @@
 package com.jusicool.repository
 
 import com.jusicool.entity.auth.SignInModel
+import com.jusicool.entity.auth.SignUpModel
 import com.jusicool.model.mapper.auth.toDto
 import com.jusicool.network.datasource.auth.AuthDataSource
 import kotlinx.coroutines.flow.Flow
@@ -11,6 +12,12 @@ class AuthRepositoryImpl @Inject constructor(
 ): AuthRepository {
     override fun signIn(body: SignInModel): Flow<Unit> {
         return authDataSource.authSignIn(
+            body = body.toDto()
+        )
+    }
+
+    override fun signUp(body: SignUpModel): Flow<Unit> {
+        return authDataSource.authSignUp(
             body = body.toDto()
         )
     }
