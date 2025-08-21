@@ -2,8 +2,10 @@ package com.jusicool.chart.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jusicool.chart.viewModel.uiState.GetCommunityListUiState
 import com.jusicool.chart.viewModel.uiState.GetCurrentMinuteCandleUiState
 import com.jusicool.chart.viewModel.uiState.GetMinuteCandleUiState
+import com.jusicool.usecase.community.GetCommunityListUseCase
 import com.jusicool.usecase.crypto.GetCurrentMinuteCandleUseCase
 import com.jusicool.usecase.crypto.GetMinuteCandleUseCase
 import com.jusicool.utils.Logger
@@ -30,12 +32,16 @@ import java.util.TimeZone
 import javax.inject.Inject
 
 @HiltViewModel
-internal class CandleChartViewModel @Inject constructor(
+internal class ChartViewModel @Inject constructor(
     private val getMinuteCandleUseCase: GetMinuteCandleUseCase,
-    private val getCurrentMinuteCandleUseCase: GetCurrentMinuteCandleUseCase
+    private val getCurrentMinuteCandleUseCase: GetCurrentMinuteCandleUseCase,
+    private val getCommunityListUseCase: GetCommunityListUseCase
 ) : ViewModel() {
     private val _minuteCandleUiState = MutableStateFlow<GetMinuteCandleUiState>(GetMinuteCandleUiState.Loading)
     val minuteCandleUiState = _minuteCandleUiState.asStateFlow()
+
+    private val _communityListUiState = MutableStateFlow<GetCommunityListUiState>(GetCommunityListUiState.Loading)
+    val communityListUiState = _communityListUiState.asStateFlow()
 
     private val _markets = MutableStateFlow<String?>(null)
 
@@ -160,5 +166,17 @@ internal class CandleChartViewModel @Inject constructor(
         }
     }
 
-
+    fun getCommunityList(market: String) {
+        viewModelScope.launch {
+            getCommunityListUseCase(market = market)
+                .catch { e ->
+                    Logger.d("ChartViewModel", "커뮤니티 리스트 가져오기 실패: ${e.message}")
+                    _communityListUiState.value = GetCommunityListUiState.Error(e.message ?: "Unknown error")
+                }
+                .collect { data ->
+                    Logger.d("ChartViewModel", "커뮤니티 리스트: ${data}")
+                    _communityListUiState.value = GetCommunityListUiState.Success(data)
+                }
+        }
+    }
 }
