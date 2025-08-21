@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.jusicool.signin"
+    namespace = "com.jusicool.signup"
 }
 
 dependencies {
