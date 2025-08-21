@@ -10,22 +10,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.model.community.CommunityModel
 import com.jusicool.design_system.icon.CommentIcon
 import com.jusicool.design_system.icon.HeartIcon
+import com.jusicool.entity.community.CommunityListModel
 
 @Composable
 fun CommunityCard(
     modifier: Modifier = Modifier,
-    community: List<CommunityModel>
+    communityList: List<CommunityListModel>
 ) {
     JusicoolTheme { colors, typography ->
         Column(modifier = modifier.fillMaxWidth()) {
-            community.forEach { item ->
+            communityList.forEach { item ->
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -73,7 +72,7 @@ fun CommunityCard(
                                 HeartIcon(modifier = Modifier.size(18.dp))
 
                                 Text(
-                                    text = "${item.like}",
+                                    text = "${item.likeCount}",
                                     color = colors.gray400,
                                     style = typography.label
                                 )
@@ -86,7 +85,7 @@ fun CommunityCard(
                                 CommentIcon()
 
                                 Text(
-                                    text = "${item.comment}",
+                                    text = "${item.commentCount}",
                                     color = colors.gray400,
                                     style = typography.label
                                 )
@@ -97,55 +96,4 @@ fun CommunityCard(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CommunityCardPreview() {
-    val mockCommunity = listOf(
-        CommunityModel(
-            title = "세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망",
-            content = "커뮤니티는공통의관심사목표가치혹은지리적위치를공유하는사람들로이루어진집단입니다이러한집단은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은개인",
-            author = "이데일리",
-            like = 24,
-            day = "06.20일 17:06",
-            comment = 24
-        ),
-        CommunityModel(
-            title = "세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망",
-            content = "커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은커뮤니티는공통의관심사목표가치혹은v지리적위치를공유하는사람들로이루어진집단입니다이러한집단은개인",
-            author = "이데일리",
-            like = 24,
-            day = "06.20일 17:06",
-            comment = 24
-        ),
-        CommunityModel(
-            title = "세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망",
-            content = "커뮤니티는공통의관심사목표가치혹은지리적위치를공유하는사람들로이루어진집단입니다이러한집단은개인",
-            author = "이데일리",
-            like = 24,
-            day = "06.20일 17:06",
-            comment = 24
-        ),CommunityModel(
-            title = "세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망",
-            content = "커뮤니티는공통의관심사목표가치혹은지리적위치를공유하는사람들로이루어진집단입니다이러한집단은개인",
-            author = "이데일리",
-            like = 24,
-            day = "06.20일 17:06",
-            comment = 24
-        ),CommunityModel(
-            title = "세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망세계경제 2.6% 성장 전망",
-            content = "커뮤니티는공통의관심사목표가치혹은지리적위치를공유하는사람들로이루어진집단입니다이러한집단은개인",
-            author = "이데일리",
-            like = 24,
-            day = "06.20일 17:06",
-            comment = 24
-        )
-
-
-    )
-
-    CommunityCard(
-        community = mockCommunity
-    )
 }

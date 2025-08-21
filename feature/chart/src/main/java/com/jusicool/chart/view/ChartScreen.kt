@@ -43,7 +43,8 @@ import com.jusicool.chart.component.CommunityCard
 import com.jusicool.chart.component.NewsCard
 import com.jusicool.chart.component.PriceBarChart
 import com.jusicool.chart.component.SellBottomSheet
-import com.jusicool.chart.viewModel.CandleChartViewModel
+import com.jusicool.chart.viewModel.ChartViewModel
+import com.jusicool.chart.viewModel.uiState.GetCommunityListUiState
 import com.jusicool.chart.viewModel.uiState.GetCurrentMinuteCandleUiState
 import com.jusicool.chart.viewModel.uiState.GetMinuteCandleUiState
 import com.jusicool.design_system.component.button.JusicoolFilledButton
@@ -62,7 +63,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun ChartRoute(
-    viewModel: CandleChartViewModel = hiltViewModel(),
+    viewModel: ChartViewModel = hiltViewModel(),
     marketCode: String,
     koreanName: String,
     quantity: Int,
@@ -78,6 +79,7 @@ internal fun ChartRoute(
 ) {
     val minuteCandleUiState by viewModel.minuteCandleUiState.collectAsStateWithLifecycle()
     val currentMinuteCandleUiState by viewModel.getCurrentMinuteCandleUiState.collectAsStateWithLifecycle()
+    val communityListUiState by viewModel.communityListUiState.collectAsStateWithLifecycle()
 
     val now = LocalDateTime.now()
     val oneMinuteLater = now.plusMinutes(-1)
@@ -91,50 +93,6 @@ internal fun ChartRoute(
         viewModel.getMarkets(market = marketCode)
         viewModel.startPeriodicRequest(market = marketCode)
     }
-
-
-    val mockCommunity = listOf(
-        CommunityModel(
-            title = "AK홀딩스 이번에 물류 시스템 바꿨다던데",
-            content = "지인 회사에서 AK 물류랑 일하는데 AI 시스템으로 바뀌고 나서 물류 처리 속도 확 달라졌다고 함. 괜히 지주회사가 아님 ㄷㄷ",
-            author = "이데일리",
-            like = 24,
-            day = "06.20일 17:06",
-            comment = 24
-        ),
-        CommunityModel(
-            title = "AK홀딩스 ESG 진짜 하는 듯",
-            content = "요즘 애경유화 쪽에서 폐플라스틱 재활용 엄청 밀고 있음. 그냥 보여주기식인 줄 알았는데 진짜 공장 돌리고 있다더라.",
-            author = "이데일리",
-            like = 24,
-            day = "06.20일 17:06",
-            comment = 24
-        ),
-        CommunityModel(
-            title = "AK홀딩스 주가 언제쯤 움직일까?",
-            content = "요즘 뉴스 보면 이것저것 하는 거 많은데 주가는 왜 이 모양일까... 자사주 매입도 했다면서요? 믿고 들고 있어도 되나?",
-            author = "이데일리",
-            like = 24,
-            day = "06.20일 17:06",
-            comment = 24
-        ),
-        CommunityModel(
-            title = "AK홀딩스 애경산업 요즘 중국에서 인기 많다던데",
-            content = "AGE 20’s 요즘 왕홍들이 엄청 밀어주고 있음ㅋㅋㅋ K-뷰티 다시 흥하나 싶다. 이거 때문에 애경 실적 오르면 AK도 같이 올라갈 듯?",
-            author = "이데일리",
-            like = 24,
-            day = "06.20일 17:06",
-            comment = 24
-        ),
-        CommunityModel(
-            title = "제주항공 유럽 노선 탄다고? ㄷㄷ",
-            content = "AK홀딩스가 제주항공에 투자 엄청 한 듯. 유럽 신규 노선 만든다고 하던데… LCC가 유럽 가는 거면 진짜 파격이다ㅋㅋ",
-            author = "이데일리",
-            like = 24,
-            day = "06.20일 17:06",
-            comment = 24
-        )
-    )
 
     val mockNews = listOf(
         NewsModel(
@@ -172,6 +130,7 @@ internal fun ChartRoute(
         ),
         minuteCandleData = minuteCandleUiState,
         currentMinuteCandleData = currentMinuteCandleUiState,
+        communityListData = communityListUiState,
         price = ChartPriceModel(
             dayMinPrice = 566772,
             dayMaxPrice = 600449,
@@ -183,7 +142,6 @@ internal fun ChartRoute(
             tradingPrice = 23400000000
         ),
         news = mockNews,
-        community = mockCommunity,
         popUpBackStack = popUpBackStack,
         koreanName = koreanName,
         marketCode = marketCode,
@@ -212,10 +170,10 @@ fun ChartScreen(
     type: String,
     minuteCandleData: GetMinuteCandleUiState,
     currentMinuteCandleData: GetCurrentMinuteCandleUiState,
+    communityListData: GetCommunityListUiState,
     chartInformation: ChartInformationModel,
     price: ChartPriceModel,
     news: List<NewsModel>,
-    community: List<CommunityModel>,
     navigateToBuy: (String, String, Long, Long, String) -> Unit,
     navigateToSell: (String, String, Int, String) -> Unit,
     navigateToReserveBuy: (String, String, Long, Long, String) -> Unit,
@@ -534,9 +492,12 @@ fun ChartScreen(
                                 }
 
                                 "커뮤니티" -> {
-                                    CommunityCard(
-                                        community = community
-                                    )
+                                    val communityList = when (communityListData) {
+                                        is GetCommunityListUiState.Success -> communityListData.communityList
+                                        else -> emptyList()
+                                    }
+
+                                    CommunityCard(communityList = communityList)
                                 }
 
                                 else -> {}
@@ -579,6 +540,7 @@ fun ChartScreenPreview() {
         ),
         minuteCandleData = GetMinuteCandleUiState.Success(emptyList()), // 또는 적절한 mock 데이터
         currentMinuteCandleData = GetCurrentMinuteCandleUiState.Blank,
+        communityListData = GetCommunityListUiState.Blank,
         price = ChartPriceModel(
             dayMinPrice = 566_772,
             dayMaxPrice = 600_449,
@@ -594,16 +556,6 @@ fun ChartScreenPreview() {
                 title = "세계경제 2.6% 성장 전망",
                 author = "이데일리",
                 img = "https://i.pinimg.com/474x/3d/c9/64/3dc9647bffee1578c683db59d9cbaa24.jpg"
-            )
-        ),
-        community = listOf(
-            CommunityModel(
-                title = "AK홀딩스 이번에 물류 시스템 바꿨다던데",
-                content = "지인 회사에서 AK 물류랑 일하는데 AI 시스템으로 바뀌고 나서 물류 처리 속도 확 달라졌다고 함. 괜히 지주회사가 아님 ㄷㄷ",
-                author = "이데일리",
-                like = 24,
-                day = "06.20일 17:06",
-                comment = 24
             )
         ),
         popUpBackStack = {},
