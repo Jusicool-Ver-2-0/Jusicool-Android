@@ -8,6 +8,6 @@ import javax.inject.Inject
 class ObserveRealtimeStockPriceUseCase @Inject constructor(
     private val wsKoreaInvestmentRepository: WsKoreaInvestmentRepository
 ) {
-    operator fun invoke(stockCode: List<String>): Flow<List<AssetsCurrentPrice>> =
-        wsKoreaInvestmentRepository.observeStockTicker(stockCode)
+    operator fun invoke(stockCodes: List<String>): Flow<List<AssetsCurrentPrice>> =
+        wsKoreaInvestmentRepository.observeStockTicker(stockCodes)
 }
