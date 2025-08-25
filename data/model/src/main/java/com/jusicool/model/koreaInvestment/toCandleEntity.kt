@@ -2,11 +2,11 @@ package com.jusicool.model.koreaInvestment
 
 import StockMinuteCandle
 import com.jusicool.entity.price.MinuteCandleEntity
-import com.jusicool.utils.parseDateTime
+import com.jusicool.utils.parseStockDateTime
 
 fun StockMinuteCandle.toCandleEntity(): MinuteCandleEntity? {
     return try {
-        val dateTime = parseDateTime(date, time)
+        val dateTime = parseStockDateTime(date, time)
         MinuteCandleEntity(
             dateTime = dateTime,
             openPrice = openingPrice.toLong().toDouble(),
@@ -23,7 +23,7 @@ fun StockMinuteCandle.toCandleEntity(): MinuteCandleEntity? {
 
 fun StockMinuteDetail.toCandleEntity(): MinuteCandleEntity? {
     return try {
-        val dateTime = parseDateTime(baseDate, baseHour)
+        val dateTime = parseStockDateTime(baseDate, baseHour)
         MinuteCandleEntity(
             dateTime = dateTime,
             openPrice = openPrice.toLong().toDouble(),

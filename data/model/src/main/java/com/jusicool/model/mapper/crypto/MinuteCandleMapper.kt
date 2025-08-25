@@ -2,11 +2,11 @@ package com.jusicool.model.mapper.crypto
 
 import com.jusicool.entity.price.MinuteCandleEntity
 import com.jusicool.model.crypto.MinuteCandleResponse
-import com.jusicool.utils.parseDateTime
+import com.jusicool.utils.parseUpbitDateTime
 
 fun MinuteCandleResponse.toModel(): MinuteCandleEntity =
     MinuteCandleEntity(
-        dateTime = parseDateTime(candleDateTimeKst),
+        dateTime = parseUpbitDateTime(candleDateTimeKst),
         openPrice = openingPrice,
         highPrice = highPrice,
         lowPrice = lowPrice,
