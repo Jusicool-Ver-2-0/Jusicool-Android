@@ -2,6 +2,7 @@ package com.jusicool.repository
 
 import com.jusicool.entity.auth.SignInModel
 import com.jusicool.entity.auth.SignUpModel
+import com.jusicool.entity.auth.VerificationCodeModel
 import com.jusicool.entity.auth.VerificationEmailModel
 import com.jusicool.model.mapper.auth.toDto
 import com.jusicool.network.datasource.auth.AuthDataSource
@@ -25,6 +26,12 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun verificationEmail(body: VerificationEmailModel): Flow<Unit> {
         return authDataSource.verificationEmail(
+            body = body.toDto()
+        )
+    }
+
+    override fun verificationCode(body: VerificationCodeModel): Flow<Unit> {
+        return authDataSource.verificationCode(
             body = body.toDto()
         )
     }
