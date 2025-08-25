@@ -4,9 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jusicool.chart.viewModel.uiState.GetCurrentMinuteCandleUiState
 import com.jusicool.chart.viewModel.uiState.GetMinuteCandleUiState
+import com.jusicool.entity.price.MinuteCandleEntity
 import com.jusicool.usecase.crypto.GetCurrentCryptoMinuteCandleUseCase
 import com.jusicool.usecase.crypto.GetMinuteCandleUseCase
+import com.jusicool.usecase.koreaInvestment.GetCurrentStockMinuteChartUseCase
+import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase
+import com.jusicool.usecase.koreaInvestment.ObserveRealtimeStockPriceUseCase
 import com.jusicool.utils.Logger
+import com.jusicool.utils.isStockMarketOpen
+import com.jusicool.utils.isValidCryptoMarketCode
+import com.jusicool.utils.isValidStockMarketCode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -33,9 +40,12 @@ import javax.inject.Inject
 internal class CandleChartViewModel @Inject constructor(
     private val getMinuteCandleUseCase: GetMinuteCandleUseCase,
     private val getCurrentCryptoMinuteCandleUseCase: GetCurrentCryptoMinuteCandleUseCase,
-
-    ) : ViewModel() {
-    private val _minuteCandleUiState = MutableStateFlow<GetMinuteCandleUiState>(GetMinuteCandleUiState.Loading)
+    private val observeRealtimeStockPriceUseCase: ObserveRealtimeStockPriceUseCase,
+    private val getCurrentStockMinuteChartUseCase: GetCurrentStockMinuteChartUseCase,
+    private val getCurrentStockPriceUseCase: GetCurrentStockPriceUseCase,
+) : ViewModel() {
+    private val _minuteCandleUiState =
+        MutableStateFlow<GetMinuteCandleUiState>(GetMinuteCandleUiState.Loading)
     val minuteCandleUiState = _minuteCandleUiState.asStateFlow()
 
     private val _markets = MutableStateFlow<String?>(null)
@@ -47,25 +57,84 @@ internal class CandleChartViewModel @Inject constructor(
             if (market.isNullOrBlank()) {
                 flowOf<GetCurrentMinuteCandleUiState>(GetCurrentMinuteCandleUiState.Blank)
             } else {
-                flow {
-                    while (currentCoroutineContext().isActive) {
-                        getCurrentCryptoMinuteCandleUseCase(market)
-                            .map { data ->
-                                Logger.d("ChartViewModel", "가격 로딩 중 성공: $data")
-                                GetCurrentMinuteCandleUiState.Success(data)
-                            }
-                            .catch { e ->
-                                Logger.e("ChartViewModel", "가격 로딩 중 에러: ${e.message}")
-                                emit(
-                                    GetCurrentMinuteCandleUiState.Error(
-                                        e.message ?: "Unknown error"
-                                    )
-                                )
-                            }
-                            .collect { emit(it) }
+                when {
+                    market.isValidCryptoMarketCode() ->
+                        flow {
+                            while (currentCoroutineContext().isActive) {
+                                getCurrentCryptoMinuteCandleUseCase(market)
+                                    .map { data ->
+                                        Logger.d("ChartViewModel", "가격 로딩 중 성공: $data")
+                                        GetCurrentMinuteCandleUiState.Success(data)
+                                    }
+                                    .catch { e ->
+                                        Logger.e("ChartViewModel", "가격 로딩 중 에러: ${e.message}")
+                                        emit(
+                                            GetCurrentMinuteCandleUiState.Error(
+                                                e.message ?: "Unknown error"
+                                            )
+                                        )
+                                    }
+                                    .collect { emit(it) }
 
-                        delay(500) // 0.5초마다 반복
-                    }
+                                delay(500) // 0.5초마다 반복
+                            }
+                        }
+
+                    market.isValidStockMarketCode() ->
+                        flow {
+                            if (isStockMarketOpen()) {
+                                observeRealtimeStockPriceUseCase(stockCodes = listOf(market))
+                                    .map { data ->
+                                        Logger.d("ChartViewModel", "가격 로딩 중 성공: $data")
+                                        GetCurrentMinuteCandleUiState.Success(data.map {
+                                            MinuteCandleEntity(
+                                                dateTime = LocalDateTime.now(),
+                                                openPrice = it.currentPrice,
+                                                highPrice = it.currentPrice,
+                                                lowPrice = it.currentPrice,
+                                                closePrice = it.currentPrice,
+                                                volume = 0.0
+                                            )
+                                        })
+                                    }
+                                    .catch { e ->
+                                        Logger.e("ChartViewModel", "가격 로딩 중 에러: ${e.message}")
+                                        emit(
+                                            GetCurrentMinuteCandleUiState.Error(
+                                                e.message ?: "Unknown error"
+                                            )
+                                        )
+                                    }.collect { emit(it) }
+                            } else {
+                                while (currentCoroutineContext().isActive) {
+                                    getCurrentStockPriceUseCase(markets = listOf(market))
+                                        .map { data ->
+                                            Logger.d("ChartViewModel", "가격 로딩 중 성공: $data")
+                                            GetCurrentMinuteCandleUiState.Success(data.map {
+                                                MinuteCandleEntity(
+                                                    dateTime = LocalDateTime.now(),
+                                                    openPrice = it.currentPrice,
+                                                    highPrice = it.currentPrice,
+                                                    lowPrice = it.currentPrice,
+                                                    closePrice = it.currentPrice,
+                                                    volume = 0.0
+                                                )
+                                            })
+                                        }
+                                        .catch { e ->
+                                            Logger.e("ChartViewModel", "가격 로딩 중 에러: ${e.message}")
+                                            emit(
+                                                GetCurrentMinuteCandleUiState.Error(
+                                                    e.message ?: "Unknown error"
+                                                )
+                                            )
+                                        }.collect { emit(it) }
+
+                                    delay(500) // 0.5초마다 반복
+                                }
+                            }
+                        }
+                    else -> flowOf()
                 }
             }
         }.stateIn(
@@ -80,27 +149,53 @@ internal class CandleChartViewModel @Inject constructor(
     }
 
     fun getMinuteCandle(market: String, to: String, count: Int) = viewModelScope.launch {
-        getMinuteCandleUseCase(market = market, to = to, count = count)
-            .catch { e ->
-                Logger.e("ChartViewModel", "Flow 내부 오류 발생", e)
-                _minuteCandleUiState.value =
-                    GetMinuteCandleUiState.Error(e.message ?: "Unknown error")
+        when {
+            market.isValidCryptoMarketCode() -> {
+                getMinuteCandleUseCase(market = market, to = to, count = count)
+                    .catch { e ->
+                        Logger.e("ChartViewModel", "Crypto 캔들 오류", e)
+                        _minuteCandleUiState.value =
+                            GetMinuteCandleUiState.Error(e.message ?: "Unknown error")
+                    }
+                    .collect { candleList ->
+                        mergeAndEmitCandles(candleList)
+                    }
             }
-            .collect { candleList ->
 
-                val newCandles = candleList.asReversed()
-                val existingCandles =
-                    (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart
-                        ?: emptyList()
-
-                val combined = (existingCandles + newCandles)
-                    .distinctBy { it.dateTime }
-                    .sortedBy { it.dateTime }
-
-                _minuteCandleUiState.value = GetMinuteCandleUiState.Success(combined)
-
-                Logger.d("ChartViewModel", "Flow collect 성공: ${combined.size} candles")
+            market.isValidStockMarketCode() -> {
+                getCurrentStockMinuteChartUseCase(
+                    inputIsCd = market,
+                    earliestTime = "090000",
+                    latestTime = "153000"
+                )
+                    .catch { e ->
+                        Logger.e("ChartViewModel", "Stock 캔들 오류", e)
+                        _minuteCandleUiState.value =
+                            GetMinuteCandleUiState.Error(e.message ?: "Unknown error")
+                    }
+                    .collect { candleList ->
+                        mergeAndEmitCandles(candleList)
+                    }
             }
+
+            else -> {
+                Logger.e("ChartViewModel", "지원하지 않는 마켓 코드: $market")
+            }
+        }
+    }
+
+    private fun mergeAndEmitCandles(newCandles: List<MinuteCandleEntity>) {
+        val reversed = newCandles.asReversed()
+        val existingCandles =
+            (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart
+                ?: emptyList()
+
+        val combined = (existingCandles + reversed)
+            .distinctBy { it.dateTime }
+            .sortedBy { it.dateTime }
+
+        _minuteCandleUiState.value = GetMinuteCandleUiState.Success(combined)
+        Logger.d("ChartViewModel", "총 ${combined.size}개 캔들 반영됨")
     }
 
     fun startPeriodicRequest(market: String) = viewModelScope.launch {
@@ -125,41 +220,40 @@ internal class CandleChartViewModel @Inject constructor(
             (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart
                 ?: emptyList()
 
-        // 기존 Candle 중 가장 오래된 시간 찾기
         val baseOldestTime = oldestDate ?: existingCandles.minOfOrNull { it.dateTime }
         ?: LocalDateTime.now()
 
-        // 200분 전으로 이동
         val toTime = baseOldestTime.minusMinutes(200)
-
         oldestDate = toTime
 
-        Logger.d("ChartViewModel", "새로고침 기준 시간: $baseOldestTime, 요청 toTime: $toTime")
+        Logger.d("ChartViewModel", "새로고침 기준: $baseOldestTime → 요청 to: $toTime")
 
         viewModelScope.launch {
-            getMinuteCandleUseCase(market = market, to = toTime.toString(), count = 200)
-                .catch { e ->
-                    Logger.e("ChartViewModel", "캔들 새로고침 실패: ${e.message}")
-                    _minuteCandleUiState.value =
-                        GetMinuteCandleUiState.Error(e.message ?: "Unknown error")
+            when {
+                market.isValidCryptoMarketCode() -> {
+                    getMinuteCandleUseCase(market = market, to = toTime.toString(), count = 200)
+                        .catch { e ->
+                            Logger.e("ChartViewModel", "Crypto 새로고침 실패", e)
+                            _minuteCandleUiState.value =
+                                GetMinuteCandleUiState.Error(e.message ?: "Unknown error")
+                        }
+                        .collect { mergeAndEmitCandles(it) }
                 }
-                .collect { newCandles ->
-                    Logger.d("ChartViewModel", "새로고침으로 ${newCandles.size}개 가져옴")
 
-                    val reversedNewCandles = newCandles.asReversed()
-                    val existingCandles =
-                        (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart
-                            ?: emptyList()
-
-                    val combined = (existingCandles + reversedNewCandles)
-                        .distinctBy { it.dateTime }
-                        .sortedBy { it.dateTime }
-
-                    _minuteCandleUiState.value = GetMinuteCandleUiState.Success(combined)
-                    Logger.d("ChartViewModel", "총 ${combined.size}개 캔들")
+                market.isValidStockMarketCode() -> {
+                    getCurrentStockMinuteChartUseCase(
+                        inputIsCd = market,
+                        earliestTime = "090000",
+                        latestTime = "153000"
+                    )
+                        .catch { e ->
+                            Logger.e("ChartViewModel", "Stock 새로고침 실패", e)
+                            _minuteCandleUiState.value =
+                                GetMinuteCandleUiState.Error(e.message ?: "Unknown error")
+                        }
+                        .collect { mergeAndEmitCandles(it) }
                 }
+            }
         }
     }
-
-
 }
