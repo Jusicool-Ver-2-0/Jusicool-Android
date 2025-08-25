@@ -3,7 +3,10 @@ package com.jusicool.signup.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jusicool.entity.auth.SignUpModel
+import com.jusicool.entity.auth.VerificationEmailModel
 import com.jusicool.signup.viewModel.uiState.SignUpUiState
+import com.jusicool.signup.viewModel.uiState.VerificationEmailUiState
+import com.jusicool.usecase.auth.VerificationEmailUseCase
 import com.jusicool.usecase.auth.SignUpRequestUseCase
 import com.jusicool.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,10 +18,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val signUpRequestUseCase: SignUpRequestUseCase
+    private val signUpRequestUseCase: SignUpRequestUseCase,
+    private val verificationEmailUseCase: VerificationEmailUseCase
 ) : ViewModel() {
     private val _signUpUiState = MutableStateFlow<SignUpUiState>(SignUpUiState.Loading)
     internal val signUpState = _signUpUiState.asStateFlow()
+
+    private val _verificationEmailUiState = MutableStateFlow<VerificationEmailUiState>(VerificationEmailUiState.Loading)
+    internal val verificationEmailUiState = _verificationEmailUiState.asStateFlow()
 
     private val _username= MutableStateFlow("")
     internal val username = _username.asStateFlow()
@@ -28,6 +35,9 @@ class SignUpViewModel @Inject constructor(
 
     private val _password = MutableStateFlow("")
     internal val password = _password.asStateFlow()
+
+    private val _confirmPassword = MutableStateFlow("")
+    internal val confirmPassword = _confirmPassword.asStateFlow()
 
     internal fun onUsernameChange(value: String) {
         _username.value = value
@@ -39,6 +49,10 @@ class SignUpViewModel @Inject constructor(
 
     internal fun onPasswordChange(value: String) {
         _password.value = value
+    }
+
+    internal fun onConfirmPasswordChange(value: String) {
+        _confirmPassword.value = value
     }
 
     private fun signUp(body: SignUpModel) = viewModelScope.launch {
@@ -55,5 +69,17 @@ class SignUpViewModel @Inject constructor(
 
     private fun isValidEmail(email: String): Boolean {
         return email.contains("@") && email.contains(".")
+    }
+
+    private fun verificationEmail(body: VerificationEmailModel) = viewModelScope.launch {
+        _verificationEmailUiState.value = VerificationEmailUiState.Loading
+        verificationEmailUseCase(body)
+            .catch { e ->
+                Logger.e("SignInViewModel", "인증 메일 보내기 실패: ${e.message}")
+                _verificationEmailUiState.value = VerificationEmailUiState.Error(e.message ?: "Unknown error")
+            }.collect {
+                Logger.d("SignInViewModel", "인증 메일 보내기 성공")
+                _verificationEmailUiState.value = VerificationEmailUiState.Success
+            }
     }
 }
