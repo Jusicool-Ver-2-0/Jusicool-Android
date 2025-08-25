@@ -4,6 +4,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import com.jusicool.model.auth.SignInRequest
 import com.jusicool.model.auth.SignUpRequest
+import com.jusicool.model.auth.VerificationCodeRequest
 import com.jusicool.model.auth.VerificationEmailRequest
 
 interface AuthApi {
@@ -20,5 +21,10 @@ interface AuthApi {
     @POST("/user/send")
     suspend fun verificationEmailRequest(
         @Body body: VerificationEmailRequest
+    )
+
+    @POST("/user/verify")
+    suspend fun verificationCodeRequest(
+        @Body body: VerificationCodeRequest
     )
 }
