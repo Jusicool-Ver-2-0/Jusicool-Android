@@ -10,5 +10,5 @@ interface AuthDataSource {
 
     fun authSignUp(body: SignUpRequest): Flow<Unit>
 
-    fun postVerificationEmail(body: VerificationEmailRequest): Flow<Unit>
+    fun verificationEmail(body: VerificationEmailRequest): Flow<Unit>
 }

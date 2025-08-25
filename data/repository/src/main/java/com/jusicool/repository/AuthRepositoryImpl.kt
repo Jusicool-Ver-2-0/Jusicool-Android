@@ -3,7 +3,6 @@ package com.jusicool.repository
 import com.jusicool.entity.auth.SignInModel
 import com.jusicool.entity.auth.SignUpModel
 import com.jusicool.entity.auth.VerificationEmailModel
-import com.jusicool.model.auth.VerificationEmailRequest
 import com.jusicool.model.mapper.auth.toDto
 import com.jusicool.network.datasource.auth.AuthDataSource
 import kotlinx.coroutines.flow.Flow
@@ -24,8 +23,8 @@ class AuthRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun postVerificationEmail(body: VerificationEmailModel): Flow<Unit> {
-        return authDataSource.postVerificationEmail(
+    override fun verificationEmail(body: VerificationEmailModel): Flow<Unit> {
+        return authDataSource.verificationEmail(
             body = body.toDto()
         )
     }
