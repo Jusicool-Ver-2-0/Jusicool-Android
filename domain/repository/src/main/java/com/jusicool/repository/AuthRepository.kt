@@ -11,5 +11,5 @@ interface AuthRepository {
 
     fun signUp(body: SignUpModel): Flow<Unit>
 
-    fun postVerificationEmail(body: VerificationEmailModel): Flow<Unit>
+    fun verificationEmail(body: VerificationEmailModel): Flow<Unit>
 }

@@ -17,6 +17,6 @@ class AuthDataSourceImpl @Inject constructor(
     override fun authSignUp(body: SignUpRequest): Flow<Unit> =
         performApiRequest { service.signUp(body = body) }
 
-    override fun postVerificationEmail(body: VerificationEmailRequest): Flow<Unit> =
+    override fun verificationEmail(body: VerificationEmailRequest): Flow<Unit> =
         performApiRequest { service.verificationEmailRequest(body = body) }
 }
