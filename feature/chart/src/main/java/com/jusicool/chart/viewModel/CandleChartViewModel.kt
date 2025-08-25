@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jusicool.chart.viewModel.uiState.GetCurrentMinuteCandleUiState
 import com.jusicool.chart.viewModel.uiState.GetMinuteCandleUiState
-import com.jusicool.usecase.crypto.GetCurrentMinuteCandleUseCase
+import com.jusicool.usecase.crypto.GetCurrentCryptoMinuteCandleUseCase
 import com.jusicool.usecase.crypto.GetMinuteCandleUseCase
 import com.jusicool.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,8 +32,9 @@ import javax.inject.Inject
 @HiltViewModel
 internal class CandleChartViewModel @Inject constructor(
     private val getMinuteCandleUseCase: GetMinuteCandleUseCase,
-    private val getCurrentMinuteCandleUseCase: GetCurrentMinuteCandleUseCase
-) : ViewModel() {
+    private val getCurrentCryptoMinuteCandleUseCase: GetCurrentCryptoMinuteCandleUseCase,
+
+    ) : ViewModel() {
     private val _minuteCandleUiState = MutableStateFlow<GetMinuteCandleUiState>(GetMinuteCandleUiState.Loading)
     val minuteCandleUiState = _minuteCandleUiState.asStateFlow()
 
@@ -48,7 +49,7 @@ internal class CandleChartViewModel @Inject constructor(
             } else {
                 flow {
                     while (currentCoroutineContext().isActive) {
-                        getCurrentMinuteCandleUseCase(market)
+                        getCurrentCryptoMinuteCandleUseCase(market)
                             .map { data ->
                                 Logger.d("ChartViewModel", "가격 로딩 중 성공: $data")
                                 GetCurrentMinuteCandleUiState.Success(data)
