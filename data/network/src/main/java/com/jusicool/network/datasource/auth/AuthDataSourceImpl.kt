@@ -2,6 +2,7 @@ package com.jusicool.network.datasource.auth
 
 import com.jusicool.model.auth.SignInRequest
 import com.jusicool.model.auth.SignUpRequest
+import com.jusicool.model.auth.VerificationCodeRequest
 import com.jusicool.model.auth.VerificationEmailRequest
 import com.jusicool.network.api.AuthApi
 import com.jusicool.utils.performApiRequest
@@ -19,4 +20,7 @@ class AuthDataSourceImpl @Inject constructor(
 
     override fun verificationEmail(body: VerificationEmailRequest): Flow<Unit> =
         performApiRequest { service.verificationEmailRequest(body = body) }
+
+    override fun verificationCode(body: VerificationCodeRequest): Flow<Unit> =
+        performApiRequest { service.verificationCodeRequest(body = body) }
 }
