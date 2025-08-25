@@ -3,11 +3,14 @@ package com.jusicool.signup.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jusicool.entity.auth.SignUpModel
+import com.jusicool.entity.auth.VerificationCodeModel
 import com.jusicool.entity.auth.VerificationEmailModel
 import com.jusicool.signup.viewModel.uiState.SignUpUiState
+import com.jusicool.signup.viewModel.uiState.VerificationCodeUiState
 import com.jusicool.signup.viewModel.uiState.VerificationEmailUiState
 import com.jusicool.usecase.auth.VerificationEmailUseCase
 import com.jusicool.usecase.auth.SignUpRequestUseCase
+import com.jusicool.usecase.auth.VerificationCodeUseCase
 import com.jusicool.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,13 +22,17 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val signUpRequestUseCase: SignUpRequestUseCase,
-    private val verificationEmailUseCase: VerificationEmailUseCase
+    private val verificationEmailUseCase: VerificationEmailUseCase,
+    private val verificationCodeUseCase: VerificationCodeUseCase
 ) : ViewModel() {
     private val _signUpUiState = MutableStateFlow<SignUpUiState>(SignUpUiState.Loading)
     internal val signUpState = _signUpUiState.asStateFlow()
 
     private val _verificationEmailUiState = MutableStateFlow<VerificationEmailUiState>(VerificationEmailUiState.Loading)
     internal val verificationEmailUiState = _verificationEmailUiState.asStateFlow()
+
+    private val _verificationCodeUiState = MutableStateFlow<VerificationCodeUiState>(VerificationCodeUiState.Loading)
+    internal val verificationCodeUiState = _verificationCodeUiState.asStateFlow()
 
     private val _username= MutableStateFlow("")
     internal val username = _username.asStateFlow()
@@ -59,10 +66,10 @@ class SignUpViewModel @Inject constructor(
         _signUpUiState.value = SignUpUiState.Loading
         signUpRequestUseCase(body)
             .catch { e ->
-                Logger.e("SignInViewModel", "로그인 실패: ${e.message}")
+                Logger.e("SignUPViewModel", "로그인 실패: ${e.message}")
                 _signUpUiState.value = SignUpUiState.Error(e.message ?: "Unknown error")
             }.collect {
-                Logger.d("SignInViewModel", "로그인 성공")
+                Logger.d("SignUPViewModel", "로그인 성공")
                 _signUpUiState.value = SignUpUiState.Success
             }
     }
@@ -75,11 +82,23 @@ class SignUpViewModel @Inject constructor(
         _verificationEmailUiState.value = VerificationEmailUiState.Loading
         verificationEmailUseCase(body)
             .catch { e ->
-                Logger.e("SignInViewModel", "인증 메일 보내기 실패: ${e.message}")
+                Logger.e("SignUPViewModel", "인증 메일 보내기 실패: ${e.message}")
                 _verificationEmailUiState.value = VerificationEmailUiState.Error(e.message ?: "Unknown error")
             }.collect {
-                Logger.d("SignInViewModel", "인증 메일 보내기 성공")
+                Logger.d("SignUPViewModel", "인증 메일 보내기 성공")
                 _verificationEmailUiState.value = VerificationEmailUiState.Success
+            }
+    }
+
+    private fun verificationCode(body: VerificationCodeModel) = viewModelScope.launch {
+        _verificationCodeUiState.value = VerificationCodeUiState.Loading
+        verificationCodeUseCase(body)
+            .catch { e ->
+                Logger.d("SignUPViewModel", "인증 코드 보내기 실패: ${e.message}")
+                _verificationCodeUiState.value = VerificationCodeUiState.Error(e.message ?: "Unknown error")
+            }.collect {
+                Logger.d("SignUpViewModel", "인증코드 보내기 성공")
+                _verificationCodeUiState.value = VerificationCodeUiState.Success
             }
     }
 }
