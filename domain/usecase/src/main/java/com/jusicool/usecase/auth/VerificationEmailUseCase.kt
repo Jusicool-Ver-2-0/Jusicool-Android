@@ -9,5 +9,5 @@ class VerificationEmailUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     operator fun invoke(body: VerificationEmailModel): Flow<Unit> =
-        authRepository.postVerificationEmail(body = body)
+        authRepository.verificationEmail(body = body)
 }
