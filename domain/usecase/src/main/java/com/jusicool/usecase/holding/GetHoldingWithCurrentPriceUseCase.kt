@@ -71,7 +71,7 @@ class GetHoldingWithCurrentPriceUseCase @Inject constructor(
     private fun getCryptoPriceFlow(cryptoMarkets: List<String>): Flow<List<AssetsCurrentPrice>> {
         if (cryptoMarkets.isEmpty()) return flowOf(emptyList())
 
-        return tickerFlow(200)
+        return tickerFlow(500)
             .flatMapLatest {
                 getCurrentCryptoPriceUseCase(cryptoMarkets)
             }
