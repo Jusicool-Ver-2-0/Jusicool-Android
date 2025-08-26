@@ -13,11 +13,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -47,10 +53,29 @@ internal fun ChartListRoute(
     viewModel: ChartListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val lazyListState = rememberLazyListState()
+    val isEndReached by remember {
+        derivedStateOf {
+            val lastVisibleItem = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()
+            val totalItems = lazyListState.layoutInfo.totalItemsCount
+
+            lastVisibleItem != null && lastVisibleItem.index >= totalItems - 1
+        }
+    }
+
+    LaunchedEffect(lazyListState) {
+        snapshotFlow { isEndReached }
+            .collect { endReached ->
+                if (endReached) {
+                    // TODO: 로딩함수 추가 
+                }
+            }
+    }
 
     ChartListScreen(
         modifier = modifier,
         uiState = uiState,
+        lazyListState = lazyListState,
         onSearchCLick = onSearchClick,
         navigateToChart = navigateToChart,
     )
@@ -61,8 +86,9 @@ internal fun ChartListRoute(
 internal fun ChartListScreen(
     modifier: Modifier = Modifier,
     uiState: ChartListUiState,
+    lazyListState: LazyListState,
     onSearchCLick: () -> Unit,
-    navigateToChart: (String, String) -> Unit
+    navigateToChart: (String, String) -> Unit,
 ) {
     JusicoolTheme { colors, _ ->
         Column(
@@ -86,7 +112,8 @@ internal fun ChartListScreen(
 
             ChartListSection(
                 data = uiState.chartListData,
-                navigateToChart = navigateToChart
+                navigateToChart = navigateToChart,
+                lazyListState = lazyListState,
             )
         }
     }
@@ -155,6 +182,7 @@ private fun ChartListScreenPreview() {
         ),
         onSearchCLick = {},
         navigateToChart = { _, _ -> },
+        lazyListState = rememberLazyListState(),
     )
 }
 
@@ -179,6 +207,7 @@ private fun RecentSearchSection(data: PersistentList<InvestmentSearchTagData>) {
 @Composable
 private fun ChartListSection(
     data: PersistentList<RecommendMarketWithPrice>,
+    lazyListState: LazyListState,
     navigateToChart: (String, String) -> Unit
 ) {
     LazyColumn(
@@ -186,6 +215,7 @@ private fun ChartListSection(
             .fillMaxWidth()
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
+        state = lazyListState
     ) {
         itemsIndexed(data, key = { _, item -> item.market }) { _, item ->
             ChartItem(
