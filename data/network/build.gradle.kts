@@ -32,6 +32,11 @@ android {
             name = "KOREAINVESTMENT_BASE_URL",
             value = "\"${getApiKey("KOREAINVESTMENT_BASE_URL")}\""
         )
+        buildConfigField(
+            type = "String",
+            name = "NEIS_API_KEY",
+            value = "\"${getApiKey("NEIS_API_KEY")}\""
+        )
     }
 
     namespace = "com.jusicool.network"
