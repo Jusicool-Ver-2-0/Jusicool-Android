@@ -2,39 +2,52 @@ package com.meister.investmentsearch.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jusicool.utils.Logger
+import com.jusicool.usecase.market.GetMarketListWithCurrentPriceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 internal class ChartListViewModel @Inject constructor(
-    // getTotalRecommendMarketListUseCase: GetTotalRecommendMarketListUseCase
+    private val getMarketListWithCurrentPriceUseCase: GetMarketListWithCurrentPriceUseCase
 ) : ViewModel() {
-    val uiState: StateFlow<ChartListUiState> = MutableStateFlow(ChartListUiState())
-//        getTotalRecommendMarketListUseCase()
-//            .map { recommendMarketList ->
-//                ChartListUiState(
-//                    isLoading = false,
-//                    chartListData = recommendMarketList.toPersistentList(),
-//                    errorMessage = null,
-//                )
-//            }
-//            .onEach { Logger.d("ChartListViewModel", it.toString()) }
-//            .catch { e ->
-//                Logger.e("ChartListViewModel", "Error fetching holdings price at ChartListViewModel.kt:22", e)
-//                emit(ChartListUiState(errorMessage = e.message))
-//            }
-//            .stateIn(
-//                scope = viewModelScope,
-//                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
-//                initialValue = ChartListUiState()
-//            )
+
+    private var currentPage = 0
+    private val pageSize = 40
+    private var isLoadingMore = false
+    private var isLastPage = false
+
+    private val _uiState = MutableStateFlow(ChartListUiState())
+    val uiState: StateFlow<ChartListUiState> = _uiState.asStateFlow()
+
+    init {
+        loadNextPage()
+    }
+
+    internal fun loadNextPage() = viewModelScope.launch {
+        if (isLoadingMore || isLastPage) return@launch
+
+        isLoadingMore = true
+        getMarketListWithCurrentPriceUseCase(currentPage = currentPage, pageSize = pageSize)
+            .onEach { newList ->
+                val currentList = _uiState.value.chartListData.toList()
+                val combinedList = currentList + newList
+                _uiState.value = ChartListUiState(
+                    isLoading = false,
+                    chartListData = combinedList.toPersistentList()
+                )
+                currentPage++
+                isLastPage = newList.size < pageSize
+            }
+            .catch { e ->
+                _uiState.value = _uiState.value.copy(errorMessage = e.message)
+            }
+            .also { isLoadingMore = false }
+    }
 }
