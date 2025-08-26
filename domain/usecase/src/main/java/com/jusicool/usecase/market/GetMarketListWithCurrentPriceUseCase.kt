@@ -10,7 +10,11 @@ import javax.inject.Inject
 class GetMarketListWithCurrentPriceUseCase @Inject constructor(
     private val marketRepository: MarketRepository,
 ) {
-    operator fun invoke(type: MarketType): Flow<List<RecommendMarketWithPrice>> = flow {
-        marketRepository.getMarketList(type = type, page = 0, size = 40)
+    operator fun invoke(
+        type: MarketType? = null,
+        currentPage: Int,
+        pageSize: Int,
+    ): Flow<List<RecommendMarketWithPrice>> = flow {
+        marketRepository.getMarketList(type = type, page = 0, size = pageSize)
     }
 }
