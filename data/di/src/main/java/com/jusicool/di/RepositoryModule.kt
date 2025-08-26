@@ -16,6 +16,8 @@ import com.jusicool.repository.MarketRepository
 import com.jusicool.repository.MarketRepositoryImpl
 import com.jusicool.repository.OrderRepository
 import com.jusicool.repository.OrderRepositoryImpl
+import com.jusicool.repository.SchoolRepository
+import com.jusicool.repository.SchoolRepositoryImpl
 import com.jusicool.repository.WsKoreaInvestmentRepository
 import com.jusicool.repository.WsKoreaInvestmentRepositoryImpl
 import dagger.Binds
@@ -72,4 +74,9 @@ abstract class RepositoryModule {
     abstract fun bindCommunityRepository(
         communityRepositoryImpl: CommunityRepositoryImpl
     ): CommunityRepository
+
+    @Binds
+    abstract fun bindSchoolRepository(
+        schoolRepositoryImpl: SchoolRepositoryImpl
+    ): SchoolRepository
 }
