@@ -11,9 +11,9 @@ import javax.inject.Inject
 class MarketRepositoryImpl @Inject constructor(
     private val marketDataSource: MarketDataSource
 ) : MarketRepository {
-    override fun getMarketList(type: MarketType, page: Int, size: Int): Flow<List<Market>> {
+    override fun getMarketList(type: MarketType?, page: Int, size: Int): Flow<List<Market>> {
         return marketDataSource
-            .getMarketList(type.name, page, size)
+            .getMarketList(type?.name, page, size)
             .map { data -> data.items.map { item -> item.toEntity() } }
     }
 

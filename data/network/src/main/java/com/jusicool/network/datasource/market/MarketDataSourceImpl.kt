@@ -11,7 +11,7 @@ class MarketDataSourceImpl @Inject constructor(
     private val marketApi: MarketApi,
 ) : MarketDataSource {
     override fun getMarketList(
-        type: String,
+        type: String?,
         page: Int,
         size: Int,
     ): Flow<MarketListResponse> =
