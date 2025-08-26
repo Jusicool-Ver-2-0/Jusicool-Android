@@ -5,12 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.jusicool.entity.auth.SignUpModel
 import com.jusicool.entity.auth.VerificationCodeModel
 import com.jusicool.entity.auth.VerificationEmailModel
+import com.jusicool.signup.viewModel.uiState.SearchSchoolUiState
 import com.jusicool.signup.viewModel.uiState.SignUpUiState
 import com.jusicool.signup.viewModel.uiState.VerificationCodeUiState
 import com.jusicool.signup.viewModel.uiState.VerificationEmailUiState
 import com.jusicool.usecase.auth.VerificationEmailUseCase
 import com.jusicool.usecase.auth.SignUpRequestUseCase
 import com.jusicool.usecase.auth.VerificationCodeUseCase
+import com.jusicool.usecase.school.SearchSchoolUseCase
 import com.jusicool.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +25,8 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val signUpRequestUseCase: SignUpRequestUseCase,
     private val verificationEmailUseCase: VerificationEmailUseCase,
-    private val verificationCodeUseCase: VerificationCodeUseCase
+    private val verificationCodeUseCase: VerificationCodeUseCase,
+    private val searchSchoolUseCase: SearchSchoolUseCase
 ) : ViewModel() {
     private val _signUpUiState = MutableStateFlow<SignUpUiState>(SignUpUiState.Loading)
     internal val signUpState = _signUpUiState.asStateFlow()
@@ -33,6 +36,9 @@ class SignUpViewModel @Inject constructor(
 
     private val _verificationCodeUiState = MutableStateFlow<VerificationCodeUiState>(VerificationCodeUiState.Loading)
     internal val verificationCodeUiState = _verificationCodeUiState.asStateFlow()
+
+    private val _searchSchoolUiState = MutableStateFlow<SearchSchoolUiState>(SearchSchoolUiState.Loading)
+    internal val searchSchoolUiState = _searchSchoolUiState.asStateFlow()
 
     private val _username= MutableStateFlow("")
     internal val username = _username.asStateFlow()
@@ -45,6 +51,9 @@ class SignUpViewModel @Inject constructor(
 
     private val _confirmPassword = MutableStateFlow("")
     internal val confirmPassword = _confirmPassword.asStateFlow()
+
+    private val _keyword = MutableStateFlow("")
+    internal val keyword = _keyword.asStateFlow()
 
     internal fun onUsernameChange(value: String) {
         _username.value = value
@@ -60,6 +69,10 @@ class SignUpViewModel @Inject constructor(
 
     internal fun onConfirmPasswordChange(value: String) {
         _confirmPassword.value = value
+    }
+
+    internal fun onKeywordChange(value: String) {
+        _keyword.value = value
     }
 
     private fun signUp(body: SignUpModel) = viewModelScope.launch {
@@ -99,6 +112,18 @@ class SignUpViewModel @Inject constructor(
             }.collect {
                 Logger.d("SignUpViewModel", "인증코드 보내기 성공")
                 _verificationCodeUiState.value = VerificationCodeUiState.Success
+            }
+    }
+
+    private fun searchSchool() = viewModelScope.launch {
+        _searchSchoolUiState.value = SearchSchoolUiState.Loading
+        searchSchoolUseCase(keyword = keyword.value)
+            .catch { e ->
+                Logger.d("SignUpViewModel", "학교 검색 실패: ${e.message}")
+                _searchSchoolUiState.value = SearchSchoolUiState.Error(e.message?: "Unknown error")
+            }.collect {
+                Logger.d("SignUpViewModel", "학교 검색 성공")
+                _searchSchoolUiState.value = SearchSchoolUiState.Success
             }
     }
 }
