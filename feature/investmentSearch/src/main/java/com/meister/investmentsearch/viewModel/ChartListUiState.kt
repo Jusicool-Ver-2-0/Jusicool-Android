@@ -7,6 +7,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 data class ChartListUiState(
     val isLoading: Boolean = true,
+    val isPaging: Boolean = false,
     val resentSearchTagData: PersistentList<InvestmentSearchTagData> = persistentListOf(),
     val chartListData: PersistentList<RecommendMarketWithPrice> = persistentListOf(),
     val errorMessage: String? = null,
