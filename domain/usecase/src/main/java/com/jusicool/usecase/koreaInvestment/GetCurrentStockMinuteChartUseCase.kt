@@ -9,7 +9,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-class GetTodayMinuteChartUseCase @Inject constructor(
+class GetCurrentStockMinuteChartUseCase @Inject constructor(
     private val koreaInvestmentRepository: KoreaInvestmentRepository
 ) {
     operator fun invoke(
