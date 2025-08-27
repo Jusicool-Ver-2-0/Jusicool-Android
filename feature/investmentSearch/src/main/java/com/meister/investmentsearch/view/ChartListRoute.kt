@@ -3,6 +3,7 @@ package com.meister.investmentsearch.view
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jusicool.design_system.component.indicator.CircularLoadingIndicator
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.icon.RightArrowIcon
@@ -67,7 +69,7 @@ internal fun ChartListRoute(
         snapshotFlow { isEndReached }
             .collect { endReached ->
                 if (endReached) {
-                    // TODO: 로딩함수 추가 
+                    viewModel.loadNextPage()
                 }
             }
     }
@@ -112,6 +114,8 @@ internal fun ChartListScreen(
 
             ChartListSection(
                 data = uiState.chartListData,
+                isPaging = uiState.isPaging,
+                isLoading = uiState.isLoading,
                 navigateToChart = navigateToChart,
                 lazyListState = lazyListState,
             )
@@ -207,21 +211,48 @@ private fun RecentSearchSection(data: PersistentList<InvestmentSearchTagData>) {
 @Composable
 private fun ChartListSection(
     data: PersistentList<RecommendMarketWithPrice>,
+    isLoading: Boolean,
+    isPaging: Boolean,
     lazyListState: LazyListState,
     navigateToChart: (String, String) -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        state = lazyListState
-    ) {
-        itemsIndexed(data, key = { _, item -> item.market }) { _, item ->
-            ChartItem(
-                data = item,
-                navigateToChart = navigateToChart,
+    if (isLoading && !isPaging) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularLoadingIndicator(
+                size = 64.dp,
+                strokeWidth = 6.dp
             )
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            state = lazyListState
+        ) {
+            itemsIndexed(
+                items = data,
+                key = { _, item -> item.market },
+            ) { _, item ->
+                ChartItem(
+                    data = item,
+                    navigateToChart = navigateToChart,
+                )
+            }
+            if (isLoading) {
+                item {
+                    Box(
+                        Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularLoadingIndicator(
+                            size = 64.dp,
+                            strokeWidth = 6.dp
+                        )
+                    }
+                }
+            }
         }
     }
 }
