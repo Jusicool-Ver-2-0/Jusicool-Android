@@ -6,11 +6,16 @@ import com.jusicool.usecase.crypto.GetCurrentCryptoPriceUseCase
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase
 import com.jusicool.usecase.koreaInvestment.ObserveRealtimeStockPriceUseCase
 import com.jusicool.utils.isStockMarketOpen
-import com.jusicool.utils.tickerFlow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
 class GetHoldingWithCurrentPriceUseCase @Inject constructor(
@@ -68,17 +73,22 @@ class GetHoldingWithCurrentPriceUseCase @Inject constructor(
         }
     }
 
-    private fun getCryptoPriceFlow(cryptoMarkets: List<String>): Flow<List<AssetsCurrentPrice>> {
+    private fun getCryptoPriceFlow(
+        cryptoMarkets: List<String>
+    ): Flow<List<AssetsCurrentPrice>> {
         if (cryptoMarkets.isEmpty()) return flowOf(emptyList())
 
-        return tickerFlow(500)
-            .flatMapLatest {
-                getCurrentCryptoPriceUseCase(cryptoMarkets)
+        return flow {
+            while (currentCoroutineContext().isActive) {
+                getCurrentCryptoPriceUseCase(cryptoMarkets).collect { emit(it) }
+                delay(500)
             }
+        }.flowOn(Dispatchers.IO)
     }
 
+
     private fun findMarketsPrice(marketCode: String, stockPrices: List<AssetsCurrentPrice>): Double {
-        return stockPrices.find { it.market == marketCode }?.currentPrice?.toDouble() ?: 0.0
+        return stockPrices.find { it.market == marketCode }?.currentPrice ?: 0.0
     }
 }
 
