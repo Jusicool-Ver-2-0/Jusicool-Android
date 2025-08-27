@@ -159,7 +159,7 @@ private fun ChartListScreenPreview() {
                     koreanName = "Apple Inc.",
                     englishName = "Apple",
                     logoUrl = "https://example.com/apple-logo.png",
-                    currentPrice = 1111131,
+                    currentPrice = 1111131.0,
                     profitRate = 0.05
                 ),
                 RecommendMarketWithPrice(
@@ -169,7 +169,7 @@ private fun ChartListScreenPreview() {
                     koreanName = "Microsoft Corporation",
                     englishName = "Microsoft",
                     logoUrl = "https://example.com/microsoft-logo.png",
-                    currentPrice = 950000,
+                    currentPrice = 950000.0,
                     profitRate = -0.02
                 ),
                 RecommendMarketWithPrice(
@@ -179,7 +179,7 @@ private fun ChartListScreenPreview() {
                     koreanName = "Amazon.com, Inc.",
                     englishName = "Amazon",
                     logoUrl = "https://example.com/amazon-logo.png",
-                    currentPrice = 800000,
+                    currentPrice = 800000.0,
                     profitRate = 0.0
                 ),
             )
