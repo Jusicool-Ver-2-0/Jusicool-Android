@@ -18,7 +18,7 @@ internal class ChartListViewModel @Inject constructor(
     private val getMarketListWithCurrentPriceUseCase: GetMarketListWithCurrentPriceUseCase
 ) : ViewModel() {
 
-    private var currentPage = 0
+    private var currentPage = 20
     private val pageSize = 40
     private var isLoadingMore = false
     private var isLastPage = false
