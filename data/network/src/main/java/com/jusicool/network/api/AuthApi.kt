@@ -18,12 +18,12 @@ interface AuthApi {
         @Body body: SignUpRequest
     )
 
-    @POST("/user/send")
+    @POST("/user/email/send")
     suspend fun verificationEmailRequest(
         @Body body: VerificationEmailRequest
     )
 
-    @POST("/user/verify")
+    @POST("/user/email/verify")
     suspend fun verificationCodeRequest(
         @Body body: VerificationCodeRequest
     )
