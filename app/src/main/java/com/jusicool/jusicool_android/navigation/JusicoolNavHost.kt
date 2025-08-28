@@ -8,7 +8,10 @@ import com.jusicool.account.navigation.accountRoute
 import com.jusicool.account.navigation.navigateToAccountRoute
 import com.jusicool.chart.navigation.chartRoute
 import com.jusicool.chart.navigation.navigateToChartRoute
+import com.jusicool.signin.navigation.navigateToSignInRoute
 import com.jusicool.signin.navigation.signInRoute
+import com.jusicool.signup.navigation.navigateToSignUpRoute
+import com.jusicool.signup.navigation.signUpRoute
 import com.jusicool.trade.navigation.buyReserveRoute
 import com.jusicool.trade.navigation.buyRoute
 import com.jusicool.trade.navigation.navigateToBuyReserveRoute
@@ -42,8 +45,12 @@ fun JusicoolNavHost(
         startDestination = startDestination
     ) {
         signInRoute(
-            navigateToSignUp = { /*TODO()*/ },
+            navigateToSignUp = navController::navigateToSignUpRoute,
             navigateToAccount = navController::navigateToAccountRoute
+        )
+
+        signUpRoute(
+            navigateToSignIn = navController::navigateToSignInRoute
         )
 
         accountRoute(
