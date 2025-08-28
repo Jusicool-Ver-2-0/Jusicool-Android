@@ -243,7 +243,9 @@ private fun ChartListSection(
             if (isLoading) {
                 item {
                     Box(
-                        Modifier.fillMaxWidth(),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
                         contentAlignment = Alignment.Center,
                     ) {
                         CircularLoadingIndicator(
