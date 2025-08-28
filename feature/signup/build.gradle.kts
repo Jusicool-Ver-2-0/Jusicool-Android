@@ -8,6 +8,8 @@ android {
 }
 
 dependencies {
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+
     implementation(project(":domain:usecase"))
     implementation(project(":domain:entity"))
     implementation(project(":ui:utils"))
