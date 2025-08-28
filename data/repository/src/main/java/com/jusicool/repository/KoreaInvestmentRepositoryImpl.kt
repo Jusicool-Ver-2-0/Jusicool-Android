@@ -49,11 +49,11 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
     ): Flow<List<AssetsCurrentPrice>> = flow {
         val result = mutableListOf<AssetsCurrentPrice>()
         stockCodes.forEach { code ->
+            delay(500)
             dataSource.getStockCurrentPrice(marketDivCode, code)
                 .map { it.toEntity(code) }
                 .collect { result.add(it) }
         }
         emit(result.toList())
-        delay(400)
     }
 }
