@@ -23,13 +23,14 @@ import com.jusicool.design_system.theme.JusicoolTheme
 fun SchoolListItem(
     modifier: Modifier = Modifier,
     schoolName: String,
-    address: String
+    address: String,
+    selected: Boolean
 ) {
     JusicoolTheme { colors, typography ->
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .border(width = 1.dp, color = colors.gray100, shape = RoundedCornerShape(size = 8.dp))
+                .border(width = 1.dp, color = if(selected) colors.main.copy(alpha = 0.5f) else colors.gray100, shape = RoundedCornerShape(size = 8.dp))
                 .padding(horizontal = 16.dp, vertical = 14.dp)
         ) {
             Row(
@@ -88,6 +89,7 @@ fun SchoolListItem(
 fun SchoolListItemPreview() {
     SchoolListItem(
         schoolName = "보길중학교",
-        address = "보길도"
+        address = "보길도",
+        selected = true
     )
 }
