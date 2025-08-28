@@ -72,7 +72,7 @@ internal class AccountViewModel @Inject constructor(
             }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
+                started = SharingStarted.WhileSubscribed(),
                 initialValue = GetHoldingsPriceUiState.Loading
             )
 }
