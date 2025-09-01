@@ -82,4 +82,8 @@ internal class ChartListViewModel @Inject constructor(
                 }
         }
     }
+
+    internal fun setCurrentPage(page: Int) {
+        currentPage = page
+    }
 }
