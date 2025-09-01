@@ -1,3 +1,4 @@
+// feature/signup/src/main/java/com/jusicool/signup/view/SignUpScreen.kt
 package com.jusicool.signup.view
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -14,51 +15,103 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jusicool.design_system.component.button.JusicoolFilledButton
 import com.jusicool.design_system.component.button.state.ButtonState
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.textField.JusicoolTextField
 import com.jusicool.design_system.theme.JusicoolTheme
-import com.jusicool.signup.component.School
 import com.jusicool.signup.component.SchoolList
-import com.jusicool.signup.component.SchoolListItem
 import com.jusicool.design_system.icon.LeftClarityArrowLineIcon
 import com.jusicool.design_system.icon.SearchIcon
+import com.jusicool.entity.school.SchoolInfoModel
+import com.jusicool.signup.viewModel.SignUpViewModel
+import com.jusicool.signup.viewModel.uiState.SearchSchoolUiState
+import com.jusicool.signup.viewModel.uiState.SignUpScreenState
+import com.jusicool.signup.viewModel.uiState.VerificationCodeUiState
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun SignUpRoute(
+    modifier: Modifier = Modifier,
+    navigateToSignIn: () -> Unit,
+    viewModel: SignUpViewModel = hiltViewModel()
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val pagerState = rememberPagerState { 4 }
+
+    LaunchedEffect(state.verificationCodeUiState) {
+        when (state.verificationCodeUiState) {
+            is VerificationCodeUiState.Success -> pagerState.animateScrollToPage(2)
+            is VerificationCodeUiState.InvalidCode -> viewModel.setVerificationCodeError(true)
+            else -> Unit
+        }
+    }
+
+    SignUpScreen(
+        modifier = modifier,
+        pagerState = pagerState,
+        state = state,
+        onSelectSchool = viewModel::onSelectSchool,
+        onUsernameChange = viewModel::onUsernameChange,
+        onEmailChange = viewModel::onEmailChange,
+        onCodeChange = viewModel::onCodeChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onConfirmPasswordChange = viewModel::onConfirmPasswordChange,
+        onKeywordChange = viewModel::onKeywordChange,
+        setEmailValidated = viewModel::setEmailValidated,
+        setShowCodeInput = viewModel::setShowCodeInput,
+        setPasswordError = viewModel::setPasswordError,
+        setConfirmError = viewModel::setConfirmError,
+        requestVerificationEmail = viewModel::requestVerificationEmail,
+        requestVerificationCode = viewModel::requestVerificationCode,
+        restartTimer = viewModel::startResendTimer,
+        onSearchSchool = viewModel::searchSchool,
+        requestSignUp = viewModel::signUp,
+        navigateToSignIn = navigateToSignIn
+    )
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SignUpScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    pagerState: PagerState,
+    state: SignUpScreenState,
+    onUsernameChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onCodeChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onKeywordChange: (String) -> Unit,
+    setEmailValidated: (Boolean) -> Unit,
+    setShowCodeInput: (Boolean) -> Unit,
+    setPasswordError: (Boolean) -> Unit,
+    setConfirmError: (Boolean) -> Unit,
+    requestVerificationEmail: () -> Unit,
+    requestVerificationCode: () -> Unit,
+    restartTimer: () -> Unit,
+    onSearchSchool: () -> Unit,
+    onSelectSchool: (SchoolInfoModel) -> Unit,
+    requestSignUp: () -> Unit,
+    navigateToSignIn: () -> Unit
 ) {
-    val pagerState = rememberPagerState { 4 }
     val coroutineScope = rememberCoroutineScope()
-
-    val (nameTextState, nameOnTextChange) = remember { mutableStateOf("") }
-    val (emailTextState, emailOnTextChange) = remember { mutableStateOf("") }
-    val (codeTextState, codeOnTextChange) = remember { mutableStateOf("") }
-    val (passwordTextState, passwordOnTextChange) = remember { mutableStateOf("") }
-    val (confirmTextState, confirmOnTextChange) = remember { mutableStateOf("") }
-    val (schoolTextState, schoolOnTextChange) = remember { mutableStateOf("") }
-
-    val (isEmailValidated, setEmailValidated) = remember { mutableStateOf(false) }
-    val (showCodeInput, setShowCodeInput) = remember { mutableStateOf(false) }
-    val (isPasswordError, setPasswordError) = remember { mutableStateOf(false) }
-    val (isConfirmError, setConfirmError) = remember { mutableStateOf(false) }
 
     JusicoolTheme { colors, typography ->
         Column(
@@ -72,12 +125,8 @@ fun SignUpScreen(
                 modifier = Modifier
                     .size(24.dp)
                     .JusicoolClickable {
-                        if (pagerState.currentPage == 0)
-                        /*TODO()*/
-                        else
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                            }
+                        if (pagerState.currentPage == 0) navigateToSignIn()
+                        else coroutineScope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
                     }
             )
 
@@ -91,97 +140,91 @@ fun SignUpScreen(
                 when (page) {
                     0 -> {
                         Column {
-                            Text(
-                                text = "이름을 입력해주세요",
-                                color = colors.black,
-                                style = typography.subTitle
-                            )
-
+                            Text(text = "이름을 입력해주세요", color = colors.black, style = typography.subTitle)
                             Spacer(modifier = Modifier.height(40.dp))
-
                             JusicoolTextField(
                                 label = "이름",
-                                textState = nameTextState,
-                                onTextChange = nameOnTextChange,
+                                textState = state.username,
+                                onTextChange = onUsernameChange,
                                 placeHolder = "이름을 입력해주세요"
                             )
-
                             Spacer(modifier = Modifier.weight(1f))
-
                             JusicoolFilledButton(
                                 modifier = Modifier.fillMaxWidth(),
                                 text = "다음",
-                                state = if (nameTextState.isNotBlank()) ButtonState.Enable else ButtonState.Disable,
-                                onClick = {
-                                    coroutineScope.launch {
-                                        pagerState.animateScrollToPage(3)
-                                    }
-                                }
+                                state = if (state.username.isNotBlank()) ButtonState.Enable else ButtonState.Disable,
+                                onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } }
                             )
                         }
                     }
 
                     1 -> {
-                        val isEmailValid = emailTextState.contains("@")
-
+                        val isEmailValid = state.email.contains("@")
                         Column {
-                            Text(
-                                text = "이메일을 입력해주세요",
-                                color = colors.black,
-                                style = typography.subTitle
-                            )
-
+                            Text(text = "이메일을 입력해주세요", color = colors.black, style = typography.subTitle)
                             Spacer(modifier = Modifier.height(40.dp))
 
-                            if (!showCodeInput) {
+                            if (!state.showCodeInput) {
                                 JusicoolTextField(
                                     label = "이메일",
-                                    textState = emailTextState,
+                                    textState = state.email,
                                     onTextChange = {
-                                        emailOnTextChange(it)
-                                        if (isEmailValidated) setEmailValidated(false)
+                                        onEmailChange(it)
+                                        if (state.isEmailValidated) setEmailValidated(false)
                                     },
                                     placeHolder = "이메일 입력해주세요",
-                                    isError = isEmailValidated && !isEmailValid,
-                                    errorText = if (isEmailValidated && !isEmailValid) "이메일 형식을 다시 확인해주세요" else ""
+                                    isError = state.isEmailValidated && !isEmailValid,
+                                    errorText = if (state.isEmailValidated && !isEmailValid) "이메일 형식을 다시 확인해주세요" else ""
                                 )
                             } else {
                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(
-                                        text = "이메일",
-                                        color = colors.black,
-                                        style = typography.bodySmall
-                                    )
-
+                                    Text(text = "이메일", color = colors.black, style = typography.bodySmall)
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .border(width = 1.dp, color = colors.gray200, shape = RoundedCornerShape(size = 8.dp))
-                                            .background(color = colors.gray100, shape = RoundedCornerShape(size = 8.dp))
+                                            .border(1.dp, colors.gray200, RoundedCornerShape(8.dp))
+                                            .background(colors.gray100, RoundedCornerShape(8.dp))
                                             .padding(16.dp)
                                     ) {
+                                        Text(text = state.email, color = colors.black, style = typography.bodySmall)
+                                    }
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.End
+                                    ) {
                                         Text(
-                                            text = emailTextState,
-                                            color = colors.black,
-                                            style = typography.bodySmall
+                                            modifier = Modifier.JusicoolClickable {
+                                                setShowCodeInput(false)
+                                                setEmailValidated(false)
+                                                onCodeChange("")
+                                            },
+                                            text = if (state.showCodeInput) "이메일 수정하기" else "",
+                                            color = colors.main,
+                                            style = typography.label
                                         )
                                     }
                                 }
                             }
 
-                            if (showCodeInput) {
+                            if (state.showCodeInput) {
+                                val timeText = String.format("%02d:%02d", state.remainingTime / 60, state.remainingTime % 60)
                                 Spacer(modifier = Modifier.height(24.dp))
-
                                 JusicoolTextField(
                                     label = "인증번호",
-                                    textState = codeTextState,
-                                    onTextChange = codeOnTextChange,
+                                    textState = state.code,
+                                    onTextChange = onCodeChange,
                                     placeHolder = "이메일로 전송된 인증번호 입력",
-                                    helperText = "이메일 수정하기",
+                                    helperText = if (!state.isVerificationCodeError) {
+                                        if (state.isResendEnabled) "인증번호 재전송" else timeText
+                                    } else "",
+                                    isError = state.isVerificationCodeError,
+                                    errorText = if (state.isVerificationCodeError) "인증번호가 올바르지 않습니다." else "",
                                     onHelperTextClick = {
-                                        setShowCodeInput(false)
-                                        setEmailValidated(false)
-                                        codeOnTextChange("")
+                                        if (state.isResendEnabled) {
+                                            requestVerificationEmail()
+                                            onCodeChange("")
+                                            restartTimer()
+                                        }
                                     }
                                 )
                             }
@@ -192,21 +235,20 @@ fun SignUpScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 text = "다음",
                                 state = when {
-                                    !showCodeInput -> if (emailTextState.isNotBlank())  ButtonState.Enable else ButtonState.Disable
-                                    else -> if (codeTextState.isNotBlank()) ButtonState.Enable else ButtonState.Disable
+                                    !state.showCodeInput -> if (state.email.isNotBlank()) ButtonState.Enable else ButtonState.Disable
+                                    else -> if (state.code.isNotBlank()) ButtonState.Enable else ButtonState.Disable
                                 },
                                 onClick = {
-                                    if (!showCodeInput) {
+                                    if (!state.showCodeInput) {
                                         if (isEmailValid) {
+                                            requestVerificationEmail()
                                             setShowCodeInput(true)
+                                            restartTimer()
                                         } else {
                                             setEmailValidated(true)
                                         }
                                     } else {
-                                        coroutineScope.launch {
-                                            pagerState.animateScrollToPage(2)
-                                            // TODO: 실제 이메일 전송 API 호출
-                                        }
+                                        requestVerificationCode()
                                     }
                                 }
                             )
@@ -215,66 +257,51 @@ fun SignUpScreen(
 
                     2 -> {
                         Column {
-                            Text(
-                                text = "비밀번호를 입력해주세요",
-                                color = colors.black,
-                                style = typography.subTitle
-                            )
-
+                            Text(text = "비밀번호를 입력해주세요", color = colors.black, style = typography.subTitle)
                             Spacer(modifier = Modifier.height(40.dp))
-
                             JusicoolTextField(
                                 label = "비밀번호",
-                                textState = passwordTextState,
+                                textState = state.password,
                                 onTextChange = {
-                                    passwordOnTextChange(it)
+                                    onPasswordChange(it)
                                     setPasswordError(false)
                                 },
                                 placeHolder = "비밀번호를 입력해주세요",
                                 visualTransformation = PasswordVisualTransformation(),
-                                helperText = if (isPasswordError) "" else "영문, 숫자, 특수문자 중 2개 이상의 조합으로 8글자 이상",
-                                isError = isPasswordError,
-                                errorText = if (isPasswordError) "비밀번호 형식을 확인해주세요" else ""
+                                helperText = if (state.isPasswordError) "" else "영문, 숫자, 특수문자 중 2개 이상의 조합으로 8글자 이상",
+                                isError = state.isPasswordError,
+                                errorText = if (state.isPasswordError) "비밀번호 형식을 확인해주세요" else ""
                             )
-
                             Spacer(modifier = Modifier.height(16.dp))
-
                             JusicoolTextField(
                                 label = "비밀번호 재입력",
-                                textState = confirmTextState,
+                                textState = state.confirmPassword,
                                 onTextChange = {
-                                    confirmOnTextChange(it)
+                                    onConfirmPasswordChange(it)
                                     setConfirmError(false)
                                 },
                                 placeHolder = "비밀번호를 다시 입력해주세요",
                                 visualTransformation = PasswordVisualTransformation(),
-                                isError = isConfirmError,
-                                errorText = if (isConfirmError) "비밀번호가 일치하지 않아요" else ""
+                                isError = state.isConfirmError,
+                                errorText = if (state.isConfirmError) "비밀번호가 일치하지 않아요" else ""
                             )
-
                             Spacer(modifier = Modifier.weight(1f))
-
                             JusicoolFilledButton(
                                 modifier = Modifier.fillMaxWidth(),
                                 text = "다음",
-                                state = if (passwordTextState.isNotBlank() && confirmTextState.isNotBlank()) ButtonState.Enable else ButtonState.Disable,
+                                state = if (state.password.isNotBlank() && state.confirmPassword.isNotBlank()) ButtonState.Enable else ButtonState.Disable,
                                 onClick = {
-                                    val passwordValid = passwordTextState.length >= 8 &&
+                                    val passwordValid = state.password.length >= 8 &&
                                             listOf(
-                                                Regex(".*[a-zA-Z].*").containsMatchIn(passwordTextState),
-                                                Regex(".*[0-9].*").containsMatchIn(passwordTextState),
-                                                Regex(".*[!@#\$%^&*(),.?\":{}|<>\\[\\]~`\\\\/;'+=-_].*").containsMatchIn(passwordTextState)
+                                                Regex(".*[a-zA-Z].*").containsMatchIn(state.password),
+                                                Regex(".*[0-9].*").containsMatchIn(state.password),
+                                                Regex(".*[!@#\$%^&*(),.?\":{}|<>\\[\\]~`\\\\/;'+=-_].*").containsMatchIn(state.password)
                                             ).count { it } >= 2
-
-                                    val confirmValid = passwordTextState == confirmTextState && confirmTextState.isNotEmpty()
-
+                                    val confirmValid = state.password == state.confirmPassword && state.confirmPassword.isNotEmpty()
                                     if (!passwordValid) setPasswordError(true)
                                     if (!confirmValid) setConfirmError(true)
-
                                     if (passwordValid && confirmValid) {
-                                        coroutineScope.launch {
-                                            pagerState.animateScrollToPage(3)
-                                        }
+                                        coroutineScope.launch { pagerState.animateScrollToPage(3) }
                                     }
                                 }
                             )
@@ -283,14 +310,8 @@ fun SignUpScreen(
 
                     3 -> {
                         Column {
-                            Text(
-                                text = "현재 재학중인 학교 이름을 입력해주세요",
-                                color = colors.black,
-                                style = typography.subTitle
-                            )
-
+                            Text(text = "현재 재학중인 학교 이름을 입력해주세요", color = colors.black, style = typography.subTitle)
                             Spacer(modifier = Modifier.height(40.dp))
-
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 verticalAlignment = Alignment.CenterVertically
@@ -298,40 +319,40 @@ fun SignUpScreen(
                                 JusicoolTextField(
                                     modifier = Modifier.weight(1f),
                                     label = "학교명",
-                                    textState = schoolTextState,
-                                    onTextChange = schoolOnTextChange,
-                                    placeHolder = "학교명을 입력해주세요"
+                                    textState = state.keyword,
+                                    onTextChange = onKeywordChange,
+                                    placeHolder = "학교명을 입력해주세요",
                                 )
-
                                 Box(
                                     modifier = Modifier
-                                        .border(width = 1.dp, color = colors.main.copy(alpha = 0.5f), shape = RoundedCornerShape(size = 8.dp))
+                                        .border(1.dp, colors.main.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
                                         .padding(15.dp)
+                                        .JusicoolClickable { onSearchSchool() }
                                 ) {
-                                    SearchIcon(
-                                        modifier = Modifier.size(24.dp),
-                                        tint = colors.main.copy(alpha = 0.5f)
-                                    )
+                                    SearchIcon(modifier = Modifier.size(24.dp), tint = colors.main.copy(alpha = 0.5f))
                                 }
                             }
-
-                            val sampleSchools = listOf(
-                                School("광주소프트웨어마이스터고등학교", "광주광역시 광산구 하남산단6번로 107"),
-                                School("서울과학고등학교", "서울특별시 노원구 공릉로 232"),
-                                School("한성과학고등학교", "서울특별시 종로구 창경궁로 254"),
-                                School("대전과학고등학교", "대전광역시 유성구 장동 23"),
-                                School("부산과학고등학교", "부산광역시 남구 신선로 365")
-                            )
-                            SchoolList(schools = sampleSchools)
-
-                            Spacer(modifier = Modifier.weight(1f))
-
+                            when (val s = state.searchSchoolUiState) {
+                                is SearchSchoolUiState.Success -> {
+                                    SchoolList(
+                                        modifier = Modifier.weight(1f),
+                                        schools = s,
+                                        selectedSchool = state.selectedSchool,
+                                        onSelectSchool = onSelectSchool
+                                    )
+                                }
+                                else -> {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
                             JusicoolFilledButton(
                                 modifier = Modifier.fillMaxWidth(),
-                                text = "다음",
-                                state = ButtonState.Enable,
+                                text = "회원가입 완료",
+                                state = if (state.selectedSchool != null) ButtonState.Enable else ButtonState.Disable,
                                 onClick = {
-                                    /*TODO()*/
+                                    requestSignUp()
+                                    navigateToSignIn()
                                 }
                             )
                         }
@@ -342,8 +363,29 @@ fun SignUpScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 fun SignUpScreenPreview() {
-    SignUpScreen()
+    SignUpScreen(
+        pagerState = rememberPagerState { 4 },
+        state = SignUpScreenState(),
+        onUsernameChange = {},
+        onEmailChange = {},
+        onCodeChange = {},
+        onPasswordChange = {},
+        onConfirmPasswordChange = {},
+        onKeywordChange = {},
+        setEmailValidated = {},
+        setShowCodeInput = {},
+        setPasswordError = {},
+        setConfirmError = {},
+        requestVerificationEmail = {},
+        requestVerificationCode = {},
+        restartTimer = {},
+        onSearchSchool = {},
+        onSelectSchool = {},
+        requestSignUp = {},
+        navigateToSignIn = {}
+    )
 }

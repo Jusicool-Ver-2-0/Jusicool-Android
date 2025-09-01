@@ -54,7 +54,8 @@ fun SignInRoute(
         isPasswordError = isPasswordError,
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
-        onSignInClick = viewModel::onSignInClick
+        onSignInClick = viewModel::onSignInClick,
+        navigateToSignUp = navigateToSignUp
     )
 }
 
@@ -67,7 +68,8 @@ private fun SignInScreen(
     isPasswordError: Boolean,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onSignInClick: () -> Unit
+    onSignInClick: () -> Unit,
+    navigateToSignUp: () ->Unit
 ) {
     JusicoolTheme { colors, typography ->
         Column(
@@ -145,7 +147,7 @@ private fun SignInScreen(
                     style = typography.bodySmall,
                     color = colors.main,
                     modifier = Modifier.JusicoolClickable {
-                        // TODO: 회원가입 화면으로 이동
+                        navigateToSignUp()
                     }
                 )
                 Spacer(modifier = Modifier.height(84.dp))
@@ -164,7 +166,8 @@ fun SignInScreenPreviewInitial() {
         isPasswordError = false,
         onEmailChange = {},
         onPasswordChange = {},
-        onSignInClick = {}
+        onSignInClick = {},
+        navigateToSignUp = {}
     )
 }
 
@@ -178,7 +181,8 @@ fun SignInScreenPreviewValid() {
         isPasswordError = false,
         onEmailChange = {},
         onPasswordChange = {},
-        onSignInClick = {}
+        onSignInClick = {},
+        navigateToSignUp = {}
     )
 }
 
@@ -192,6 +196,7 @@ fun SignInScreenPreviewError() {
         isPasswordError = true,
         onEmailChange = {},
         onPasswordChange = {},
-        onSignInClick = {}
+        onSignInClick = {},
+        navigateToSignUp = {}
     )
 }

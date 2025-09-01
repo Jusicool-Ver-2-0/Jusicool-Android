@@ -13,3 +13,7 @@ annotation class BaseApiRetrofit
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class KoreaInvestmentRetrofit
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class NeisRetrofit

@@ -18,6 +18,8 @@ import com.jusicool.network.datasource.market.MarketDataSource
 import com.jusicool.network.datasource.market.MarketDataSourceImpl
 import com.jusicool.network.datasource.order.OrderDataSource
 import com.jusicool.network.datasource.order.OrderDataSourceImpl
+import com.jusicool.network.datasource.school.SchoolDataSource
+import com.jusicool.network.datasource.school.SchoolDatasourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -77,4 +79,9 @@ abstract class RemoteDataSourceModule {
     abstract fun bindMarketDataSource(
         marketDataSourceImpl: MarketDataSourceImpl
     ): MarketDataSource
+
+    @Binds
+    abstract fun bindSchoolDataSource(
+        schoolDatasourceImpl: SchoolDatasourceImpl
+    ): SchoolDataSource
 }
