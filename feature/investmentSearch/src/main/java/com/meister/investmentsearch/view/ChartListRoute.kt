@@ -21,9 +21,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,21 +54,18 @@ internal fun ChartListRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
-    val isEndReached by remember {
-        derivedStateOf {
-            val lastVisibleItem = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()
-            val totalItems = lazyListState.layoutInfo.totalItemsCount
-
-            lastVisibleItem != null && lastVisibleItem.index >= totalItems - 1
-        }
-    }
 
     LaunchedEffect(lazyListState) {
-        snapshotFlow { isEndReached }
-            .collect { endReached ->
-                if (endReached) {
+        snapshotFlow { lazyListState.layoutInfo }
+            .collect { layoutInfo ->
+                val totalItems = layoutInfo.totalItemsCount
+                val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+
+                if (lastVisibleIndex >= totalItems - 1 && !uiState.isPaging) {
                     viewModel.loadNextPage()
                 }
+
+                viewModel.setCurrentPage(lastVisibleIndex / viewModel.pageSize)
             }
     }
 
