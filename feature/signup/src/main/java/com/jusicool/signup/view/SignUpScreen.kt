@@ -338,9 +338,7 @@ fun SignUpScreen(
                                             setEmailValidated(true)
                                         }
                                     } else {
-                                        coroutineScope.launch {
-                                            requestVerificationCode()
-                                        }
+                                        requestVerificationCode()
                                     }
                                 }
                             )
