@@ -22,8 +22,11 @@ internal class ChartListViewModel @Inject constructor(
     private val getMarketListWithCurrentPriceUseCase: GetMarketListWithCurrentPriceUseCase
 ) : ViewModel() {
 
-    private var currentPage = 20
-    private val pageSize = 40
+    companion object {
+        const val PAGE_SIZE = 40
+    }
+
+    private var currentPage = 0
     private var isLoadingMore = false
     private var isLastPage = false
 
@@ -44,7 +47,7 @@ internal class ChartListViewModel @Inject constructor(
         currentPage++
 
         viewModelScope.launch {
-            getMarketListWithCurrentPriceUseCase(currentPage = pageIndex, pageSize = pageSize)
+            getMarketListWithCurrentPriceUseCase(currentPage = pageIndex, pageSize = PAGE_SIZE)
                 .onStart {
                     _uiState.update { it.copy(isLoading = true, isPaging = true) }
                 }
@@ -75,7 +78,7 @@ internal class ChartListViewModel @Inject constructor(
                         )
                     }
 
-                    isLastPage = newList.size < pageSize
+                    isLastPage = newList.size < PAGE_SIZE
                 }
         }
     }
