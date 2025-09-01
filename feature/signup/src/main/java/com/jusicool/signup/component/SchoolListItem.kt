@@ -30,7 +30,11 @@ fun SchoolListItem(
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .border(width = 1.dp, color = if(selected) colors.main.copy(alpha = 0.5f) else colors.gray100, shape = RoundedCornerShape(size = 8.dp))
+                .border(
+                    width = 1.dp,
+                    color = if(selected) colors.main.copy(alpha = 0.5f) else colors.gray100,
+                    shape = RoundedCornerShape(size = 8.dp)
+                )
                 .padding(horizontal = 16.dp, vertical = 14.dp)
         ) {
             Row(
