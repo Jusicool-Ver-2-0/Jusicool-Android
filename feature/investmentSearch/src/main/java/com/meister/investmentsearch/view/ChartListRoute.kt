@@ -61,7 +61,7 @@ internal fun ChartListRoute(
                 val totalItems = layoutInfo.totalItemsCount
                 val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
 
-                if (lastVisibleIndex >= totalItems - 1 && !uiState.isPaging) {
+                if (lastVisibleIndex >= totalItems - 1 && !uiState.isLoading) {
                     viewModel.loadNextPage()
                 }
 
@@ -109,7 +109,7 @@ internal fun ChartListScreen(
 
             ChartListSection(
                 data = uiState.chartListData,
-                isPaging = uiState.isPaging,
+                isInitialLoad = uiState.isInitialLoad,
                 isLoading = uiState.isLoading,
                 navigateToChart = navigateToChart,
                 lazyListState = lazyListState,
@@ -207,11 +207,11 @@ private fun RecentSearchSection(data: PersistentList<InvestmentSearchTagData>) {
 private fun ChartListSection(
     data: PersistentList<RecommendMarketWithPrice>,
     isLoading: Boolean,
-    isPaging: Boolean,
+    isInitialLoad: Boolean,
     lazyListState: LazyListState,
     navigateToChart: (String, String) -> Unit
 ) {
-    if (isLoading && !isPaging) {
+    if (isLoading && isInitialLoad) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularLoadingIndicator(
                 size = 64.dp,
