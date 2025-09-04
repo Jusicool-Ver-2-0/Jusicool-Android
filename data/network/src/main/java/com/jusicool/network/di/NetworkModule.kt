@@ -11,11 +11,13 @@ import com.jusicool.network.api.HoldingApi
 import com.jusicool.network.api.KoreaInvestmentApi
 import com.jusicool.network.api.MarketApi
 import com.jusicool.network.api.OrderApi
+import com.jusicool.network.api.SchoolApi
 import com.jusicool.network.util.BaseApiRetrofit
 import com.jusicool.network.util.BasicCookieJar
 import com.jusicool.network.util.KoreaInvestmentAuthManager
 import com.jusicool.network.util.KoreaInvestmentInterceptor
 import com.jusicool.network.util.KoreaInvestmentRetrofit
+import com.jusicool.network.util.NeisRetrofit
 import com.jusicool.network.util.UpbitRetrofit
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -146,6 +148,19 @@ object NetworkModule {
             .build()
 
     @Provides
+    @Singleton
+    @NeisRetrofit
+    fun provideNeisRetrofit(
+        okHttpClient: OkHttpClient,
+        moshiConverterFactory: MoshiConverterFactory
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl("https://open.neis.go.kr/hub/")
+            .client(okHttpClient)
+            .addConverterFactory(moshiConverterFactory)
+            .build()
+
+    @Provides
     fun provideAuthApi(@BaseApiRetrofit retrofit: Retrofit): AuthApi =
         retrofit.create(AuthApi::class.java)
 
@@ -176,4 +191,8 @@ object NetworkModule {
     @Provides
     fun provideCommunityApi(@BaseApiRetrofit retrofit: Retrofit): CommunityApi =
         retrofit.create(CommunityApi::class.java)
+
+    @Provides
+    fun provideSchoolApi(@NeisRetrofit retrofit: Retrofit): SchoolApi =
+        retrofit.create(SchoolApi::class.java)
 }

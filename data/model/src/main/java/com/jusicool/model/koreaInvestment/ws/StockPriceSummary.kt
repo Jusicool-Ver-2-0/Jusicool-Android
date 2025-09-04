@@ -9,9 +9,11 @@ data class StockPriceSummary(
     val time: String,            // STCK_CNTG_HOUR (1)
 ) {
     companion object {
+        const val STOCK_PRICE_FIELDS_COUNT = 46
+
         fun parseStockPriceSummary(rawData: String): StockPriceSummary? {
             val splitData = rawData.split("^")
-            if (splitData.size <= 52) return null
+            if (splitData.size < STOCK_PRICE_FIELDS_COUNT) return null
 
             return try {
                 StockPriceSummary(

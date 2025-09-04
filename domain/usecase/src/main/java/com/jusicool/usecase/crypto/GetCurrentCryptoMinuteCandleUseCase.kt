@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-class GetCurrentMinuteCandleUseCase @Inject constructor(
+class GetCurrentCryptoMinuteCandleUseCase @Inject constructor(
     private val cryptoRepository: CryptoRepository
 ) {
     operator fun invoke(market: String): Flow<List<MinuteCandleEntity>> {

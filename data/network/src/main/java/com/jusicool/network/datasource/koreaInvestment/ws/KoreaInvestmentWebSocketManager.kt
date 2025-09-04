@@ -3,12 +3,19 @@ package com.jusicool.network.datasource.koreaInvestment.ws
 import android.util.Log
 import com.jusicool.model.koreaInvestment.ws.StockPriceSummary
 import com.jusicool.network.util.KoreaInvestmentAuthManager
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import okhttp3.*
+import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
 import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Named
@@ -98,23 +105,41 @@ class KoreaInvestmentWebSocketManager @Inject constructor(
     private fun parseAndEmit(message: String) {
         if (!message.startsWith("0|")) return
 
-        val payload = message.split("|").getOrNull(3) ?: return
-        val stockCode = payload.split("^").getOrNull(0) ?: return
+        val parts = message.split("|")
+        val count = parts.getOrNull(2)?.toIntOrNull() ?: return
+        val payload = parts.getOrNull(3) ?: return
 
-        val parsed = StockPriceSummary.parseStockPriceSummary(payload) ?: return
+        val payloadParts = payload.split("^")
 
-        // 기존 리스트에서 해당 종목이 있으면 교체, 없으면 추가
+        val parsedList = mutableListOf<StockPriceSummary>()
+
+        repeat(count) { i ->
+            val start = i * StockPriceSummary.STOCK_PRICE_FIELDS_COUNT
+            val end = start + StockPriceSummary.STOCK_PRICE_FIELDS_COUNT
+            if (end <= payloadParts.size) {
+                val record = payloadParts.subList(start, end).joinToString("^")
+                StockPriceSummary.parseStockPriceSummary(record)?.let { parsed ->
+                    parsedList.add(parsed)
+                }
+            }
+        }
+
         _stockTickerListFlow.update { currentList ->
             val mutableList = currentList.toMutableList()
-            val index = mutableList.indexOfFirst { it.stockCode == stockCode }
-            if (index >= 0) {
-                mutableList[index] = parsed
-            } else {
-                mutableList.add(parsed)
+            parsedList.forEach { parsed ->
+                val index = mutableList.indexOfFirst { it.stockCode == parsed.stockCode }
+                if (index >= 0) {
+                    mutableList[index] = parsed
+                } else {
+                    mutableList.add(parsed)
+                }
             }
             mutableList.toList()
         }
 
-        Log.d("WebSocket", "📈 $stockCode 업데이트: $parsed")
+        if (parsedList.isNotEmpty()) {
+            val codes = parsedList.joinToString(", ") { it.stockCode }
+            Log.d("WebSocket", "📈 ${parsedList.size}건 업데이트 완료 → [$codes]")
+        }
     }
 }
