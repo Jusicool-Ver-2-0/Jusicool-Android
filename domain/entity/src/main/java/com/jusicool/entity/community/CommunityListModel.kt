@@ -6,8 +6,10 @@ data class CommunityListModel (
     val market: String,
     val title: String,
     val content: String,
+    val username: String,
     val commentCount: Int,
     val likeCount: Int,
     val isLiked: Boolean,
-    val isMine: Boolean
+    val isMine: Boolean,
+    val createdAt: String
 )

@@ -10,8 +10,10 @@ fun CommunityListResponse.toModel(): CommunityListModel =
         market = this.market,
         title = this.title,
         content = this.content,
+        username = this.username,
         commentCount = this.commentCount,
         likeCount = this.likeCount,
         isLiked = this.isLiked,
-        isMine = this.isMine
+        isMine = this.isMine,
+        createdAt = this.createdAt
     )

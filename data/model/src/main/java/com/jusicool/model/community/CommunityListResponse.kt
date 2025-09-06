@@ -10,8 +10,10 @@ data class CommunityListResponse(
     val market: String,
     val title: String,
     val content: String,
+    val username: String,
     @Json(name = "comment_count") val commentCount: Int,
     @Json(name = "like_count") val likeCount: Int,
     @Json(name = "is_liked") val isLiked: Boolean,
-    @Json(name = "is_mine") val isMine: Boolean
+    @Json(name = "is_mine") val isMine: Boolean,
+    @Json(name = "created_at") val createdAt: String
 )
