@@ -6,9 +6,8 @@ import com.jusicool.chart.viewModel.uiState.GetCommunityListUiState
 import com.jusicool.chart.viewModel.uiState.GetCurrentMinuteCandleUiState
 import com.jusicool.chart.viewModel.uiState.GetMinuteCandleUiState
 import com.jusicool.entity.price.MinuteCandleEntity
-import com.jusicool.usecase.crypto.GetCurrentCryptoMinuteCandleUseCase
 import com.jusicool.usecase.community.GetCommunityListUseCase
-import com.jusicool.usecase.crypto.GetCurrentMinuteCandleUseCase
+import com.jusicool.usecase.crypto.GetCurrentCryptoMinuteCandleUseCase
 import com.jusicool.usecase.crypto.GetMinuteCandleUseCase
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockMinuteChartUseCase
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase
@@ -46,12 +45,14 @@ internal class ChartViewModel @Inject constructor(
     private val observeRealtimeStockPriceUseCase: ObserveRealtimeStockPriceUseCase,
     private val getCurrentStockMinuteChartUseCase: GetCurrentStockMinuteChartUseCase,
     private val getCurrentStockPriceUseCase: GetCurrentStockPriceUseCase,
+    private val getCommunityListUseCase: GetCommunityListUseCase
 ) : ViewModel() {
     private val _minuteCandleUiState =
         MutableStateFlow<GetMinuteCandleUiState>(GetMinuteCandleUiState.Loading)
     val minuteCandleUiState = _minuteCandleUiState.asStateFlow()
 
-    private val _communityListUiState = MutableStateFlow<GetCommunityListUiState>(GetCommunityListUiState.Loading)
+    private val _communityListUiState =
+        MutableStateFlow<GetCommunityListUiState>(GetCommunityListUiState.Loading)
     val communityListUiState = _communityListUiState.asStateFlow()
 
     private val _markets = MutableStateFlow<String?>(null)
@@ -140,6 +141,7 @@ internal class ChartViewModel @Inject constructor(
                                 }
                             }
                         }
+
                     else -> flowOf()
                 }
             }
@@ -184,10 +186,17 @@ internal class ChartViewModel @Inject constructor(
                     }
             }
 
-                val newCandles = candleList.asReversed()
-                val existingCandles =
-                    (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart
-                        ?: emptyList()
+            else -> {
+                Logger.e("ChartViewModel", "지원하지 않는 마켓 코드: $market")
+            }
+        }
+    }
+
+    private fun mergeAndEmitCandles(newCandles: List<MinuteCandleEntity>) {
+        val reversed = newCandles.asReversed()
+        val existingCandles =
+            (_minuteCandleUiState.value as? GetMinuteCandleUiState.Success)?.chart
+                ?: emptyList()
 
         val combined = (existingCandles + reversed)
             .distinctBy { it.dateTime }
@@ -196,6 +205,7 @@ internal class ChartViewModel @Inject constructor(
         _minuteCandleUiState.value = GetMinuteCandleUiState.Success(combined)
         Logger.d("ChartViewModel", "총 ${combined.size}개 캔들 반영됨")
     }
+
 
     fun startPeriodicRequest(market: String) = viewModelScope.launch {
         val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
@@ -252,20 +262,22 @@ internal class ChartViewModel @Inject constructor(
                         }
                         .collect { mergeAndEmitCandles(it) }
                 }
+            }
         }
-    }
 
-    fun getCommunityList(market: String) {
-        viewModelScope.launch {
-            getCommunityListUseCase(market = market)
-                .catch { e ->
-                    Logger.d("ChartViewModel", "커뮤니티 리스트 가져오기 실패: ${e.message}")
-                    _communityListUiState.value = GetCommunityListUiState.Error(e.message ?: "Unknown error")
-                }
-                .collect { data ->
-                    Logger.d("ChartViewModel", "커뮤니티 리스트: ${data}")
-                    _communityListUiState.value = GetCommunityListUiState.Success(data)
-                }
+        fun getCommunityList(market: String) {
+            viewModelScope.launch {
+                getCommunityListUseCase(market = market)
+                    .catch { e ->
+                        Logger.d("ChartViewModel", "커뮤니티 리스트 가져오기 실패: ${e.message}")
+                        _communityListUiState.value =
+                            GetCommunityListUiState.Error(e.message ?: "Unknown error")
+                    }
+                    .collect { data ->
+                        Logger.d("ChartViewModel", "커뮤니티 리스트: ${data}")
+                        _communityListUiState.value = GetCommunityListUiState.Success(data)
+                    }
+            }
         }
     }
 }
