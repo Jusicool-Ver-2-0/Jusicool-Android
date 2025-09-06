@@ -56,7 +56,7 @@ fun CommunityCard(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "${item.author} | ${item.day}",
+                            text = "${item.username} | ${item.createdAt}",
                             color = colors.gray400,
                             style = typography.label
                         )
