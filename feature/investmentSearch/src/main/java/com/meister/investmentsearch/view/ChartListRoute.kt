@@ -65,7 +65,7 @@ internal fun ChartListRoute(
                     viewModel.loadNextPage()
                 }
 
-                viewModel.setCurrentPage(lastVisibleIndex / ChartListViewModel.PAGE_SIZE)
+                viewModel.setCurrentPage((lastVisibleIndex / ChartListViewModel.PAGE_SIZE) + 1)
             }
     }
 
