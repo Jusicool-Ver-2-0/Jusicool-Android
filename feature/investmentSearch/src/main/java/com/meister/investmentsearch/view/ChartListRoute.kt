@@ -59,7 +59,7 @@ internal fun ChartListRoute(
         snapshotFlow { lazyListState.layoutInfo }
             .collect { layoutInfo ->
                 val totalItems = layoutInfo.totalItemsCount
-                val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 1
 
                 if (lastVisibleIndex >= totalItems - 1 && !uiState.isLoading) {
                     viewModel.loadNextPage()
