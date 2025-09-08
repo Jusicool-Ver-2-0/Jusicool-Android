@@ -55,44 +55,29 @@ internal class ChartListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            combine(_pagesFlow, _currentPage) { pages, currentPage ->
-                pages to currentPage
-            }
-                .flatMapLatest { (pages, currentPage) ->
-                    if (pages.isEmpty()) return@flatMapLatest flowOf(emptyList<List<RecommendMarketWithPrice>>())
+            _pagesFlow
+                .flatMapLatest { pages ->
+                    if (pages.isEmpty()) return@flatMapLatest flowOf(emptyList())
 
-                    // 현재 페이지 주변 페이지만 선택
-                    val targetPages = listOf(currentPage - 1, currentPage, currentPage + 1)
-                        .filter { it in 1..pages.size }
-
-                    val marketsToUpdate: List<RecommendMarketWithPrice> =
-                        targetPages.flatMap { pageIndex ->
-                            pages[pageIndex - 1]
-                        }
-
-                    val stockMarkets = marketsToUpdate.filter { it.marketType == MarketType.STOCK }
-                        .map { it.market }
-                    val cryptoMarkets = marketsToUpdate.filter { it.marketType == MarketType.CRYPTO }
-                        .map { it.market }
+                    val allMarkets = pages.flatten()
+                    val stockMarkets = allMarkets.filter { it.marketType == MarketType.STOCK }.map { it.market }
+                    val cryptoMarkets = allMarkets.filter { it.marketType == MarketType.CRYPTO }.map { it.market }
 
                     combine(
                         getStockPriceFlow(stockMarkets),
                         getCryptoPriceFlow(cryptoMarkets)
                     ) { stockPrices, cryptoPrices ->
-                        val updatedMarkets: List<RecommendMarketWithPrice> = (stockPrices + cryptoPrices).mapNotNull { priceData ->
-                            marketsToUpdate.find { it.market == priceData.market }?.copy(
-                                currentPrice = priceData.currentPrice,
-                                profitRate = priceData.priceDifferenceRate
+                        val updatedList = (stockPrices + cryptoPrices).mapNotNull { marketData ->
+                            allMarkets.find { it.market == marketData.market }?.copy(
+                                currentPrice = marketData.currentPrice,
+                                profitRate = marketData.priceDifferenceRate,
                             )
                         }
 
-                        // 기존 pages를 복사하고 업데이트된 markets만 교체
-                        pages.mapIndexed { index, page ->
-                            if (index in targetPages.map { it - 1 }) {
-                                page.map { market ->
-                                    updatedMarkets.find { it.market == market.market } ?: market
-                                }
-                            } else page
+                        pages.map { page ->
+                            page.map { market ->
+                                updatedList.find { it.market == market.market } ?: market
+                            }
                         }
                     }
                 }
@@ -138,7 +123,7 @@ internal class ChartListViewModel @Inject constructor(
                         )
                     }
 
-                    _pagesFlow.value = _pagesFlow.value + listOf(mapped)
+                    _pagesFlow.update { it + listOf(mapped) }
                     _uiState.update {
                         it.copy(
                             isInitialLoad = false,
