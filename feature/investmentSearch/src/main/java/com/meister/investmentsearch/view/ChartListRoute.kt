@@ -235,19 +235,17 @@ private fun ChartListSection(
                     navigateToChart = navigateToChart,
                 )
             }
-            if (isLoading) {
-                item {
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularLoadingIndicator(
-                            size = 64.dp,
-                            strokeWidth = 6.dp
-                        )
-                    }
+            item {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularLoadingIndicator(
+                        size = 64.dp,
+                        strokeWidth = 6.dp
+                    )
                 }
             }
         }
