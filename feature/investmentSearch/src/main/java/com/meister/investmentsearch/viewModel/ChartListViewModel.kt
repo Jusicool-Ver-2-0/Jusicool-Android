@@ -55,29 +55,44 @@ internal class ChartListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _pagesFlow
-                .flatMapLatest { pages ->
-                    if (pages.isEmpty()) return@flatMapLatest flowOf(emptyList())
+            combine(_pagesFlow, _currentPage) { pages, currentPage ->
+                pages to currentPage
+            }
+                .flatMapLatest { (pages, currentPage) ->
+                    if (pages.isEmpty()) return@flatMapLatest flowOf(emptyList<List<RecommendMarketWithPrice>>())
 
-                    val allMarkets = pages.flatten()
-                    val stockMarkets = allMarkets.filter { it.marketType == MarketType.STOCK }.map { it.market }
-                    val cryptoMarkets = allMarkets.filter { it.marketType == MarketType.CRYPTO }.map { it.market }
+                    // 현재 페이지 주변 페이지만 선택
+                    val targetPages = listOf(currentPage - 1, currentPage, currentPage + 1)
+                        .filter { it in 1..pages.size }
+
+                    val marketsToUpdate: List<RecommendMarketWithPrice> =
+                        targetPages.flatMap { pageIndex ->
+                            pages[pageIndex - 1]
+                        }
+
+                    val stockMarkets = marketsToUpdate.filter { it.marketType == MarketType.STOCK }
+                        .map { it.market }
+                    val cryptoMarkets = marketsToUpdate.filter { it.marketType == MarketType.CRYPTO }
+                        .map { it.market }
 
                     combine(
                         getStockPriceFlow(stockMarkets),
                         getCryptoPriceFlow(cryptoMarkets)
                     ) { stockPrices, cryptoPrices ->
-                        val updatedList = (stockPrices + cryptoPrices).mapNotNull { marketData ->
-                            allMarkets.find { it.market == marketData.market }?.copy(
-                                currentPrice = marketData.currentPrice,
-                                profitRate = marketData.priceDifferenceRate,
+                        val updatedMarkets: List<RecommendMarketWithPrice> = (stockPrices + cryptoPrices).mapNotNull { priceData ->
+                            marketsToUpdate.find { it.market == priceData.market }?.copy(
+                                currentPrice = priceData.currentPrice,
+                                profitRate = priceData.priceDifferenceRate
                             )
                         }
 
-                        pages.map { page ->
-                            page.map { market ->
-                                updatedList.find { it.market == market.market } ?: market
-                            }
+                        // 기존 pages를 복사하고 업데이트된 markets만 교체
+                        pages.mapIndexed { index, page ->
+                            if (index in targetPages.map { it - 1 }) {
+                                page.map { market ->
+                                    updatedMarkets.find { it.market == market.market } ?: market
+                                }
+                            } else page
                         }
                     }
                 }
@@ -95,7 +110,6 @@ internal class ChartListViewModel @Inject constructor(
         }
     }
 
-
     internal fun loadNextPage() {
         if (_isLastPage) return
 
@@ -103,21 +117,14 @@ internal class ChartListViewModel @Inject constructor(
             Logger.d("ChartListViewModel", "📥 Loading page ${_currentPage.value}")
             getMarketListUseCase(currentPage = _currentPage.value, pageSize = PAGE_SIZE)
                 .onStart {
-                    Logger.d("ChartListViewModel", "⏳ Start loading page ${_currentPage.value}")
                     _uiState.update { it.copy(isLoading = true) }
                 }
                 .catch { e ->
-                    Logger.e("ChartListViewModel", "❌ Error loading page ${_currentPage.value}", e)
                     _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = e.message,
-                        )
+                        it.copy(isLoading = false, errorMessage = e.message)
                     }
                 }
                 .collect { newList ->
-                    Logger.d("ChartListViewModel", "📦 newList size=${newList.size}")
-
                     val mapped = newList.map {
                         RecommendMarketWithPrice(
                             id = it.id,
@@ -132,11 +139,6 @@ internal class ChartListViewModel @Inject constructor(
                     }
 
                     _pagesFlow.value = _pagesFlow.value + listOf(mapped)
-                    Logger.d(
-                        "ChartListViewModel",
-                        "📑 _pagesFlow size=${_pagesFlow.value.size}, _currentPage=${_currentPage.value}"
-                    )
-
                     _uiState.update {
                         it.copy(
                             isInitialLoad = false,
@@ -150,12 +152,9 @@ internal class ChartListViewModel @Inject constructor(
 
     private fun getStockPriceFlow(stockMarkets: List<String>): Flow<List<AssetsCurrentPrice>> {
         if (stockMarkets.isEmpty()) return flowOf(emptyList())
-
         return if (isStockMarketOpen()) {
-            Logger.d("ChartListViewModel", "📡 Subscribing realtime stock price")
             observeRealtimeStockPriceUseCase(stockMarkets)
         } else {
-            Logger.d("ChartListViewModel", "📡 Fetching snapshot stock price")
             getCurrentStockPriceUseCase(stockMarkets)
         }
     }
@@ -165,7 +164,6 @@ internal class ChartListViewModel @Inject constructor(
 
         return flow {
             while (currentCoroutineContext().isActive) {
-                Logger.d("ChartListViewModel", "💰 Fetching crypto prices (${cryptoMarkets.size})")
                 emitAll(getCurrentCryptoPriceUseCase(cryptoMarkets))
                 delay(500)
             }
@@ -173,7 +171,6 @@ internal class ChartListViewModel @Inject constructor(
     }
 
     internal fun setCurrentPage(page: Int) {
-        Logger.d("ChartListViewModel", "📌 setCurrentPage=$page")
         _currentPage.value = page
     }
 }
