@@ -1,18 +1,18 @@
 package com.jusicool.chart.component
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
 import com.jusicool.design_system.theme.JusicoolTheme
-import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 @Composable
 fun CandleStick(
@@ -30,41 +30,42 @@ fun CandleStick(
             else -> colors.gray300
         }
 
-        val total = (shadowHigh - shadowLow).takeIf { it != 0.0 } ?: 1.0
+        val bodyW = 9.dp
+        val wickW = 1.dp
+        val radius = 2.dp
+        val range = (shadowHigh - shadowLow).takeIf { it > 0.0 } ?: 1.0
 
-        val upperShadowHeight = ((shadowHigh - maxOf(open, close)) / total * height)
-        val bodyHeight = (abs(open - close) / total * height).coerceAtLeast(1.0)
-        val lowerShadowHeight = ((minOf(open, close) - shadowLow) / total * height)
+        Box(
+            modifier = modifier
+                .width(bodyW)
+                .height(height.dp)
+                .drawBehind {
+                    val H = size.height
+                    val W = size.width
+                    fun y(v: Double): Float =
+                        (((shadowHigh - v) / range) * H).toFloat()
 
-        Column(
-            modifier = modifier.height(height.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            if (upperShadowHeight > 0f) {
-                Box(
-                    modifier = Modifier
-                        .width(1.dp)
-                        .height(upperShadowHeight.dp)
-                        .background(bodyColor)
-                )
-            }
+                    val yHigh = y(shadowHigh)
+                    val yLow = y(shadowLow)
+                    val yOpen = y(open)
+                    val yClose = y(close)
+                    val topBody = min(yOpen, yClose)
+                    val botBody = max(yOpen, yClose)
 
-            Box(
-                modifier = Modifier
-                    .width(9.dp)
-                    .height(bodyHeight.dp)
-                    .background(bodyColor, shape = RoundedCornerShape(2.dp))
-            )
+                    val cx = W / 2f
+                    val wickPx = wickW.toPx()
+                    drawLine(color = bodyColor, start = Offset(cx, yHigh), end = Offset(cx, topBody), strokeWidth = wickPx)
+                    drawLine(color = bodyColor, start = Offset(cx, botBody), end = Offset(cx, yLow), strokeWidth = wickPx)
 
-            if (lowerShadowHeight > 0f) {
-                Box(
-                    modifier = Modifier
-                        .width(1.dp)
-                        .height(lowerShadowHeight.dp)
-                        .background(bodyColor)
-                )
-            }
-        }
+                    val bw = bodyW.toPx()
+                    val bh = max(1f, botBody - topBody)
+                    drawRoundRect(
+                        color = bodyColor,
+                        topLeft = Offset(cx - bw / 2f, topBody),
+                        size = Size(bw, bh),
+                        cornerRadius = CornerRadius(radius.toPx(), radius.toPx())
+                    )
+                }
+        )
     }
 }
