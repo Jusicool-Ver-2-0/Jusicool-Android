@@ -53,7 +53,7 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
             dataSource.getStockCurrentPrice(marketDivCode, code)
                 .map { it.toEntity(code) }
                 .collect { result.add(it) }
+            emit(result.toList())
         }
-        emit(result.toList())
     }
 }
