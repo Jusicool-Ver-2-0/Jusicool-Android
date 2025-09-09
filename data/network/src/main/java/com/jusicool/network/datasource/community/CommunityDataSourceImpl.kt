@@ -1,5 +1,6 @@
 package com.jusicool.network.datasource.community
 
+import com.jusicool.model.community.CommunityListResponse
 import com.jusicool.model.community.WritePostRequest
 import com.jusicool.network.api.CommunityApi
 import com.jusicool.utils.performApiRequest
@@ -12,4 +13,6 @@ class CommunityDataSourceImpl @Inject constructor(
     override fun postWrite(market: String, body: WritePostRequest): Flow<Unit> =
         performApiRequest { communityApi.postWrite(market = market, body = body) }
 
+    override fun getList(market: String): Flow<List<CommunityListResponse>> =
+        performApiRequest { communityApi.getCommunityList(market = market) }
 }
