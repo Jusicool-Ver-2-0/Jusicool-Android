@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
@@ -193,7 +194,10 @@ private fun RecentSearchSection(data: PersistentList<InvestmentSearchTagData>) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
-        itemsIndexed(data, key = { _, item -> item.investmentName }) { _, item ->
+        items(
+            items = data,
+            key = { item -> item.investmentName },
+        ) { item ->
             RecentSearchTag(
                 investmentName = item.investmentName,
                 investmentChangeRate = item.investmentChangeRate,
@@ -226,10 +230,10 @@ private fun ChartListSection(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             state = lazyListState
         ) {
-            itemsIndexed(
+            items(
                 items = data,
-                key = { _, item -> item.market },
-            ) { _, item ->
+                key = { item -> item.market },
+            ) { item ->
                 ChartItem(
                     data = item,
                     navigateToChart = navigateToChart,
