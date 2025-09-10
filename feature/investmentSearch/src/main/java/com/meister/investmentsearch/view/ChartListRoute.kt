@@ -232,7 +232,7 @@ private fun ChartListSection(
         ) {
             items(
                 items = data,
-                key = { item -> item.market },
+                key = { item -> "${item.id}_${item.market}" },
             ) { item ->
                 ChartItem(
                     data = item,
