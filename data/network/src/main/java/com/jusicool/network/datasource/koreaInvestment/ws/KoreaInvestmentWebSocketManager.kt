@@ -22,53 +22,64 @@ import javax.inject.Named
 
 class KoreaInvestmentWebSocketManager @Inject constructor(
     @Named("koreaInvestmentOkHttpClient") private val client: OkHttpClient,
-    private val authManager: KoreaInvestmentAuthManager
+    private val authManager: KoreaInvestmentAuthManager,
 ) : KoreaInvestmentWebSocketManagerInterface {
 
-    private var webSocket: WebSocket? = null
+    companion object {
+        private const val MAX_CODES_PER_SOCKET = 40
+    }
+
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+    private val webSockets = mutableMapOf<Int, WebSocket>()
 
     private val _stockTickerListFlow = MutableStateFlow<List<StockPriceSummary>>(emptyList())
     override val stockTickerMapFlow: StateFlow<List<StockPriceSummary>> = _stockTickerListFlow.asStateFlow()
 
     override fun connect(stockCodes: List<String>) {
-        if (webSocket != null) {
-            disconnect()
-        }
+        disconnect()
 
         scope.launch {
             runCatching { authManager.getApprovalKey() }
                 .onSuccess { approvalKey ->
-                    val request = Request.Builder()
-                        .url("ws://ops.koreainvestment.com:21000/tryitout/H0STCNT0")
-                        .build()
 
-                    webSocket = client.newWebSocket(request, object : WebSocketListener() {
+                    // stockCodes 리스트를 40개 단위로 분할
+                    val chunks = stockCodes.chunked(MAX_CODES_PER_SOCKET)
 
-                        override fun onOpen(ws: WebSocket, response: Response) {
-                            stockCodes.forEach { code ->
-                                val msg = createSubscribeMessage(approvalKey, code)
-                                ws.send(msg)
-                                Log.d("WebSocket", "✅ 구독 메시지 전송: $msg")
+                    chunks.forEachIndexed { index, chunk ->
+
+                        val request = Request.Builder()
+                            .url("ws://ops.koreainvestment.com:21000/tryitout/H0STCNT0")
+                            .build()
+
+                        val webSocket = client.newWebSocket(request, object : WebSocketListener() {
+
+                            override fun onOpen(ws: WebSocket, response: Response) {
+                                chunk.forEach { code ->
+                                    val msg = createSubscribeMessage(approvalKey, code)
+                                    ws.send(msg)
+                                    Log.d("WebSocket[$index]", "✅ 구독 메시지 전송: $msg")
+                                }
                             }
-                        }
 
-                        override fun onMessage(ws: WebSocket, text: String) {
-                            Log.d("WebSocket", "📩 수신 메시지: $text")
-                            parseAndEmit(text)
-                        }
+                            override fun onMessage(ws: WebSocket, text: String) {
+                                Log.d("WebSocket[$index]", "📩 수신 메시지: $text")
+                                parseAndEmit(text)
+                            }
 
-                        override fun onClosing(ws: WebSocket, code: Int, reason: String) {
-                            ws.close(1000, null)
-                            webSocket = null
-                            Log.d("WebSocket", "🔒 연결 종료 중: $reason")
-                        }
+                            override fun onClosing(ws: WebSocket, code: Int, reason: String) {
+                                ws.close(1000, null)
+                                webSockets.remove(index)
+                                Log.d("WebSocket[$index]", "🔒 연결 종료 중: $reason")
+                            }
 
-                        override fun onFailure(ws: WebSocket, t: Throwable, response: Response?) {
-                            webSocket = null
-                            Log.e("WebSocket", "❌ 오류: ${t.message}", t)
-                        }
-                    })
+                            override fun onFailure(ws: WebSocket, t: Throwable, response: Response?) {
+                                webSockets.remove(index)
+                                Log.e("WebSocket[$index]", "❌ 오류: ${t.message}", t)
+                            }
+                        })
+                        webSockets[index] = webSocket
+                    }
                 }
                 .onFailure {
                     Log.e("WebSocket", "❌ 승인 키 획득 실패", it)
@@ -77,8 +88,8 @@ class KoreaInvestmentWebSocketManager @Inject constructor(
     }
 
     override fun disconnect() {
-        webSocket?.close(1000, "Client disconnect")
-        webSocket = null
+        webSockets.values.forEach { it.close(1000, "Client disconnect") }
+        webSockets.clear()
         _stockTickerListFlow.value = emptyList()
     }
 

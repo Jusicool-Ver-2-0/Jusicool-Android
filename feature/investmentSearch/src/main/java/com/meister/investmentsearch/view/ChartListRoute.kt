@@ -3,6 +3,7 @@ package com.meister.investmentsearch.view
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,11 +14,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jusicool.design_system.component.indicator.CircularLoadingIndicator
 import com.jusicool.design_system.component.modifier.JusicoolClickable
 import com.jusicool.design_system.component.topbar.JusicoolTopBar
 import com.jusicool.design_system.icon.RightArrowIcon
@@ -47,10 +53,26 @@ internal fun ChartListRoute(
     viewModel: ChartListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val lazyListState = rememberLazyListState()
+
+    LaunchedEffect(lazyListState) {
+        snapshotFlow { lazyListState.layoutInfo }
+            .collect { layoutInfo ->
+                val totalItems = layoutInfo.totalItemsCount
+                val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 1
+
+                if (lastVisibleIndex >= totalItems - 1 && !uiState.isLoading) {
+                    viewModel.loadNextPage()
+                }
+
+                viewModel.setCurrentPage((lastVisibleIndex / ChartListViewModel.PAGE_SIZE) + 1)
+            }
+    }
 
     ChartListScreen(
         modifier = modifier,
         uiState = uiState,
+        lazyListState = lazyListState,
         onSearchCLick = onSearchClick,
         navigateToChart = navigateToChart,
     )
@@ -61,8 +83,9 @@ internal fun ChartListRoute(
 internal fun ChartListScreen(
     modifier: Modifier = Modifier,
     uiState: ChartListUiState,
+    lazyListState: LazyListState,
     onSearchCLick: () -> Unit,
-    navigateToChart: (String, String) -> Unit
+    navigateToChart: (String, String) -> Unit,
 ) {
     JusicoolTheme { colors, _ ->
         Column(
@@ -86,7 +109,10 @@ internal fun ChartListScreen(
 
             ChartListSection(
                 data = uiState.chartListData,
-                navigateToChart = navigateToChart
+                isInitialLoad = uiState.isInitialLoad,
+                isLoading = uiState.isLoading,
+                navigateToChart = navigateToChart,
+                lazyListState = lazyListState,
             )
         }
     }
@@ -128,7 +154,7 @@ private fun ChartListScreenPreview() {
                     koreanName = "Apple Inc.",
                     englishName = "Apple",
                     logoUrl = "https://example.com/apple-logo.png",
-                    currentPrice = 1111131,
+                    currentPrice = 1111131.0,
                     profitRate = 0.05
                 ),
                 RecommendMarketWithPrice(
@@ -138,7 +164,7 @@ private fun ChartListScreenPreview() {
                     koreanName = "Microsoft Corporation",
                     englishName = "Microsoft",
                     logoUrl = "https://example.com/microsoft-logo.png",
-                    currentPrice = 950000,
+                    currentPrice = 950000.0,
                     profitRate = -0.02
                 ),
                 RecommendMarketWithPrice(
@@ -148,13 +174,14 @@ private fun ChartListScreenPreview() {
                     koreanName = "Amazon.com, Inc.",
                     englishName = "Amazon",
                     logoUrl = "https://example.com/amazon-logo.png",
-                    currentPrice = 800000,
+                    currentPrice = 800000.0,
                     profitRate = 0.0
                 ),
             )
         ),
         onSearchCLick = {},
         navigateToChart = { _, _ -> },
+        lazyListState = rememberLazyListState(),
     )
 }
 
@@ -179,19 +206,48 @@ private fun RecentSearchSection(data: PersistentList<InvestmentSearchTagData>) {
 @Composable
 private fun ChartListSection(
     data: PersistentList<RecommendMarketWithPrice>,
+    isLoading: Boolean,
+    isInitialLoad: Boolean,
+    lazyListState: LazyListState,
     navigateToChart: (String, String) -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        itemsIndexed(data, key = { _, item -> item.market }) { _, item ->
-            ChartItem(
-                data = item,
-                navigateToChart = navigateToChart,
+    if (isLoading && isInitialLoad) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularLoadingIndicator(
+                size = 64.dp,
+                strokeWidth = 6.dp
             )
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            state = lazyListState
+        ) {
+            itemsIndexed(
+                items = data,
+                key = { _, item -> item.market },
+            ) { _, item ->
+                ChartItem(
+                    data = item,
+                    navigateToChart = navigateToChart,
+                )
+            }
+            item {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularLoadingIndicator(
+                        size = 64.dp,
+                        strokeWidth = 6.dp
+                    )
+                }
+            }
         }
     }
 }

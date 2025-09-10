@@ -7,7 +7,7 @@ data class RecommendMarketWithPrice(
     val koreanName: String,         // 예: "애플"
     val englishName: String,        // 예: "Apple"
     val logoUrl: String?,           // 로고 이미지 URL 또는 로컬 리소스
-    val currentPrice: Long,         // 현재 평가 금액 (예: 11111131)
+    val currentPrice: Double,         // 현재 평가 금액 (예: 11111131)
     val profitRate: Double,         // 수익률 (예: 7.9)
 ) {
     init {

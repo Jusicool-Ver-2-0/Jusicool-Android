@@ -25,7 +25,7 @@ fun List<Market>.mergeWithPrices(
                 koreanName = market.koreanName,
                 englishName = market.englishName,
                 logoUrl = null, // TODO: 필요 시 매핑
-                currentPrice = it.currentPrice.toLong(),
+                currentPrice = it.currentPrice,
                 profitRate = it.priceDifferenceRate
             )
         }
