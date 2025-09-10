@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,15 +59,21 @@ fun CandleChart(
         var previousSize by remember { mutableStateOf(candles.size) }
 
         // 현재 화면에 보이는 캔들 리스트 계산
-        val visibleCandles = remember(
-            listState.firstVisibleItemIndex,
-            listState.layoutInfo.visibleItemsInfo,
-            candles
-        ) {
-            val start = listState.firstVisibleItemIndex
-            val end = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: start
-            if (candles.isEmpty() || start >= candles.size) candles
-            else candles.subList(start.coerceAtLeast(0), (end + 1).coerceAtMost(candles.size))
+        val visibleRange by remember(listState) {
+            derivedStateOf {
+                val start = listState.firstVisibleItemIndex
+                val end = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: start
+                start to end
+            }
+        }
+
+        // 화면에 보이는 캔들 리스트
+        val visibleCandles by remember(candles, visibleRange) {
+            derivedStateOf {
+                val (start, end) = visibleRange
+                if (candles.isEmpty() || start >= candles.size) candles
+                else candles.subList(start.coerceAtLeast(0), (end + 1).coerceAtMost(candles.size))
+            }
         }
 
         // 현재 캔들 데이터에서 최신 캔들 하나 가져오기
@@ -75,14 +82,18 @@ fun CandleChart(
         } else null
 
         // 현재 캔들이 화면에 보이는지 여부 확인
-        val isCurrentCandleVisible = listState.layoutInfo.visibleItemsInfo
-            .any { it.index == candles.lastIndex + 1 }
+        val isCurrentCandleVisible by remember(listState, candles) {
+            derivedStateOf {
+                listState.layoutInfo.visibleItemsInfo.any { it.index == candles.lastIndex + 1 }
+            }
+        }
 
         // 현재 캔들이 보이면 현재 캔들도 포함, 아니면 그냥 visibleCandles만 사용
-        val visibleWithCurrent = if (isCurrentCandleVisible && currentCandle != null) {
-            visibleCandles + currentCandle
-        } else {
-            visibleCandles
+        val visibleWithCurrent by remember(visibleCandles, isCurrentCandleVisible, currentCandle) {
+            derivedStateOf {
+                if (isCurrentCandleVisible && currentCandle != null) visibleCandles + currentCandle
+                else visibleCandles
+            }
         }
 
         // 보이는 캔들들 중 최고가 계산
@@ -162,7 +173,10 @@ fun CandleChart(
                     contentPadding = PaddingValues(end = 24.dp),
                     state = listState
                 ) {
-                    items(candles) { candle ->
+                    items(
+                        items = candles,
+                        key = { it.dateTime.toString() }
+                    ) { candle ->
                         val candleTop = if (maxHigh != minLow) ((maxHigh - candle.highPrice) / (maxHigh - minLow)) * totalHeight else 0.0
                         val candleHeight = if (maxHigh != minLow) ((candle.highPrice - candle.lowPrice) / (maxHigh - minLow)) * totalHeight else totalHeight.toDouble()
                         val adjustedCandleHeight = candleHeight.coerceAtLeast(1.0)
@@ -191,7 +205,7 @@ fun CandleChart(
                         val currentCandleHeight = if (maxHigh != minLow) ((currentCandle.highPrice - currentCandle.lowPrice) / (maxHigh - minLow)) * totalHeight else totalHeight.toDouble()
                         val adjustedCandleHeight = currentCandleHeight.coerceAtLeast(1.0)
 
-                        item {
+                        item(key = "current-${currentCandle.dateTime}") {
                             Column(
                                 modifier = Modifier.height(totalHeight.dp),
                                 verticalArrangement = Arrangement.Top,
