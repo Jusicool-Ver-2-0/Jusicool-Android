@@ -8,6 +8,8 @@ import com.jusicool.network.datasource.community.CommunityDataSource
 import com.jusicool.network.datasource.community.CommunityDataSourceImpl
 import com.jusicool.network.datasource.crypto.CryptoDataSource
 import com.jusicool.network.datasource.crypto.CryptoDataSourceImpl
+import com.jusicool.network.datasource.crypto.ws.UpbitWebSocketManager
+import com.jusicool.network.datasource.crypto.ws.UpbitWebSocketManagerInterface
 import com.jusicool.network.datasource.holding.HoldingDataSource
 import com.jusicool.network.datasource.holding.HoldingDataSourceImpl
 import com.jusicool.network.datasource.koreaInvestment.KoreaInvestmentDataSource
@@ -84,4 +86,9 @@ abstract class RemoteDataSourceModule {
     abstract fun bindSchoolDataSource(
         schoolDatasourceImpl: SchoolDatasourceImpl
     ): SchoolDataSource
+
+    @Binds
+    abstract fun bindUpbitWebSocketManager(
+        upbitWebSocketManager: UpbitWebSocketManager
+    ): UpbitWebSocketManagerInterface
 }

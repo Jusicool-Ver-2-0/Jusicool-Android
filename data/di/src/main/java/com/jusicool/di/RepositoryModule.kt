@@ -20,6 +20,8 @@ import com.jusicool.repository.SchoolRepository
 import com.jusicool.repository.SchoolRepositoryImpl
 import com.jusicool.repository.WsKoreaInvestmentRepository
 import com.jusicool.repository.WsKoreaInvestmentRepositoryImpl
+import com.jusicool.repository.WsUpbitRepository
+import com.jusicool.repository.WsUpbitRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -79,4 +81,9 @@ abstract class RepositoryModule {
     abstract fun bindSchoolRepository(
         schoolRepositoryImpl: SchoolRepositoryImpl
     ): SchoolRepository
+
+    @Binds
+    abstract fun bindWsUpbitRepository(
+        wsUpbitRepositoryImpl: WsUpbitRepositoryImpl
+    ): WsUpbitRepository
 }
