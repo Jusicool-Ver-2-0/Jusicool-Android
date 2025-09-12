@@ -81,6 +81,19 @@ object NetworkModule {
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
             .build()
 
+    @Provides
+    @Singleton
+    @Named("upbitWs")
+    fun provideUpbitWebSocketClient(
+        httpLoggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient =
+        OkHttpClient.Builder()
+            .pingInterval(20, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
+            .addInterceptor(httpLoggingInterceptor)
+            .build()
+
+
 
     @Provides
     @Singleton

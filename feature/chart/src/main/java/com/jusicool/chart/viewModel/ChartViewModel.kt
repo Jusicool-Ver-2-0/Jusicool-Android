@@ -2,9 +2,11 @@ package com.jusicool.chart.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jusicool.chart.viewModel.uiState.GetCommunityListUiState
 import com.jusicool.chart.viewModel.uiState.GetCurrentMinuteCandleUiState
 import com.jusicool.chart.viewModel.uiState.GetMinuteCandleUiState
 import com.jusicool.entity.price.MinuteCandleEntity
+import com.jusicool.usecase.community.GetCommunityListUseCase
 import com.jusicool.usecase.crypto.GetCurrentCryptoMinuteCandleUseCase
 import com.jusicool.usecase.crypto.GetMinuteCandleUseCase
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockMinuteChartUseCase
@@ -37,16 +39,21 @@ import java.util.TimeZone
 import javax.inject.Inject
 
 @HiltViewModel
-internal class CandleChartViewModel @Inject constructor(
+internal class ChartViewModel @Inject constructor(
     private val getMinuteCandleUseCase: GetMinuteCandleUseCase,
     private val getCurrentCryptoMinuteCandleUseCase: GetCurrentCryptoMinuteCandleUseCase,
     private val observeRealtimeStockPriceUseCase: ObserveRealtimeStockPriceUseCase,
     private val getCurrentStockMinuteChartUseCase: GetCurrentStockMinuteChartUseCase,
     private val getCurrentStockPriceUseCase: GetCurrentStockPriceUseCase,
+    private val getCommunityListUseCase: GetCommunityListUseCase
 ) : ViewModel() {
     private val _minuteCandleUiState =
         MutableStateFlow<GetMinuteCandleUiState>(GetMinuteCandleUiState.Loading)
     val minuteCandleUiState = _minuteCandleUiState.asStateFlow()
+
+    private val _communityListUiState =
+        MutableStateFlow<GetCommunityListUiState>(GetCommunityListUiState.Loading)
+    val communityListUiState = _communityListUiState.asStateFlow()
 
     private val _markets = MutableStateFlow<String?>(null)
 
@@ -134,12 +141,13 @@ internal class CandleChartViewModel @Inject constructor(
                                 }
                             }
                         }
+
                     else -> flowOf()
                 }
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
+            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = GetCurrentMinuteCandleUiState.Loading
         )
 
@@ -198,6 +206,7 @@ internal class CandleChartViewModel @Inject constructor(
         Logger.d("ChartViewModel", "총 ${combined.size}개 캔들 반영됨")
     }
 
+
     fun startPeriodicRequest(market: String) = viewModelScope.launch {
         val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
         formatter.timeZone = TimeZone.getTimeZone("Asia/Seoul")
@@ -253,6 +262,21 @@ internal class CandleChartViewModel @Inject constructor(
                         }
                         .collect { mergeAndEmitCandles(it) }
                 }
+            }
+        }
+
+        fun getCommunityList(market: String) {
+            viewModelScope.launch {
+                getCommunityListUseCase(market = market)
+                    .catch { e ->
+                        Logger.d("ChartViewModel", "커뮤니티 리스트 가져오기 실패: ${e.message}")
+                        _communityListUiState.value =
+                            GetCommunityListUiState.Error(e.message ?: "Unknown error")
+                    }
+                    .collect { data ->
+                        Logger.d("ChartViewModel", "커뮤니티 리스트: ${data}")
+                        _communityListUiState.value = GetCommunityListUiState.Success(data)
+                    }
             }
         }
     }

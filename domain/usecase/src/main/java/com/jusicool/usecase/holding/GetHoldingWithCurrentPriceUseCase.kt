@@ -32,7 +32,7 @@ class GetHoldingWithCurrentPriceUseCase @Inject constructor(
                 val cryptoMarkets = holdingType.cryptoHoldings.map { it.market.market }
 
                 val stockPriceFlow = getStockPriceFlow(stockMarkets)
-                val cryptoPriceFlow = getCryptoPriceFlow(cryptoMarkets)
+                val cryptoPriceFlow = getCurrentCryptoPriceUseCase(cryptoMarkets)
 
                 combine(stockPriceFlow, cryptoPriceFlow) { stockPrices, cryptoPrices ->
 
@@ -72,20 +72,6 @@ class GetHoldingWithCurrentPriceUseCase @Inject constructor(
             getCurrentStockPriceUseCase(stockMarkets)
         }
     }
-
-    private fun getCryptoPriceFlow(
-        cryptoMarkets: List<String>
-    ): Flow<List<AssetsCurrentPrice>> {
-        if (cryptoMarkets.isEmpty()) return flowOf(emptyList())
-
-        return flow {
-            while (currentCoroutineContext().isActive) {
-                getCurrentCryptoPriceUseCase(cryptoMarkets).collect { emit(it) }
-                delay(500)
-            }
-        }.flowOn(Dispatchers.IO)
-    }
-
 
     private fun findMarketsPrice(marketCode: String, stockPrices: List<AssetsCurrentPrice>): Double {
         return stockPrices.find { it.market == marketCode }?.currentPrice ?: 0.0
