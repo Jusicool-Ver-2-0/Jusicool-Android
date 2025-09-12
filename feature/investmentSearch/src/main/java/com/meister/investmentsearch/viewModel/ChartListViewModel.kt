@@ -100,7 +100,7 @@ internal class ChartListViewModel @Inject constructor(
 
                                 combine(
                                     getStockPriceFlow(stockMarkets),
-                                    getCryptoPriceFlow(cryptoMarkets)
+                                    getCurrentCryptoPriceUseCase(cryptoMarkets)
                                 ) { stockPrices, cryptoPrices ->
                                     val updatedList =
                                         (stockPrices + cryptoPrices).mapNotNull { marketData ->
@@ -144,16 +144,6 @@ internal class ChartListViewModel @Inject constructor(
         if (stockMarkets.isEmpty()) return flowOf(emptyList())
         return if (isStockMarketOpen()) observeRealtimeStockPriceUseCase(stockMarkets)
         else getCurrentStockPriceUseCase(stockMarkets)
-    }
-
-    private fun getCryptoPriceFlow(cryptoMarkets: List<String>): Flow<List<AssetsCurrentPrice>> {
-        if (cryptoMarkets.isEmpty()) return flowOf(emptyList())
-        return flow {
-            while (currentCoroutineContext().isActive) {
-                emitAll(getCurrentCryptoPriceUseCase(cryptoMarkets))
-                delay(500)
-            }
-        }.flowOn(Dispatchers.IO)
     }
 
     internal fun setCurrentPage(page: Int) {
