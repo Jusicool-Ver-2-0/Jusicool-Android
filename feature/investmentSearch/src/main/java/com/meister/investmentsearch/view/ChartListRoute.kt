@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,6 +44,8 @@ import com.meister.investmentsearch.viewModel.ChartListUiState
 import com.meister.investmentsearch.viewModel.ChartListViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 @Composable
 internal fun ChartListRoute(
@@ -58,15 +59,15 @@ internal fun ChartListRoute(
 
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.layoutInfo }
-            .collect { layoutInfo ->
-                val totalItems = layoutInfo.totalItemsCount
+            .map { layoutInfo ->
                 val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 1
+                val nextPage = (lastVisibleIndex / ChartListViewModel.PAGE_SIZE) + 1
 
-                if (lastVisibleIndex >= totalItems - 1 && !uiState.isLoading) {
-                    viewModel.loadNextPage()
-                }
-
-                viewModel.setCurrentPage((lastVisibleIndex / ChartListViewModel.PAGE_SIZE) + 1)
+                nextPage
+            }
+            .distinctUntilChanged()
+            .collect { page ->
+                viewModel.setCurrentPage(page)
             }
     }
 
