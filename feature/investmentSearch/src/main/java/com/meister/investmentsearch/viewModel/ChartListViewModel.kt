@@ -53,11 +53,52 @@ internal class ChartListViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ChartListUiState())
     val uiState: StateFlow<ChartListUiState> = _uiState.asStateFlow()
 
+    private val _nextPageFlow = _currentPage
+        .flatMapLatest { page ->
+            Logger.d("ChartListViewModel", "📥 Loading page ${_currentPage.value}")
+
+            if (page >= _pagesFlow.value.size) {
+                getMarketListUseCase(currentPage = page, pageSize = PAGE_SIZE)
+                    .map { newList ->
+                        val mapped = newList.map {
+                            RecommendMarketWithPrice(
+                                id = it.id,
+                                market = it.market,
+                                marketType = it.marketType,
+                                koreanName = it.koreanName,
+                                englishName = it.englishName,
+                                logoUrl = null,
+                                currentPrice = 0.0,
+                                profitRate = 0.0,
+                            )
+                        }
+
+                        _pagesFlow.update { it + listOf(mapped) }
+
+                        _uiState.update {
+                            it.copy(
+                                isInitialLoad = false,
+                                isLoading = false,
+                                chartListData = _pagesFlow.value.flatten().toPersistentList()
+                            )
+                        }
+                    }
+                    .onStart { _uiState.update { it.copy(isLoading = true) } }
+                    .catch { e ->
+                        _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+                    }
+            } else {
+                flowOf(Unit)
+            }
+        }
+
     init {
         viewModelScope.launch {
             _pagesFlow
                 .flatMapLatest { pages ->
                     if (pages.isEmpty()) return@flatMapLatest flowOf(emptyList())
+            _nextPageFlow.collect{}
+
 
                     val allMarkets = pages.flatten()
                     val stockMarkets = allMarkets.filter { it.marketType == MarketType.STOCK }.map { it.market }
