@@ -95,45 +95,6 @@ internal class ChartListViewModel @Inject constructor(
         }
     }
 
-    internal fun loadNextPage() {
-        if (_isLastPage) return
-
-        viewModelScope.launch {
-            Logger.d("ChartListViewModel", "📥 Loading page ${_currentPage.value}")
-            getMarketListUseCase(currentPage = _currentPage.value, pageSize = PAGE_SIZE)
-                .onStart {
-                    _uiState.update { it.copy(isLoading = true) }
-                }
-                .catch { e ->
-                    _uiState.update {
-                        it.copy(isLoading = false, errorMessage = e.message)
-                    }
-                }
-                .collect { newList ->
-                    val mapped = newList.map {
-                        RecommendMarketWithPrice(
-                            id = it.id,
-                            market = it.market,
-                            marketType = it.marketType,
-                            koreanName = it.koreanName,
-                            englishName = it.englishName,
-                            logoUrl = null,
-                            currentPrice = 0.0,
-                            profitRate = 0.0,
-                        )
-                    }
-
-                    _pagesFlow.update { it + listOf(mapped) }
-                    _uiState.update {
-                        it.copy(
-                            isInitialLoad = false,
-                            isLoading = false,
-                            chartListData = _pagesFlow.value.flatten().toPersistentList()
-                        )
-                    }
-                }
-        }
-    }
 
     private fun getStockPriceFlow(stockMarkets: List<String>): Flow<List<AssetsCurrentPrice>> {
         if (stockMarkets.isEmpty()) return flowOf(emptyList())
