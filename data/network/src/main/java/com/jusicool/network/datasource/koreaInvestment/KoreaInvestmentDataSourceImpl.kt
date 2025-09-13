@@ -6,6 +6,7 @@ import com.jusicool.model.koreaInvestment.StockMinutePriceResponse
 import com.jusicool.network.BuildConfig
 import com.jusicool.network.api.KoreaInvestmentApi
 import com.jusicool.utils.performApiRequest
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -53,7 +54,6 @@ class KoreaInvestmentDataSourceImpl @Inject constructor(
     }
 
     override fun getStockCurrentPrice(
-        marketDivCode: String,
         stockCode: String
     ): Flow<StockPriceResponse> = performApiRequest {
         api.getStockCurrentPrice(
@@ -61,8 +61,8 @@ class KoreaInvestmentDataSourceImpl @Inject constructor(
             appSecret = BuildConfig.KOREAINVESTMENT_APP_SECRET,
             trId = "FHKST01010100",
             custType = "P",
+            marketDivCode = "J",
 
-            marketDivCode = marketDivCode,
             stockCode = stockCode
         )
     }

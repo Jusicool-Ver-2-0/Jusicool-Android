@@ -12,7 +12,6 @@ class GetCurrentStockPriceUseCase @Inject constructor(
         markets: List<String>,
     ): Flow<List<AssetsCurrentPrice>> =
         koreaInvestmentRepository.getStockCurrentPrice(
-            marketDivCode = "J",
             markets = markets
         )
 }

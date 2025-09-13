@@ -20,7 +20,6 @@ interface KoreaInvestmentDataSource {
     ): Flow<StockMinutePriceResponse>
 
     fun getStockCurrentPrice(
-        marketDivCode: String,
         stockCode: String,
     ): Flow<StockPriceResponse>
 }
