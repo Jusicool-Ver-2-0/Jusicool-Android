@@ -19,6 +19,7 @@ interface KoreaInvestmentRepository {
     ): Flow<List<MinuteCandleEntity>>
 
     fun getStockCurrentPrice(
-        markets: List<String>
+        markets: List<String>,
+        delay: Long,
     ): Flow<List<AssetsCurrentPrice>>
 }

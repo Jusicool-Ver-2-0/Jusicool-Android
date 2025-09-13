@@ -10,8 +10,10 @@ class GetCurrentStockPriceUseCase @Inject constructor(
 ) {
     operator fun invoke(
         markets: List<String>,
+        delay: Long = 500L,
     ): Flow<List<AssetsCurrentPrice>> =
         koreaInvestmentRepository.getStockCurrentPrice(
-            markets = markets
+            markets = markets,
+            delay = delay
         )
 }

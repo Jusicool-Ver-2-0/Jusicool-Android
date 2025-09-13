@@ -44,11 +44,12 @@ class KoreaInvestmentRepositoryImpl @Inject constructor(
     }
 
     override fun getStockCurrentPrice(
-        stockCodes: List<String>
+        stockCodes: List<String>,
+        delay: Long,
     ): Flow<List<AssetsCurrentPrice>> = flow {
         val result = mutableListOf<AssetsCurrentPrice>()
         stockCodes.forEach { code ->
-            delay(500)
+            delay(delay)
             dataSource.getStockCurrentPrice(code)
                 .map { it.toEntity(code) }
                 .collect { result.add(it) }
