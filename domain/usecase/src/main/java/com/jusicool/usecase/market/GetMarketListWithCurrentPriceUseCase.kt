@@ -7,7 +7,7 @@ import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.repository.MarketRepository
 import com.jusicool.usecase.crypto.GetCurrentCryptoPriceUseCase
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase
-import com.jusicool.usecase.koreaInvestment.ObserveRealtimeStockPriceUseCase
+import com.jusicool.usecase.koreaInvestment.ObserveStockPriceWithFallbackUseCase
 import com.jusicool.utils.isStockMarketOpen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
@@ -28,7 +28,7 @@ class GetMarketListWithCurrentPriceUseCase @Inject constructor(
     private val marketRepository: MarketRepository,
     private val getCurrentStockPriceUseCase: GetCurrentStockPriceUseCase,
     private val getCurrentCryptoPriceUseCase: GetCurrentCryptoPriceUseCase,
-    private val observeRealtimeStockPriceUseCase: ObserveRealtimeStockPriceUseCase,
+    private val observeStockPriceWithFallbackUseCase: ObserveStockPriceWithFallbackUseCase,
 ) {
 
     operator fun invoke(
@@ -110,7 +110,7 @@ class GetMarketListWithCurrentPriceUseCase @Inject constructor(
         if (stockMarkets.isEmpty()) return flowOf(emptyList())
 
         return if (isStockMarketOpen()) {
-            observeRealtimeStockPriceUseCase(stockMarkets)
+            observeStockPriceWithFallbackUseCase(stockMarkets)
         } else {
             getCurrentStockPriceUseCase(stockMarkets)
         }

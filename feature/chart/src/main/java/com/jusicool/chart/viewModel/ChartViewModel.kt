@@ -11,7 +11,7 @@ import com.jusicool.usecase.crypto.GetCurrentCryptoMinuteCandleUseCase
 import com.jusicool.usecase.crypto.GetMinuteCandleUseCase
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockMinuteChartUseCase
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase
-import com.jusicool.usecase.koreaInvestment.ObserveRealtimeStockPriceUseCase
+import com.jusicool.usecase.koreaInvestment.ObserveStockPriceWithFallbackUseCase
 import com.jusicool.utils.Logger
 import com.jusicool.utils.isStockMarketOpen
 import com.jusicool.utils.isValidCryptoMarketCode
@@ -42,7 +42,7 @@ import javax.inject.Inject
 internal class ChartViewModel @Inject constructor(
     private val getMinuteCandleUseCase: GetMinuteCandleUseCase,
     private val getCurrentCryptoMinuteCandleUseCase: GetCurrentCryptoMinuteCandleUseCase,
-    private val observeRealtimeStockPriceUseCase: ObserveRealtimeStockPriceUseCase,
+    private val observeStockPriceWithFallbackUseCase: ObserveStockPriceWithFallbackUseCase,
     private val getCurrentStockMinuteChartUseCase: GetCurrentStockMinuteChartUseCase,
     private val getCurrentStockPriceUseCase: GetCurrentStockPriceUseCase,
     private val getCommunityListUseCase: GetCommunityListUseCase
@@ -90,7 +90,7 @@ internal class ChartViewModel @Inject constructor(
                     market.isValidStockMarketCode() ->
                         flow {
                             if (isStockMarketOpen()) {
-                                observeRealtimeStockPriceUseCase(stockCodes = listOf(market))
+                                observeStockPriceWithFallbackUseCase(stockCodes = listOf(market))
                                     .map { data ->
                                         Logger.d("ChartViewModel", "가격 로딩 중 성공: $data")
                                         GetCurrentMinuteCandleUiState.Success(data.map {

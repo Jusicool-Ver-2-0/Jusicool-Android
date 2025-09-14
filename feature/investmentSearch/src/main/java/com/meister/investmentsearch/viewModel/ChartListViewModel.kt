@@ -7,7 +7,7 @@ import com.jusicool.entity.market.RecommendMarketWithPrice
 import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.usecase.crypto.GetCurrentCryptoPriceUseCase
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase
-import com.jusicool.usecase.koreaInvestment.ObserveRealtimeStockPriceUseCase
+import com.jusicool.usecase.koreaInvestment.ObserveStockPriceWithFallbackUseCase
 import com.jusicool.usecase.market.GetMarketListUseCase
 import com.jusicool.utils.Logger
 import com.jusicool.utils.isStockMarketOpen
@@ -29,7 +29,7 @@ import javax.inject.Inject
 internal class ChartListViewModel @Inject constructor(
     private val getCurrentStockPriceUseCase: GetCurrentStockPriceUseCase,
     private val getCurrentCryptoPriceUseCase: GetCurrentCryptoPriceUseCase,
-    private val observeRealtimeStockPriceUseCase: ObserveRealtimeStockPriceUseCase,
+    private val observeStockPriceWithFallbackUseCase: ObserveStockPriceWithFallbackUseCase,
     private val getMarketListUseCase: GetMarketListUseCase,
 ) : ViewModel() {
 
@@ -117,7 +117,7 @@ internal class ChartListViewModel @Inject constructor(
 
     private fun getStockPriceFlow(stockMarkets: List<String>): Flow<List<AssetsCurrentPrice>> {
         if (stockMarkets.isEmpty()) return flowOf(emptyList())
-        return if (isStockMarketOpen()) observeRealtimeStockPriceUseCase(stockMarkets)
+        return if (isStockMarketOpen()) observeStockPriceWithFallbackUseCase(stockMarkets)
         else getCurrentStockPriceUseCase(stockMarkets)
     }
 

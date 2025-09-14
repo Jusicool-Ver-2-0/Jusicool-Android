@@ -4,25 +4,19 @@ import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.entity.price.HoldingWithCurrentPrice
 import com.jusicool.usecase.crypto.GetCurrentCryptoPriceUseCase
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase
-import com.jusicool.usecase.koreaInvestment.ObserveRealtimeStockPriceUseCase
+import com.jusicool.usecase.koreaInvestment.ObserveStockPriceWithFallbackUseCase
 import com.jusicool.utils.isStockMarketOpen
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
 class GetHoldingWithCurrentPriceUseCase @Inject constructor(
     private val getHoldingResponseUseCase: GetHoldingResponseUseCase,
     private val getCurrentStockPriceUseCase: GetCurrentStockPriceUseCase,
     private val getCurrentCryptoPriceUseCase: GetCurrentCryptoPriceUseCase,
-    private val observeRealtimeStockPriceUseCase: ObserveRealtimeStockPriceUseCase
+    private val observeStockPriceWithFallbackUseCase: ObserveStockPriceWithFallbackUseCase
 ) {
     operator fun invoke(): Flow<HoldingWithCurrentPriceResult> =
         getHoldingResponseUseCase()
@@ -67,7 +61,7 @@ class GetHoldingWithCurrentPriceUseCase @Inject constructor(
         if (stockMarkets.isEmpty()) return flowOf(emptyList())
 
         return if (isStockMarketOpen()) {
-            observeRealtimeStockPriceUseCase(stockMarkets)
+            observeStockPriceWithFallbackUseCase(stockMarkets)
         } else {
             getCurrentStockPriceUseCase(stockMarkets)
         }
