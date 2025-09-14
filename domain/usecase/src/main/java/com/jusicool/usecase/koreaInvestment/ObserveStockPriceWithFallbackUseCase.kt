@@ -16,7 +16,8 @@ class ObserveStockPriceWithFallbackUseCase @Inject constructor(
         stockCodes: List<String>,
         delayMs: Long = 2_000L,
     ): Flow<List<AssetsCurrentPrice>> {
-        return if (isStockMarketOpen()) {
+        return if (stockCodes.isEmpty()) return flowOf(emptyList())
+        else if (isStockMarketOpen()) {
             // 장이 열렸을 때: 웹소켓 + fallback
             val realtimeFlow: Flow<List<AssetsCurrentPrice>> =
                 wsKoreaInvestmentRepository.observeStockTicker(stockCodes)
