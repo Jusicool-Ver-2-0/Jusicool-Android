@@ -3,18 +3,14 @@ package com.jusicool.usecase.holding
 import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.entity.price.HoldingWithCurrentPrice
 import com.jusicool.usecase.crypto.GetCurrentCryptoPriceUseCase
-import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase
 import com.jusicool.usecase.koreaInvestment.ObserveStockPriceWithFallbackUseCase
-import com.jusicool.utils.isStockMarketOpen
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 class GetHoldingWithCurrentPriceUseCase @Inject constructor(
     private val getHoldingResponseUseCase: GetHoldingResponseUseCase,
-    private val getCurrentStockPriceUseCase: GetCurrentStockPriceUseCase,
     private val getCurrentCryptoPriceUseCase: GetCurrentCryptoPriceUseCase,
     private val observeStockPriceWithFallbackUseCase: ObserveStockPriceWithFallbackUseCase
 ) {
@@ -25,7 +21,7 @@ class GetHoldingWithCurrentPriceUseCase @Inject constructor(
                 val stockMarkets = holdingType.stockHoldings.map { it.market.market }
                 val cryptoMarkets = holdingType.cryptoHoldings.map { it.market.market }
 
-                val stockPriceFlow = getStockPriceFlow(stockMarkets)
+                val stockPriceFlow = observeStockPriceWithFallbackUseCase(stockMarkets)
                 val cryptoPriceFlow = getCurrentCryptoPriceUseCase(cryptoMarkets)
 
                 combine(stockPriceFlow, cryptoPriceFlow) { stockPrices, cryptoPrices ->
@@ -57,17 +53,10 @@ class GetHoldingWithCurrentPriceUseCase @Inject constructor(
                 }
             }
 
-    private fun getStockPriceFlow(stockMarkets: List<String>): Flow<List<AssetsCurrentPrice>> {
-        if (stockMarkets.isEmpty()) return flowOf(emptyList())
-
-        return if (isStockMarketOpen()) {
-            observeStockPriceWithFallbackUseCase(stockMarkets)
-        } else {
-            getCurrentStockPriceUseCase(stockMarkets)
-        }
-    }
-
-    private fun findMarketsPrice(marketCode: String, stockPrices: List<AssetsCurrentPrice>): Double {
+    private fun findMarketsPrice(
+        marketCode: String,
+        stockPrices: List<AssetsCurrentPrice>
+    ): Double {
         return stockPrices.find { it.market == marketCode }?.currentPrice ?: 0.0
     }
 }

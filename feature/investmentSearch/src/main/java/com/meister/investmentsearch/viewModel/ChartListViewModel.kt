@@ -4,13 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jusicool.entity.market.MarketType
 import com.jusicool.entity.market.RecommendMarketWithPrice
-import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.usecase.crypto.GetCurrentCryptoPriceUseCase
 import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase
 import com.jusicool.usecase.koreaInvestment.ObserveStockPriceWithFallbackUseCase
 import com.jusicool.usecase.market.GetMarketListUseCase
 import com.jusicool.utils.Logger
-import com.jusicool.utils.isStockMarketOpen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
@@ -27,7 +25,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class ChartListViewModel @Inject constructor(
-    private val getCurrentStockPriceUseCase: GetCurrentStockPriceUseCase,
     private val getCurrentCryptoPriceUseCase: GetCurrentCryptoPriceUseCase,
     private val observeStockPriceWithFallbackUseCase: ObserveStockPriceWithFallbackUseCase,
     private val getMarketListUseCase: GetMarketListUseCase,
@@ -94,7 +91,7 @@ internal class ChartListViewModel @Inject constructor(
                 val cryptoMarkets = neighborMarkets.filter { it.marketType == MarketType.CRYPTO }.map { it.market }
 
                 combine(
-                    getStockPriceFlow(stockMarkets),
+                    observeStockPriceWithFallbackUseCase(stockMarkets),
                     getCurrentCryptoPriceUseCase(cryptoMarkets)
                 ) { stockPrices, cryptoPrices ->
                     val updatedList = (stockPrices + cryptoPrices).mapNotNull { marketData ->
@@ -113,12 +110,6 @@ internal class ChartListViewModel @Inject constructor(
                     }
                 }
             }
-    }
-
-    private fun getStockPriceFlow(stockMarkets: List<String>): Flow<List<AssetsCurrentPrice>> {
-        if (stockMarkets.isEmpty()) return flowOf(emptyList())
-        return if (isStockMarketOpen()) observeStockPriceWithFallbackUseCase(stockMarkets)
-        else getCurrentStockPriceUseCase(stockMarkets)
     }
 
     fun setCurrentPage(page: Int) {

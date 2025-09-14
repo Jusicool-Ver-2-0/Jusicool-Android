@@ -3,30 +3,18 @@ package com.jusicool.usecase.market
 import android.util.Log
 import com.jusicool.entity.market.MarketType
 import com.jusicool.entity.market.RecommendMarketWithPrice
-import com.jusicool.entity.price.AssetsCurrentPrice
 import com.jusicool.repository.MarketRepository
 import com.jusicool.usecase.crypto.GetCurrentCryptoPriceUseCase
-import com.jusicool.usecase.koreaInvestment.GetCurrentStockPriceUseCase
 import com.jusicool.usecase.koreaInvestment.ObserveStockPriceWithFallbackUseCase
-import com.jusicool.utils.isStockMarketOpen
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
 private const val TAG = "GetMarketListUseCase"
 
 class GetMarketListWithCurrentPriceUseCase @Inject constructor(
     private val marketRepository: MarketRepository,
-    private val getCurrentStockPriceUseCase: GetCurrentStockPriceUseCase,
     private val getCurrentCryptoPriceUseCase: GetCurrentCryptoPriceUseCase,
     private val observeStockPriceWithFallbackUseCase: ObserveStockPriceWithFallbackUseCase,
 ) {
@@ -41,8 +29,8 @@ class GetMarketListWithCurrentPriceUseCase @Inject constructor(
                 val stockMarkets = marketList.filter { it.isStock }
                 val cryptoMarkets = marketList.filter { it.isCrypto }
 
-                val stockPriceFlow = getStockPriceFlow(stockMarkets.map { it.market })
-                val cryptoPriceFlow = getCryptoPriceFlow(cryptoMarkets.map { it.market })
+                val stockPriceFlow = observeStockPriceWithFallbackUseCase(stockMarkets.map { it.market })
+                val cryptoPriceFlow = getCurrentCryptoPriceUseCase(cryptoMarkets.map { it.market })
 
                 combine(stockPriceFlow, cryptoPriceFlow) { stockPrices, cryptoPrices ->
 
@@ -104,26 +92,5 @@ class GetMarketListWithCurrentPriceUseCase @Inject constructor(
                     }
                 }
             }
-    }
-
-    private fun getStockPriceFlow(stockMarkets: List<String>): Flow<List<AssetsCurrentPrice>> {
-        if (stockMarkets.isEmpty()) return flowOf(emptyList())
-
-        return if (isStockMarketOpen()) {
-            observeStockPriceWithFallbackUseCase(stockMarkets)
-        } else {
-            getCurrentStockPriceUseCase(stockMarkets)
-        }
-    }
-
-    private fun getCryptoPriceFlow(cryptoMarkets: List<String>): Flow<List<AssetsCurrentPrice>> {
-        if (cryptoMarkets.isEmpty()) return flowOf(emptyList())
-
-        return flow {
-            while (currentCoroutineContext().isActive) {
-                emitAll(getCurrentCryptoPriceUseCase(cryptoMarkets))
-                delay(500)
-            }
-        }.flowOn(Dispatchers.IO)
     }
 }
