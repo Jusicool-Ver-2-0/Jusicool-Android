@@ -93,6 +93,10 @@ internal class ChartListViewModel @Inject constructor(
                 combine(
                     observeStockPriceWithFallbackUseCase(stockMarkets),
                     getCurrentCryptoPriceUseCase(cryptoMarkets)
+                        .catch { e ->
+                            Logger.e("ChartListViewModel", "Error in crypto price flow", e)
+                            emit(emptyList())
+                        }
                 ) { stockPrices, cryptoPrices ->
                     val updatedList = (stockPrices + cryptoPrices).mapNotNull { marketData ->
                         neighborMarkets.find { it.market == marketData.market }?.copy(
