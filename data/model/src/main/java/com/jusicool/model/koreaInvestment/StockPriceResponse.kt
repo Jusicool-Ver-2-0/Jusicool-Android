@@ -13,7 +13,7 @@ data class StockPriceResponse( // 주식현재가 시세 https://apiportal.korea
 data class StockPriceData(
     @Json(name = "stck_prpr") val currentPrice: String,
     @Json(name = "prdy_vrss") val priceDifference: String,
-    @Json(name = "prdy_vrss_sign") val priceDifferenceSign: String,
+    @Json(name = "prdy_vrss_sign") val priceDifferenceSign: String = "0",
     @Json(name = "prdy_ctrt") val priceDifferenceRate: String,
     @Json(name = "acml_vol") val accumulatedVolume: String,
     @Json(name = "acml_tr_pbmn") val accumulatedTradeAmount: String,
