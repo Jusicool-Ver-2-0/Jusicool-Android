@@ -20,7 +20,7 @@ class KoreaInvestmentInterceptor(
         }
 
         val token = runBlocking {
-            koreaInvestmentAuthManager.get().getValidAccessToken(forceRefresh = false)
+            koreaInvestmentAuthManager.get().getValidAccessToken()
         }
 
         val authenticatedRequest = originalRequest.newBuilder()
@@ -34,7 +34,7 @@ class KoreaInvestmentInterceptor(
             response.close()
 
             val newToken = runBlocking {
-                koreaInvestmentAuthManager.get().getValidAccessToken(forceRefresh = true)
+                koreaInvestmentAuthManager.get().getValidAccessToken()
             }
 
             val retriedRequest = originalRequest.newBuilder()

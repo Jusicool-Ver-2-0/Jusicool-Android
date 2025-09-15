@@ -22,7 +22,7 @@ class KoreaInvestmentAuthManager @Inject constructor(
     private val tokenMutex = Mutex()
     private val approvalKeyMutex = Mutex()
 
-    suspend fun getValidAccessToken(forceRefresh: Boolean = false): String {
+    suspend fun getValidAccessToken(): String {
         return tokenMutex.withLock {
             try {
                 val now = System.currentTimeMillis()
@@ -30,7 +30,7 @@ class KoreaInvestmentAuthManager @Inject constructor(
                 val storedToken = prefs.getString("access_token", null)
                 val storedExpires = prefs.getLong("access_token_expires_at", 0L)
 
-                if (!forceRefresh && storedToken != null && now < storedExpires) {
+                if (storedToken != null && now < storedExpires) {
                     Log.d("AuthManager", "✅ SharedPreferences 캐시된 AccessToken 사용: $storedToken")
                     return storedToken
                 }
@@ -69,7 +69,7 @@ class KoreaInvestmentAuthManager @Inject constructor(
         }
     }
 
-    suspend fun getApprovalKey(forceRefresh: Boolean = false): String {
+    suspend fun getApprovalKey(): String {
         return approvalKeyMutex.withLock {
             try {
                 val now = System.currentTimeMillis()
@@ -77,7 +77,7 @@ class KoreaInvestmentAuthManager @Inject constructor(
                 val storedKey = prefs.getString("approval_key", null)
                 val storedExpires = prefs.getLong("approval_key_expires_at", 0L)
 
-                if (!forceRefresh && storedKey != null && now < storedExpires) {
+                if (storedKey != null && now < storedExpires) {
                     Log.d("AuthManager", "✅ SharedPreferences 캐시된 ApprovalKey 사용: $storedKey")
                     return storedKey
                 }
